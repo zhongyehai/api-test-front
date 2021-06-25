@@ -1,0 +1,20 @@
+
+// 根据项目id，从初始化的项目列表中取对应项目的hosts
+export function parseHostByProjectId(project_list, project_id){
+  for (let project_index in project_list){
+    let project = project_list[project_index]
+    if (project.id === project_id){
+      return project.hosts ? JSON.parse(project.hosts): project.hosts
+    }
+  }
+}
+
+// 根据用户id，从初始化的用户列表中取对应用户的用户名
+export function parseUserNameByUserId(user_list, user_id){
+  for (let index in user_list) {
+    let user_data = user_list[index]
+    if (user_data.id === user_id) {
+      return user_data.name
+    }
+  }
+}

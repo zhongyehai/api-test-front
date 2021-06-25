@@ -1,0 +1,307 @@
+<template>
+  <div class="app-container">
+
+    <!-- 搜索、添加栏 -->
+    <div class="filter-container">
+      <el-input v-model="listQuery.name" :placeholder="'项目名'" style="width: 400px;" class="filter-item" size="mini"
+                @keyup.enter.native="handleFilter"/>
+      <el-select v-model="listQuery.create_user" :placeholder="'选择创建人'" clearable style="margin-left: 10px" size="mini"
+                 class="filter-item">
+        <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+      </el-select>
+      <el-select v-model="listQuery.manager" :placeholder="'选择负责人'" clearable style="margin-left: 10px" size="mini"
+                 class="filter-item">
+        <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" icon="el-icon-search" size="mini"
+                 @click="handleFilter">
+        {{ '搜索' }}
+      </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" size="mini"
+                 @click="addProject">
+        {{ '添加' }}
+      </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-refresh" size="mini"
+                 @click="handleInitListQuery">
+        {{ '重置' }}
+      </el-button>
+      <!--      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download"-->
+      <!--                 @click="handleDownload">-->
+      <!--        {{ '导出' }}-->
+      <!--      </el-button>-->
+    </div>
+    <br>
+
+    <!-- 表格栏 -->
+    <el-table
+      :key="tableKey"
+      v-loading="listLoading"
+      :data="project_list"
+      fit
+      stripe
+      highlight-current-row
+      style="width: 100%;"
+      @sort-change="sortChange"
+      @row-dblclick="doubleClick"
+    >
+      <el-table-column :label="'序号'" prop="id" align="center" min-width="5%">
+        <template slot-scope="scope">
+          <span>{{ scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'项目名'" prop="name" align="center" min-width="20%" :show-overflow-tooltip=true>
+        <template slot-scope="scope">
+          <el-tooltip class="item" effect="dark" content="可双击修改" placement="right-end">
+            <span> {{ scope.row.name }} </span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'域名'" prop="id" align="center" min-width="35%" :show-overflow-tooltip=true>
+        <template slot-scope="scope">
+          <span>{{ parsHosts(scope.row.hosts) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'创建人'" prop="id" align="center" min-width="10%">
+        <template slot-scope="scope">
+          <span>{{ parsUser(scope.row.create_user) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'负责人'" prop="id" align="center" min-width="10%">
+        <template slot-scope="scope">
+          <span>{{ parsUser(scope.row.manager) }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="'操作'" align="center" min-width="20%" class-name="small-padding fixed-width">
+        <template slot-scope="{row, $index}">
+          <el-button size="mini" type="danger" @click="confirmBox(delProject, row.id, row.name)">
+            {{ '删除' }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 分页 -->
+    <pagination
+      v-show="total>0"
+      :total="total"
+      :page.sync="listQuery.pageNum"
+      :limit.sync="listQuery.pageSize"
+      @pagination="getProjectList"/>
+
+    <!-- 编辑框 -->
+    <projectDialog
+      :currentProject="currentProject"
+      :currentUserList="user_list"
+    ></projectDialog>
+
+  </div>
+</template>
+
+<script>
+import {deleteProject, projectList} from '@/apis/project'
+import {userList} from '@/apis/user'
+import waves from '@/directive/waves' // waves directive
+import Pagination from '@/components/Pagination'
+import {parseTime} from "@/utils";
+import projectDialog from '@/views/project/dialogForm'
+
+export default {
+  name: 'Project',
+  components: {
+    Pagination,
+    projectDialog
+  },
+  directives: {waves},
+  data() {
+    return {
+      // 查询对象
+      listQuery: {
+        pageNum: 1,
+        pageSize: 20,
+        name: undefined,  // 项目名
+        manager: undefined,  // 负责人
+        create_user: undefined, // 创建人
+      },
+
+      // 当前选中的项目
+      currentProject: {},
+
+      // 用户列表
+      user_list: [],
+
+      // 项目列表
+      project_list: [],
+
+      // 项目数据表格起始
+      tableKey: 0,
+
+      // 项目数据表格总条数
+      total: 0,
+
+      // dialog框状态，edit 为编辑数据, create 为新增数据
+      dialogStatus: '',
+
+      // 下载表格状态
+      downloadLoading: false,
+
+      // 请求加载状态
+      listLoading: true,
+
+      rules: {
+        type: [{required: true, message: '类型必填', trigger: 'change'}],
+        timestamp: [{type: 'date', required: true, message: '时间必填', trigger: 'change'}],
+        title: [{required: true, message: '标题必填', trigger: 'blur'}]
+      },
+
+    }
+  },
+
+  created() {
+
+    // 初始化用户列表
+    this.getUserList()
+
+    // 初始化项目列表
+    this.getProjectList()
+
+  },
+
+  methods: {
+
+    // 双击进入编辑
+    doubleClick(row, column, event) {
+      this.$bus.$emit(this.$busEvents.showProjectDialog, 'edit', row)
+    },
+
+    // 请求用户信息
+    getUserList() {
+      userList().then(response => {
+        this.user_list = response.data.data
+      })
+    },
+
+    // 获取项目列表
+    getProjectList() {
+      this.listLoading = true
+      projectList(this.listQuery).then(response => {
+        this.project_list = response.data.data
+        this.total = response.data.total
+      })
+      this.listLoading = false
+    },
+
+    // 删除项目
+    delProject(projectId) {
+      deleteProject({"id": projectId}).then(response => {
+        if (this.showMessage(this, response)) {
+          this.getProjectList(); // 重新从后台获取项目列表
+        }
+      })
+    },
+
+    // 触发查询
+    handleFilter() {
+      this.listQuery.pageNum = 1
+      this.getProjectList()
+    },
+
+    // 点击添加项目
+    addProject() {
+      this.$bus.$emit(this.$busEvents.showProjectDialog, 'add')
+    },
+
+    // 把hosts的 ["http://127.0.0.1:8010", "http://127.0.0.1:8011"] 展示为 索引0 + ...
+    parsHosts(hosts) {
+      if (hosts.length > 0) {
+        return hosts[0] + '...'
+      }
+      return '待设置'
+    },
+
+    // 把用户id解析为用户名
+    parsUser(userId) {
+      for (let index in this.user_list) {
+        let user_data = this.user_list[index]
+        if (user_data.id === userId) {
+          return user_data.name
+        }
+      }
+    },
+
+    // 初始化查询数据
+    handleInitListQuery() {
+      this.listQuery = {
+        pageNum: 1,
+        pageSize: 20,
+        name: undefined,  // 项目名
+        manager: undefined,  // 负责人
+        create_user: undefined, // 创建人
+      }
+    },
+
+    // 修改排序
+    sortChange(data) {
+      const {prop, order} = data
+      if (prop === 'id') {
+        this.sortByID(order)
+      }
+    },
+
+    // 修改排序
+    sortByID(order) {
+      if (order === 'ascending') {
+        this.listQuery.sort = '+id'
+      } else {
+        this.listQuery.sort = '-id'
+      }
+      this.handleFilter()
+    },
+
+
+    // 下载表格
+    handleDownload() {
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'name', 'hosts', 'create_user', 'manger']
+        const filterVal = ['id', 'name', 'hosts', 'create_user', 'manger']
+        const data = this.formatJson(filterVal)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: '项目列表'
+        })
+        this.downloadLoading = false
+      })
+    },
+
+    // 下载表格取json的值
+    formatJson(filterVal) {
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    }
+  },
+  mounted() {
+
+    this.$bus.$on(this.$busEvents.projectDialogCommitSuccess, (status) => {
+      this.getProjectList()
+    })
+  },
+
+  // 组件销毁前，关闭bus监听事件
+  beforeDestroy() {
+    this.$bus.$off(this.$busEvents.projectDialogCommitSuccess)
+  },
+
+}
+</script>
+
+<style scoped>
+body {
+  margin: 0px
+}
+</style>

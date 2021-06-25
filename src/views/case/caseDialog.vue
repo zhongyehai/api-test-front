@@ -1,0 +1,318 @@
+<template>
+  <!--  :title=" dialogStatus === 'update' ? '修改用例' : '新增用例'"-->
+  <el-dialog
+    :title=" dialogStatus === 'add' ? '新增用例' : dialogStatus === 'update' ? '修改用例' : '复制用例' "
+    :visible.sync="dialogIsShow"
+    :close-on-click-modal="false"
+    width="90%"
+  >
+
+    <el-tabs v-model="activeName">
+
+      <!-- 用例信息组件 -->
+      <el-tab-pane label="用例信息" name="caseInFo">
+
+        <el-form size="small" :inline="true">
+
+          <!-- 项目选择 -->
+          <!--          <el-form-item label="项目选择" :label-width="'70px'">-->
+          <!--            <projectSelectorView-->
+          <!--              ref="projectSelectorView"-->
+          <!--              :projectId="tempCase.project_id"-->
+          <!--            ></projectSelectorView>-->
+          <!--          </el-form-item>-->
+
+          <el-form-item label="用例名称" :label-width="'70px'">
+            <el-input v-model="tempCase.name" class="minWidth"></el-input>
+          </el-form-item>
+
+          <el-form-item label="用例编号" :label-width="'70px'" v-if="tempCase.id">
+            <el-input v-model.number="tempCase.num" :minlength="215" class="minWidth"></el-input>
+          </el-form-item>
+
+          <el-form-item label="执行次数" label-width="70px" class="minWidth">
+            <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"
+            ></el-input-number>
+          </el-form-item>
+
+          <!-- 函数文件 -->
+          <el-form-item label="函数文件" labelWidth="70px">
+            <funcFilesView :funcFiles="tempCase.func_files" ref="funcFilesView"></funcFilesView>
+          </el-form-item>
+
+          <!-- 用例集选择 -->
+          <el-form-item label="用例集" :label-width="'70px'">
+            <caseSetSelectorView
+              ref="caseSetSelectorView"
+              :projectId="tempCase.project_id"
+              :caseSetId="tempCase.case_set_id"
+              :isWatchStatus="dialogIsShow"
+              :busOnEventName="$busEvents.projectTreeChoiceProject"
+            ></caseSetSelectorView>
+          </el-form-item>
+
+        </el-form>
+
+        <!--        <el-form :inline="true" size="small">-->
+
+        <!--          <el-form-item label="用例名称" :label-width="'70px'">-->
+        <!--            <el-input v-model="tempCase.name" class="minWidth"></el-input>-->
+        <!--          </el-form-item>-->
+
+        <!--&lt;!&ndash;          <el-form-item label="用例描述" :label-width="'70px'">&ndash;&gt;-->
+        <!--&lt;!&ndash;            <el-input v-model="tempCase.desc" class="minWidth"></el-input>&ndash;&gt;-->
+        <!--&lt;!&ndash;          </el-form-item>&ndash;&gt;-->
+
+        <!--          <el-form-item label="用例编号" :label-width="'70px'" v-if="tempCase.id">-->
+        <!--            <el-input v-model.number="tempCase.num" :minlength="215" class="minWidth"></el-input>-->
+        <!--          </el-form-item>-->
+
+        <!--          <el-form-item label="执行次数" label-width="70px" class="minWidth">-->
+        <!--            <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"-->
+        <!--            ></el-input-number>-->
+        <!--          </el-form-item>-->
+        <!--        </el-form>-->
+
+
+        <el-form :inline="true" class="demo-form-inline " size="small">
+
+          <el-tabs type="border-card">
+
+            <el-tab-pane label="头部信息">
+              <headersView
+                ref="headersView"
+                :currentData="tempCase.headers"
+                :placeholder-key="'key'"
+                :placeholder-value="'value'"
+                :placeholder-desc="'备注'"
+              ></headersView>
+            </el-tab-pane>
+
+            <el-tab-pane label="公用变量">
+              <variablesView
+                ref="variablesView"
+                :currentData="tempCase.variables"
+                :placeholder-key="'key'"
+                :placeholder-value="'value'"
+                :placeholder-desc="'备注'"
+              ></variablesView>
+            </el-tab-pane>
+
+          </el-tabs>
+
+        </el-form>
+      </el-tab-pane>
+
+      <!-- 步骤管理组件 -->
+      <el-tab-pane label="步骤管理" name="stepInFo">
+        <stepView
+          ref="stepView"
+          :projectId="tempCase.project_id"
+          :caseId="tempCase.id"
+          :stepList="tempCase.steps"
+        ></stepView>
+      </el-tab-pane>
+
+    </el-tabs>
+
+    <div slot="footer" class="dialog-footer">
+      <el-button size="mini" @click=" dialogIsShow = false"> {{ '取消' }}</el-button>
+      <el-button size="mini" type="primary" @click=" dialogStatus === 'add' ? addCase() : changCase() ">
+        {{ '保存用例' }}
+      </el-button>
+    </div>
+
+  </el-dialog>
+
+</template>
+
+<script>
+
+import projectSelectorView from "@/components/Selector/project";
+import caseSetSelectorView from "@/components/Selector/caseSet";
+import funcFilesView from '@/components/Selector/funcFile'
+import headersView from '@/components/Inputs/changeRow'
+import variablesView from '@/components/Inputs/changeRow'
+import stepView from '@/views/step/index'
+
+import {postCase, putCase, copyCase} from "@/apis/case";
+import {stepList} from "@/apis/step";
+
+export default {
+  name: 'caseDialog',
+  props: [
+    'currentProject',
+    'currentCaseSet'
+  ],
+  components: {
+    projectSelectorView,
+    caseSetSelectorView,
+    funcFilesView,
+    headersView,
+    variablesView,
+    stepView
+  },
+  data() {
+    return {
+      dialogStatus: '',
+      dialogIsShow: false,
+      activeName: 'caseInFo',
+      tempCase: {
+        id: '',
+        num: '',
+        name: '',
+        desc: '',
+        is_run: true,
+        run_times: '',
+        func_files: [],
+        variables: [{key: null, value: null, remark: null}],
+        headers: [{key: null, value: null, remark: null}],
+        project_id: '',
+        case_set_id: '',
+        steps: []  // 测试步骤
+      },
+
+    }
+  },
+
+  methods: {
+
+    // 初始化新增用例模板
+    initNewTempCase() {
+      this.tempCase.id = ''
+      this.tempCase.num = ''
+      this.tempCase.desc = ''
+      this.tempCase.run_times = ''
+      this.tempCase.func_files = []
+      this.tempCase.variables = [{key: null, value: null, remark: null}]
+      this.tempCase.headers = [{key: null, value: null, remark: null}]
+      this.tempCase.steps = []
+      this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
+      this.tempCase.case_set_id = this.currentCaseSet ? this.currentCaseSet.id : ''
+      this.dialogStatus = 'add'
+      this.dialogIsShow = true
+    },
+
+    // 初始化修改用例模板
+    initUpdateTempCase(currentCase) {
+      // console.log('caseDialog.method.initUpdateTempCase.currentCase: ', JSON.stringify(currentCase))
+      this.tempCase = currentCase
+      this.getStepList()
+      this.dialogStatus = 'update'
+      this.dialogIsShow = true
+    },
+
+    // 获取当前的用例数据，用于提交给后端
+    getCaseDataToCommit() {
+      let caseData = this.tempCase
+      caseData.case_set_id = this.$refs.caseSetSelectorView.tempCaseSetId
+      caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
+      caseData.variables = this.$refs.variablesView.tempData
+      caseData.headers = this.$refs.headersView.tempData
+      caseData.steps = this.$refs.stepView.$refs.stepListView.stepList
+      return caseData
+    },
+
+    // 获取步骤列表
+    getStepList() {
+      stepList({'caseId': this.tempCase.id}).then(response => {
+        this.tempCase.steps = response.data
+      })
+    },
+
+    // 新增用例
+    addCase() {
+      // console.log(JSON.stringify(this.tempCase))
+      postCase(this.getCaseDataToCommit()).then(response => {
+        if (this.showMessage(this, response)) {
+          // console.log('caseDialog.addCase.response: ', JSON.stringify(response.data))
+          this.dialogIsShow = false
+          this.tempCase.id = response.data.id
+          this.tempCase.num = response.data.num
+          this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+        }
+      })
+    },
+
+    // 修改用例
+    changCase() {
+      // console.log(JSON.stringify(this.tempCase))
+      // console.log(JSON.stringify(this.getCaseDataToCommit()))
+      putCase(this.getCaseDataToCommit()).then(response => {
+        if (this.showMessage(this, response)) {
+          this.dialogIsShow = false
+          this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+        }
+      })
+    },
+
+  },
+
+  mounted() {
+
+    // 监听 caseDialog 的状态
+    this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
+      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
+      if (command === 'add') {
+        this.initNewTempCase()
+      } else if (command === 'edit') {
+        this.initUpdateTempCase(currentCase)
+      } else if (command === 'copy') {  // 复制用例
+        // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.currentCase: ', JSON.stringify(currentCase))
+        copyCase({id: currentCase.id}).then(response => {
+            if (this.showMessage(this, response)) {
+              this.tempCase = response.data.case
+              this.tempCase.steps = response.data.steps
+              this.dialogStatus = 'copy'
+              this.dialogIsShow = true
+              this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+            }
+          }
+        )
+      }
+      this.activeName = 'caseInFo'
+    })
+
+    // 在添加步骤时触发的 保存用例，这个时候保存后不关闭用例的Dialog框，只重新请求用例列表
+    this.$bus.$on(this.$busEvents.isAddStepTriggerSaveCase, (status) => {
+      postCase(this.getCaseDataToCommit()).then(response => {
+        if (this.showMessage(this, response)) {
+          // 把接口返回的用例id赋值给this.tempCase.id
+          this.tempCase.id = response.data.id
+          this.tempCase.num = response.data.num
+          this.dialogStatus = 'update'  // 新增完后把状态改为编辑
+          this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+        }
+      })
+    })
+
+  },
+
+  // 组件销毁前，关闭bus监听事件
+  beforeDestroy() {
+    this.$bus.$off(this.$busEvents.caseDialogStatus)
+    this.$bus.$off(this.$busEvents.isAddStepTriggerSaveCase)
+  },
+
+  watch: {
+
+    'currentProject': {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.tempCase.project_id = newVal.id
+      }
+    },
+
+    'currentCaseSet': {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.tempCase.case_set_id = newVal.id
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
