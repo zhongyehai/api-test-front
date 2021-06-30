@@ -29,7 +29,6 @@ export default {
   computed: {
     ...mapGetters(['sidebar' ]),
     routes() {
-      console.log(`this.$router: ${this.$router}`)
       return this.$router.options.routes
     },
     activeMenu() {
@@ -48,7 +47,6 @@ export default {
       return variables
     },
     isCollapse() {
-      console.log(this.sidebar)
       return !this.sidebar.opened
     }
   }

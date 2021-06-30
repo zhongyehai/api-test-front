@@ -127,8 +127,6 @@ export default {
 
     // 双击查看测试报告
     doubleClick(row, column, event) {
-      // console.log('被双击了。。。')
-      // console.log('row: ', JSON.stringify(row))
       let {href} = this.$router.resolve({path: 'reportShow', query: {id: row.id}})
       window.open(href, '_blank')
     },
@@ -139,13 +137,6 @@ export default {
         this.reportDataList = response.data.data
         this.reportTotal = response.data.total
       })
-    },
-
-    // 打开测试报告
-    openReportById(reportId) {
-      console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
-      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
-      window.open(href, '_blank')
     },
 
     // 下载测试报告按钮
