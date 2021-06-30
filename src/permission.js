@@ -22,27 +22,26 @@ router.beforeEach(async (to, from, next) => {
   // 根据路由中配置的meta.title更改页面标题
   document.title = getPageTitle(to.meta.title)
 
-  // 从 localStorage 中获取token，判断用户是否已登录
-  // const hasToken = getToken()
-  const hasToken = store.getters.token
+  // 如果是查看报告，则从 localStorage 中获取token，判断用户是否已登录
+  const hasToken = to.path.indexOf('reportShow') !== -1 ? localStorage.getItem('token') : store.getters.token
 
   if (hasToken) {
-    // 如果有token，判断权限
 
+    // 如果有token，判断权限
     if (to.path === '/login') {
+
       // 路由为登录页，直接放行
-      // next({path: '/'})  // 如果访问的是登录，则跳转到首页
       next()  // 如果访问的是登录，则直接放行
       NProgress.done()  // 隐藏顶部页面加载进度条
 
     } else {
       // 如果访问的不是登录页，判断是否有权限访问此路由
 
-      let roles = to.meta.roles
+      let roles = to.meta.roles  // 访问此路由需要的权限
 
       // 如果此路由有权限校验，则进行校验
       if (roles) {
-        // let user_role = getRole()
+
         const user_role = store.getters.roles
         // 如果路由指定的权限数组包含当前用户的权限，则放行
         if (roles.indexOf(user_role) > -1) {
@@ -64,7 +63,6 @@ router.beforeEach(async (to, from, next) => {
       next()
     } else {
       // 如果不在白名单中，则跳转到/login，将要访问的路由，放在redirect参数上
-      console.log(`permission.router.beforeEach.to.path: ${to.path}`)
       next(`/login?redirect=${to.path}`)
       // 隐藏顶部页面加载进度条
       NProgress.done()
