@@ -74,11 +74,11 @@ export default {
   data() {
     return {
       title: {
-        'project': '',
-        'api': '',
-        'case': '',
-        'step': '',
-        'task': '',
+        'project': 0,
+        'api': 0,
+        'case': 0,
+        'step': 0,
+        'task': 0,
       }
     }
   },

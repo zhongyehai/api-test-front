@@ -139,6 +139,13 @@ export default {
       })
     },
 
+    // 打开测试报告
+    // openReportById(reportId) {
+    //   console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
+    //   let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+    //   window.open(href, '_blank')
+    // },
+
     // 下载测试报告按钮
     downReport(reportId) {
       downloadReport({'id': reportId}).then((response) => {
