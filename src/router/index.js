@@ -140,7 +140,7 @@ export const constantRoutes = [
       },
       {
         path: 'reportShow',
-        name: 'reportShow',
+        name: 'ReportShow',
         hidden: true,
         meta: {title: '查看测试报告', icon: 'form'},
         component: () => import('@/views/report/show')
@@ -157,13 +157,13 @@ export const constantRoutes = [
         meta: {title: '参数管理', icon: 'el-icon-setting'},
         component: () => import('@/views/configs/index')
       },
-      // {
-      //   path: 'debug',
-      //   name: 'debug',
-      //   // hidden: true,
-      //   meta: {title: '调试界面', icon: 'form'},
-      //   component: () => import('@/views/debug/index')
-      // },
+      {
+        path: 'debug',
+        name: 'debug',
+        hidden: true,
+        meta: {title: '调试界面', icon: 'form'},
+        component: () => import('@/views/debug/index')
+      },
     ]
   },
 
@@ -199,10 +199,10 @@ export const constantRoutes = [
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
       {
-        path: 'toolList',
-        name: 'ToolList',
-        component: () => import('@/views/tools/toolList'),
-        meta: {title: '工具列表', icon: 'el-icon-s-operation'}
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/tools/fileManage'),
+        meta: {title: '文件管理', icon: 'el-icon-files'}
       },
       {
         path: 'examination',

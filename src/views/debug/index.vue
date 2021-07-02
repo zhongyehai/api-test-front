@@ -1,64 +1,67 @@
 <template>
-  <!--  <el-tree class="filter-tree"-->
-  <!--           :render-content="renderContent"-->
-  <!--           :data="data"-->
-  <!--           :props="defaultProps"-->
-  <!--           ref="tree">-->
-  <!--  </el-tree>-->
-
-<!--  <el-tree default-expand-all :data="data">-->
-<!--   <span class="custom-tree-node"-->
-<!--         slot-scope="{ node, data }"-->
-<!--         style="width:100%;"-->
-<!--         @mouseenter="mouseenter(data)"-->
-<!--         @mouseleave="mouseleave(data)">-->
-<!--    <span>{{ node.label }}</span>-->
-<!--     <span v-show="data.show" size="mini" style="margin-left: 15px">添加</span>-->
-<!--    </span>-->
-<!--  </el-tree>-->
-
-  <el-tree default-expand-all :data="data">
-   <span
-     class="custom-tree-node"
-     slot-scope="{ node, data }"
-     style="width:100%;"
-     @mouseenter="mouseenter(data)"
-     @mouseleave="mouseleave(data)">
-    <span>{{ node.label }}</span>
-       <el-link v-show="data.show" size="mini" style="margin-left: 5px" type="primary">添加</el-link>
-    </span>
-  </el-tree>
-
+  <div class="app-container">
+    <el-upload
+      class="upload-demo"
+      ref="upload"
+      action="https://jsonplaceholder.typicode.com/posts/"
+      :on-change="onChange"
+      :on-preview="handlePreview"
+      :on-remove="handleRemove"
+      :file-list="fileList"
+      :auto-upload="false">
+      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+    </el-upload>
+  </div>
 </template>
 
 <script>
 export default {
   data() {
     return {
-      data: [
-        {
-          id: 0,
-          label: '水果',
-          show: false,
-        },
-        {
-          id: 1,
-          label: '手机',
-          show: false,
-        },
-      ],
-
-    }
+      fileList: [{
+        name: 'food.jpeg',
+        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      }, {
+        name: 'food2.jpeg',
+        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      }]
+    };
   },
   methods: {
-    mouseenter(data) {
-      console.log('滑入了')
-      data.show = true
+    submitUpload() {
+      this.$refs.upload.submit();
     },
 
-    mouseleave(data) {
-      console.log('滑出了')
-      data.show = false
+    handleRemove(file, fileList) {
+      console.log('handleRemove.file: ', file);
+      console.log('handleRemove.fileList: ', fileList);
+      fileList.splice(fileList.indexOf(file), 1)
+      console.log('handleRemove.fileList: ', fileList);
+      console.log('this.fileList: ', this.fileList);
+    },
+
+    handlePreview(file) {
+      console.log('handlePreview.file: ', file);
+      // console.log('handlePreview.fileList: ', fileList);
+    },
+
+    // 选中文件事件
+    onChange(file, fileList){
+      // 检验文件是否已存在
+      console.log('onChange.file: ', file);
+      console.log('onChange.fileList: ', fileList);
+      console.log('onChange.this.fileList: ', this.fileList);
+      this.$confirm('服务器已存在相同名字文件，是否覆盖?', '提示', {
+        confirmButtonText: '覆盖',
+        cancelButtonText: '不覆盖',
+        type: 'warning'
+      }).then(() => {
+        console.log(1111111111111)
+      }).catch(() => {
+        this.handleRemove(file, fileList)
+      });
     }
   }
 }

@@ -25,4 +25,34 @@ exports.install = function (Vue) {
       return true
     }
   };
+
+  // 显示接口业务响应状态为2xx的信息
+  Vue.prototype.showSuccess = function (_this, response) {
+    if (response.status < 300) {
+      _this.$message.success(response.message);
+      return true
+    }
+  };
+
+  // 显示接口业务响应状态为4xx的信息
+  Vue.prototype.showFail = function (_this, response) {
+    if (400 <= response.status < 500) {
+      _this.$message.warning(response.message);
+      return true
+    }
+  };
+
+  // 显示接口业务响应状态为5xx的信息
+  Vue.prototype.showErrorResponse = function (_this, response) {
+    if (400 <= response.status < 500) {
+      _this.$message.error(response.message);
+      return true
+    }
+  };
+
+  // 显示接口业务响应状态为5xx的信息
+  Vue.prototype.showError = function (_this, message) {
+    _this.$message.error(message);
+  };
+
 };

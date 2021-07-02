@@ -53,4 +53,7 @@ export default {
   configDialogIsShow: 'configDialogIsShow',  // 打开配置编辑框
   configDialogIsCommit: 'configDialogIsCommit',  // 配置已提交
 
+  uploadFileDialogIsShow: 'uploadFileDialogIsShow',  // 打开文件上传
+  uploadFileIsCommit: 'uploadFileIsCommit',  // 文件上传已提交
+
 }
