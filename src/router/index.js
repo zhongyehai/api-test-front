@@ -136,7 +136,7 @@ export const constantRoutes = [
         path: 'task',
         name: 'Task',
         component: () => import('@/views/task/index'),
-        meta: {title: '定时任务', icon: 'el-icon-message-solid'}
+        meta: {title: '定时任务', icon: 'el-icon-date'}
       },
       {
         path: 'reportShow',
