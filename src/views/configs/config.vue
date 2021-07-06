@@ -64,16 +64,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="8%">
-        <template slot-scope="scope">
+<!--      <el-table-column label="操作" min-width="8%">-->
+<!--        <template slot-scope="scope">-->
 
-          <el-button type="danger"
-                     size="mini"
-                     @click.native="confirmBox(delConfig, scope.row.id, scope.row.name)">删除
-          </el-button>
+<!--          <el-button type="danger"-->
+<!--                     size="mini"-->
+<!--                     @click.native="confirmBox(delConfig, scope.row.id, scope.row.name)">删除-->
+<!--          </el-button>-->
 
-        </template>
-      </el-table-column>
+<!--        </template>-->
+<!--      </el-table-column>-->
+
     </el-table>
 
     <pagination
