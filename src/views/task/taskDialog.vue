@@ -1,6 +1,10 @@
 <template>
 
-  <el-dialog :title="dialogStatus === 'update' ? '修改任务' : '新增任务'" :visible.sync="taskDialogIsShow" width="50%">
+  <el-dialog
+    :title="dialogStatus === 'update' ? '修改任务' : '新增任务'"
+    :visible.sync="taskDialogIsShow"
+    :close-on-click-modal="false"
+    width="50%">
 
     <el-tabs>
       <el-tab-pane>
@@ -52,19 +56,19 @@
             <el-radio v-model="tempTask.send_type" label="all">都接收</el-radio>
             <el-radio v-model="tempTask.send_type" label="webhook">仅微信群</el-radio>
             <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
-            <div v-if="tempTask.send_type !== 'email'">
+            <div v-show="tempTask.send_type !== 'email'">
               <el-input
                 type="textarea"
                 v-model="tempTask.webhook"
                 placeholder="企业微信或钉钉webhook地址">
               </el-input>
             </div>
-            <div v-if="tempTask.send_type !== 'webhook'">
+            <div v-show="tempTask.send_type !== 'webhook'">
               <el-form-item label="邮箱服务器" :label-width="labelWidth">
                 <emailServerSelector ref="emailServerSelector" :oldEmailServer="tempTask.email_server"></emailServerSelector>
               </el-form-item>
               <el-form-item label="发件人邮箱" :label-width="labelWidth">
-                <el-input v-model="tempTask.email_from" placeholder="支持QQ邮箱和BBD公司邮箱">
+                <el-input v-model="tempTask.email_from" placeholder="默认支持QQ邮箱，可到全局参数添加对应的服务器，配置类型选邮箱">
                 </el-input>
               </el-form-item>
               <el-form-item label="邮箱密码" :label-width="labelWidth" prop="desc">
@@ -80,66 +84,7 @@
                 ></el-input>
               </el-form-item>
             </div>
-
-<!--            -->
-<!--            <el-tabs v-model="tempTask.send_type" type="border-card">-->
-
-<!--              <el-tab-pane label="webhook" name="all">-->
-<!--                <el-input-->
-<!--                  type="textarea"-->
-<!--                  v-model="tempTask.webhook"-->
-<!--                  placeholder="企业微信或钉钉webhook地址，后台已配置默认值，输入则覆盖，如不需要接收报告则输入no">-->
-<!--                </el-input>-->
-<!--              </el-tab-pane>-->
-
-<!--              <el-tab-pane label="webhook" name="webhook">-->
-<!--                <el-input-->
-<!--                  type="textarea"-->
-<!--                  v-model="tempTask.webhook"-->
-<!--                  placeholder="企业微信或钉钉webhook地址，后台已配置默认值，输入则覆盖，如不需要接收报告则输入no">-->
-<!--                </el-input>-->
-<!--              </el-tab-pane>-->
-
-<!--              <el-tab-pane label="邮箱" name="email">-->
-<!--                <el-form-item label="收件人邮箱" :label-width="labelWidth">-->
-<!--                  <el-input v-model="tempTask.email_to"></el-input>-->
-<!--                </el-form-item>-->
-<!--                <el-form-item label="发件人邮箱" :label-width="labelWidth">-->
-<!--                  <el-input v-model="tempTask.email_from" placeholder="支持QQ邮箱和BBD公司邮箱">-->
-<!--                  </el-input>-->
-<!--                </el-form-item>-->
-<!--                <el-form-item label="邮箱密码" :label-width="labelWidth" prop="desc">-->
-<!--                  <el-input v-model="tempTask.email_pwd" type="text">-->
-<!--                  </el-input>-->
-<!--                </el-form-item>-->
-<!--              </el-tab-pane>-->
-<!--            </el-tabs>-->
           </el-form-item>
-
-<!--          <el-form-item label="接收报告" :label-width="labelWidth">-->
-<!--            <el-tabs v-model="tempTask.send_type" type="border-card">-->
-<!--              <el-tab-pane label="webhook" name="webhook">-->
-<!--                <el-input-->
-<!--                  type="textarea"-->
-<!--                  v-model="tempTask.webhook"-->
-<!--                  placeholder="企业微信或钉钉webhook地址，后台已配置默认值，输入则覆盖，如不需要接收报告则输入no">-->
-<!--                </el-input>-->
-<!--              </el-tab-pane>-->
-<!--              <el-tab-pane label="邮箱" name="email">-->
-<!--                <el-form-item label="收件人邮箱" :label-width="labelWidth">-->
-<!--                  <el-input v-model="tempTask.email_to"></el-input>-->
-<!--                </el-form-item>-->
-<!--                <el-form-item label="发件人邮箱" :label-width="labelWidth">-->
-<!--                  <el-input v-model="tempTask.email_from" placeholder="支持QQ邮箱和BBD公司邮箱">-->
-<!--                  </el-input>-->
-<!--                </el-form-item>-->
-<!--                <el-form-item label="邮箱密码" :label-width="labelWidth" prop="desc">-->
-<!--                  <el-input v-model="tempTask.email_pwd" type="text">-->
-<!--                  </el-input>-->
-<!--                </el-form-item>-->
-<!--              </el-tab-pane>-->
-<!--            </el-tabs>-->
-<!--          </el-form-item>-->
 
           <el-form-item label="时间配置" :label-width="labelWidth" size="small">
             <el-input v-model="tempTask.cron" style="width: 70%"
@@ -188,21 +133,6 @@ export default {
       labelWidth: '90px',
       dialogStatus: '',
       tempTask: {}
-      // tempTask: {
-      //   id: '',
-      //   num: '',
-      //   name: '',
-      //   task_type: 'cron',
-      //   cron: '',
-      //   send_type: 'webhook',
-      //   webhook: '',
-      //   email_to: '',
-      //   email_from: '',
-      //   email_pwd: '',
-      //   set_id: '',
-      //   case_id: '',
-      //   project_id: ''
-      // }
     }
   },
   methods: {
@@ -245,9 +175,7 @@ export default {
       }
     },
 
-    initEditTask(task) {
-
-    },
+    initEditTask(task) {},
 
     busEmit() {
       this.taskDialogIsShow = false
