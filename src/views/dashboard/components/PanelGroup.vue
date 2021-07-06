@@ -1,9 +1,8 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
+      <div class="card-panel" @click="handleSetLineChartData('project')">
         <div class="card-panel-icon-wrapper icon-people">
-          <!-- <svg-icon icon-class="peoples" class-name="card-panel-icon"/> -->
           <i class="el-icon-folder-opened card-panel-icon"></i>
         </div>
         <div class="card-panel-description">
@@ -16,7 +15,23 @@
     </el-col>
 
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('messages')">
+      <div class="card-panel" @click="handleSetLineChartData('module')">
+        <!--  图标 -->
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <i class="el-icon-folder card-panel-icon" ></i>
+        </div>
+        <!-- 文案 -->
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            模块数
+          </div>
+          <count-to :start-val="0" :end-val="title.module" :duration="3600" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('api')">
         <div class="card-panel-icon-wrapper icon-message">
           <i class="el-icon-s-order card-panel-icon"></i>
         </div>
@@ -30,7 +45,39 @@
     </el-col>
 
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('purchases')">
+      <div class="card-panel" @click="handleSetLineChartData('file')">
+        <!--  图标 -->
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <i class="el-icon-files card-panel-icon" ></i>
+        </div>
+        <!-- 文案 -->
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            文件数
+          </div>
+          <count-to :start-val="0" :end-val="title.file" :duration="3600" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('set')">
+        <!--  图标 -->
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <i class="el-icon-document-copy card-panel-icon" ></i>
+        </div>
+        <!-- 文案 -->
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            用例集数
+          </div>
+          <count-to :start-val="0" :end-val="title.set" :duration="3600" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('case')">
         <div class="card-panel-icon-wrapper icon-money">
           <i class="el-icon-tickets card-panel-icon"></i>
         </div>
@@ -44,7 +91,7 @@
     </el-col>
 
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('shoppings')">
+      <div class="card-panel" @click="handleSetLineChartData('task')">
         <!--  图标 -->
         <div class="card-panel-icon-wrapper icon-shopping">
           <i class="el-icon-date card-panel-icon" ></i>
@@ -55,6 +102,22 @@
             定时任务数
           </div>
           <count-to :start-val="0" :end-val="title.task" :duration="3600" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('report')">
+        <!--  图标 -->
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <i class="el-icon-s-data card-panel-icon" ></i>
+        </div>
+        <!-- 文案 -->
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            测试报告数
+          </div>
+          <count-to :start-val="0" :end-val="title.report" :duration="3600" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -75,19 +138,25 @@ export default {
     return {
       title: {
         'project': 0,
+        'models': 0,
         'api': 0,
+        'file': 0,
+        'set': 0,
         'case': 0,
         'step': 0,
         'task': 0,
+        'report': 0,
       }
     }
   },
 
   methods: {
+    // 点击的title统计，传给折线图，获取对应的明细
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type)
     },
 
+    // 获取title的统计
     getTitle() {
       getTitleCount().then(response => {
         this.title = response.data
