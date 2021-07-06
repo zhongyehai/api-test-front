@@ -29,7 +29,7 @@ import LineChart from './components/LineChart'
 import RaddarChart from './components/RaddarChart'
 import PieChart from './components/PieChart'
 
-import ColumnChart from './components/ColumnChart'
+// import ColumnChart from './components/ColumnChart'
 
 import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
