@@ -12,14 +12,14 @@
       :model="tempModule"
       :rules="rules"
       label-position="left"
-      label-width="70px"
+      label-width="90px"
       style="min-width: 400px;">
       <!-- 用户信息 -->
-      <el-form-item :label="'模块名'" prop="name" class="filter-item" size="mini">
-        <el-input v-model="tempModule.name"/>
+      <el-form-item :label="'模块名称'" prop="name" class="filter-item" size="mini">
+        <el-input v-model="tempModule.name" placeholder="同一项目下，模块名称不可重复"/>
       </el-form-item>
       <el-form-item :label="'模块序号'" prop="num" class="filter-item" size="mini">
-        <el-input v-model="tempModule.num"/>
+        <el-input v-model="tempModule.num" placeholder="数字，在当前项目下，此模块的序号，用于排序"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -62,7 +62,8 @@ export default {
 
       // 检验规则
       rules: {
-        name: [{required: true, message: '请输入模块名称', trigger: 'blur'}]
+        name: [{required: true, message: '请输入模块名称', trigger: 'blur'}],
+        num: [{required: true, message: '请输入模块序号', trigger: 'blur'}]
       }
     }
   },
@@ -73,7 +74,7 @@ export default {
   mounted() {
     // 监听 bus 模块操作指令
     this.$bus.$on(this.$busEvents.moduleTreeCommand, (command) => {
-      console.log('command: ', command)
+      // console.log('command: ', command)
       if (command === 'add') {
         this.initTempModule()
       } else if (command === 'edit') {
