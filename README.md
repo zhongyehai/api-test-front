@@ -2,6 +2,8 @@
 
 # 线上预览：http://139.196.100.202/#/login  账号：tester、密码：123456
 
+## 系统操作手册：[gitee](https://gitee.com/Xiang-Qian-Zou/api-test-api/blob/master/%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.md) ，[github](https://github.com/zhongyehai/api-test-api/blob/main/%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.md)
+
 ## 后端传送门：https://github.com/zhongyehai/api-test-api
 
 ## 步骤
