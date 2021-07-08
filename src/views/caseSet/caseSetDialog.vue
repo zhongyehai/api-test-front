@@ -7,15 +7,20 @@
     :close-on-click-modal="false"
     width="40%"
   >
-    <el-form ref="dataForm" :model="tempCaseSet" label-position="left" label-width="70px"
-             style="min-width: 400px;"
+    <el-form
+      ref="dataForm"
+      :model="tempCaseSet"
+      label-position="left"
+      label-width="70px"
+      style="min-width: 400px;"
+      :rules="rules"
     >
       <!-- 用户信息 -->
       <el-form-item :label="'名称'" prop="name" class="filter-item" size="mini">
-        <el-input v-model="tempCaseSet.name"/>
+        <el-input v-model="tempCaseSet.name" placeholder="同一项目下，用例集名称不可重复"/>
       </el-form-item>
       <el-form-item :label="'序号'" prop="name" class="filter-item" size="mini">
-        <el-input v-model="tempCaseSet.num"/>
+        <el-input v-model="tempCaseSet.num" placeholder="数字，在当前项目下，此用例集的序号，用于排序"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -29,12 +34,12 @@
 </template>
 
 <script>
-import {postCaseSet, putCaseSet} from '@/apis/caseSet'
+import { postCaseSet, putCaseSet } from '@/apis/caseSet'
 import waves from '@/directive/waves' // waves directive
 
 export default {
   name: 'caseSetDialog',
-  directives: {waves},
+  directives: { waves },
   props: [
     'currentProject',
     'currentCaseSet'
@@ -54,7 +59,13 @@ export default {
       dialogFormVisible: false,
 
       // dialog框状态，edit为编辑数据, create为新增数据
-      dialogStatus: 'add'
+      dialogStatus: 'add',
+
+      // 检验规则
+      rules: {
+        name: [{ required: true, message: '请输入用例集名称', trigger: 'blur' }],
+        num: [{ required: true, message: '请输入用例集序号', trigger: 'blur' }]
+      }
     }
   },
 
@@ -100,18 +111,30 @@ export default {
 
     // 新增用例集
     addCaseSet() {
-      postCaseSet(this.tempCaseSet).then(response => {
-        if (this.showMessage(this, response)) {
-          this.sendIsCommitStatus()
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          postCaseSet(this.tempCaseSet).then(response => {
+            if (this.showMessage(this, response)) {
+              this.sendIsCommitStatus()
+            }
+          })
+        } else {
+          this.$message.error('请确认规则')
         }
       })
     },
 
     // 修改用例集
     changCaseSet() {
-      putCaseSet(this.tempCaseSet).then(response => {
-        if (this.showMessage(this, response)) {
-          this.sendIsCommitStatus()
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          putCaseSet(this.tempCaseSet).then(response => {
+            if (this.showMessage(this, response)) {
+              this.sendIsCommitStatus()
+            }
+          })
+        } else {
+          this.$message.error('请确认规则')
         }
       })
     },
@@ -120,7 +143,7 @@ export default {
     sendIsCommitStatus() {
       this.dialogFormVisible = false
       this.$bus.$emit(this.$busEvents.caseSetDialogCommit, 'success')
-    },
+    }
 
   },
   computed: {},
