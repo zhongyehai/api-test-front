@@ -102,7 +102,7 @@ export default {
     },
 
     getConfigTypeList() {
-      configTypeList({'pagNum': this.defaultPage.pageNum, 'pageSize': this.defaultPage.apiPageSize}).then(response => {
+      configTypeList({'pageNum': this.defaultPage.pageNum, 'pageSize': this.defaultPage.apiPageSize}).then(response => {
         this.types.list = response.data.data
         this.types.total = response.data.total
         this.$bus.$emit(this.$busEvents.configTypeList, this.types.list)

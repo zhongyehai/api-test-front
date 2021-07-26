@@ -18,7 +18,11 @@
               :data="apis.api_list"
               stripe
             >
-              <el-table-column prop="num" label="编号" min-width="10%"></el-table-column>
+              <el-table-column prop="num" label="编号" min-width="10%">
+                <template slot-scope="scope">
+                    <span> {{ scope.$index + 1 }} </span>
+                </template>
+              </el-table-column>
 
               <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="30%">
                 <template slot-scope="scope">
@@ -239,7 +243,7 @@ export default {
       this.listLoading = true
       caseList({
         'caseSetId': this.currentCaseSet.id,
-        'pagNum': this.defaultPage.pageNum,
+        'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
         this.apis.api_list = response.data.data
@@ -264,7 +268,7 @@ export default {
       handler(newVal, oldVal) {
         this.getCaseList({
           'caseSetId': newVal.id,
-          'pagNum': this.defaultPage.pageNum,
+          'pageNum': this.defaultPage.pageNum,
           'pageSize': this.defaultPage.apiPageSize
         })
       }

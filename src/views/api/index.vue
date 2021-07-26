@@ -199,7 +199,7 @@ export default {
       this.listLoading = true
       apiList({
         'moduleId': this.currentModule.id,
-        'pagNum': this.defaultPage.pageNum,
+        'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
         this.apis.api_list = response.data.data
@@ -233,7 +233,7 @@ export default {
       handler(newVal, oldVal) {
         this.getApiList({
           'moduleId': newVal.id,
-          'pagNum': this.defaultPage.pageNum,
+          'pageNum': this.defaultPage.pageNum,
           'pageSize': this.defaultPage.apiPageSize
         })
       }

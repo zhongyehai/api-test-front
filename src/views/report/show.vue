@@ -50,7 +50,7 @@
           </div>
 
           <ol style="margin-top:5px;font-size:14px;line-height:25px" class="remote-line">
-            <li style="font-weight:700;font-size:16px">接口概况</li>
+            <li style="font-weight:700;font-size:16px">步骤概况</li>
             <li style="font-weight:600;color: rgb(146, 123, 139)">总数:{{ this.reportData.stat.teststeps.total }}</li>
             <li style="color: rgb(25,212,174);font-weight:600">成功:{{ this.reportData.stat.teststeps.successes }}</li>
             <li style="color: rgb(250,110,134);font-weight:600">失败:{{ this.reportData.stat.teststeps.failures }}</li>

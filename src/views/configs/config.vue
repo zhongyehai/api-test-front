@@ -164,7 +164,7 @@ export default {
     getConfigList() {
       configList({
         'type': this.queryType,
-        'pagNum': this.defaultPage.pageNum,
+        'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
         this.mailService.list = response.data.data
