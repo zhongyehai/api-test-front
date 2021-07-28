@@ -169,11 +169,11 @@ export const constantRoutes = [
 
   // web测试
   {
-    path: '/webTest',
+    path: '/uiTest',
     component: Layout,
     redirect: '/webTest/project',
-    name: 'webTest',
-    meta: {title: 'web测试', icon: 'el-icon-s-tools'},
+    name: 'UITest',
+    meta: {title: 'UI测试', icon: 'el-icon-s-tools'},
     children: [
       {
         path: 'pages',
@@ -249,7 +249,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/help/gitee',
     name: 'Help',
-    meta: {title: '帮助', icon: 'el-icon-document', roles: [2, '2']},
+    meta: {title: '帮助', icon: 'el-icon-document'},
     children: [
       {
         path: 'https://gitee.com/Xiang-Qian-Zou/api-test-api/blob/master/%E6%93%8D%E4%BD%9C%E6%89%8B%E5%86%8C.md',
