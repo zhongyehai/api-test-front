@@ -4,7 +4,7 @@
     <el-form :inline="true" size="small">
 
       <el-form-item label="函数文件名" :label-width="'100px'" size="mini">
-        <el-input v-model="funcName" :minlength="215" style="width: 200px"></el-input>
+        <el-input v-model="name" :minlength="215" style="width: 200px"></el-input>
       </el-form-item>
 
       <el-form-item label="调试函数" :label-width="'100px'" size="mini">
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       funcData: '',
-      funcName: '',
+      name: '',
       id: '',
       debugFuncData: '',
       funcFileDialogIsShow: false,
@@ -69,7 +69,7 @@ export default {
 
     // 提交修改函数文件
     editFuncFile() {
-      putFuncFile({'id': this.id, 'func_data': this.funcData, 'func_file_name': this.funcName}).then(response => {
+      putFuncFile({'id': this.id, 'func_data': this.funcData, 'name': this.name}).then(response => {
         if (this.showMessage(this, response)) {
           this.$bus.$emit(this.$busEvents.editFuncFileIsCommit, 'success')
         }
@@ -103,7 +103,7 @@ export default {
     // 点击编辑函数文件事件
     this.$bus.$on(this.$busEvents.editFuncFile, (funcFile) => {
       this.funcData = funcFile.func_data
-      this.funcName = funcFile.func_file_name
+      this.name = funcFile.name
       this.id = funcFile.id
     })
 

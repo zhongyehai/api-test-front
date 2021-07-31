@@ -9,7 +9,7 @@
     <el-form ref="dataForm" label-position="left" label-width="100px" style="min-width: 400px;">
       <!-- 用户信息 -->
       <el-form-item :label="'函数文件名'" prop="name" class="filter-item" size="mini">
-        <el-input v-model="funcFileName"/>
+        <el-input v-model="name"/>
       </el-form-item>
     </el-form>
 
@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       currentDialogIsShow: false,
-      funcFileName: ''
+      name: ''
     }
   },
   created() {
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     creteFuncFile() {
-      postFuncFile({'func_file_name': this.funcFileName}).then(response => {
+      postFuncFile({'name': this.name}).then(response => {
         if (this.showMessage(this, response)) {
           this.$bus.$emit(this.$busEvents.addFuncFileIsCommit, 'addFuncFileIsCommit')
           this.currentDialogIsShow = false

@@ -16,7 +16,7 @@
 
       <el-table-column
         :show-overflow-tooltip=true
-        prop="func_file_name"
+        prop="name"
         label="文件名称"
         min-width="33%"></el-table-column>
 
@@ -32,7 +32,7 @@
             编辑
           </el-button>
           <el-button type="danger" size="mini"
-                     @click.native="confirmBox(delFuncFile, scope.row, scope.row.func_file_name)">
+                     @click.native="confirmBox(delFuncFile, scope.row, scope.row.name)">
             删除
           </el-button>
         </template>
@@ -105,7 +105,7 @@ export default {
     },
 
     delFuncFile(funcFile) {
-      deleteFuncFile({'func_file_name': funcFile.func_file_name}).then(response => {
+      deleteFuncFile({'name': funcFile.name}).then(response => {
         if (this.showMessage(this, response)) {
           this.getFuncFileList()
         }
