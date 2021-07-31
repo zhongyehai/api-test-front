@@ -97,13 +97,13 @@
 
         <!-- 用户信息 -->
         <el-form-item :label="'用户名'" prop="name" class="filter-item" size="mini">
-          <el-input v-model="tempUser.name"/>
+          <el-input v-model="tempUser.name" placeholder="不小于6位"/>
         </el-form-item>
         <el-form-item :label="'账号'" prop="name" class="filter-item" size="mini">
-          <el-input v-model="tempUser.account"/>
+          <el-input v-model="tempUser.account" placeholder="不小于6位"/>
         </el-form-item>
         <el-form-item :label="'密码'" prop="name" class="filter-item" size="mini">
-          <el-input v-model="tempUser.password"/>
+          <el-input v-model="tempUser.password" placeholder="不小于6位"/>
         </el-form-item>
         <el-form-item :label="'角色'" class="filter-item" size="mini">
           <el-select v-model="tempUser.role_id" class="filter-item" placeholder="请选择角色">
