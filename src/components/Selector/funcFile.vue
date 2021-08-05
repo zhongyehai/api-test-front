@@ -10,8 +10,8 @@
     size="small">
     <el-option v-for="funcFile in funcFilesList"
                :key="funcFile.id"
-               :label="funcFile.func_file_name"
-               :value="funcFile.func_file_name"
+               :label="funcFile.name"
+               :value="funcFile.name"
     ></el-option>
   </el-select>
   <!--  </el-form-item>-->
