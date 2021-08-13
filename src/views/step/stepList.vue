@@ -82,7 +82,7 @@ export default {
 
     // 修改步骤提交事件，更改对应的步骤数据
     this.$bus.$on(this.$busEvents.editStepIsCommit, (step) => {
-      console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.step: ', JSON.stringify(step))
+      // console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.step: ', JSON.stringify(step))
       // console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.step : ', JSON.stringify(step))
       for (let index in this.stepList) {
         if (this.stepList[index].id === step.id) {
@@ -103,9 +103,9 @@ export default {
   created() {
 
     // 初始化父组件传过来的步骤列表
-    console.log('step.stepList.created.this.caseStepList: ', JSON.stringify(this.caseStepList))
+    // console.log('step.stepList.created.this.caseStepList: ', JSON.stringify(this.caseStepList))
     this.stepList = this.caseStepList ? this.caseStepList : []
-    console.log('step.stepList.created.this.stepList: ', JSON.stringify(this.stepList))
+    // console.log('step.stepList.created.this.stepList: ', JSON.stringify(this.stepList))
 
     this.oldList = this.stepList.map(v => v.id)
     this.newList = this.oldList.slice()
@@ -161,8 +161,8 @@ export default {
     'caseStepList': {
 
       handler(newVal, oldVal) {
-        console.log('step.stepList.watch.caseStepList.oldVal: ', JSON.stringify(oldVal))
-        console.log('step.stepList.watch.caseStepList.newVal: ', JSON.stringify(newVal))
+        // console.log('step.stepList.watch.caseStepList.oldVal: ', JSON.stringify(oldVal))
+        // console.log('step.stepList.watch.caseStepList.newVal: ', JSON.stringify(newVal))
         if (newVal && newVal.length > 0) {
           this.stepList = newVal
         } else {

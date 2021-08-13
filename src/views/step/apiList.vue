@@ -134,7 +134,7 @@ export default {
     addApiToStep(api) {
 
       // 如果没有用例id，则先保存用例
-      console.log('apiList.methods.addApiToStep.this.caseId: ', this.caseId)
+      // console.log('apiList.methods.addApiToStep.this.caseId: ', this.caseId)
       if (!this.caseId) {
         this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
       }
@@ -142,17 +142,13 @@ export default {
       this.activeName = 'editStepInfo'
 
       // 把当前选中的接口，传给步骤编辑tab
-      console.log('apiList.methods.addApiToStep.api: ', JSON.stringify(api))
-
       // 初始化步骤的默认值
-      api['api_id'] = api['id']
-      api['id'] = ''
-      api['is_run'] = true
-      api['run_times'] = 1
-
-      console.log('apiList.methods.addApiToStep.api: ', JSON.stringify(api))
-      this.$bus.$emit(this.$busEvents.addApiToStep, api)
-
+      var new_api = JSON.parse(JSON.stringify(api))
+      new_api['api_id'] = new_api['id']
+      new_api['id'] = ''
+      new_api['is_run'] = true
+      new_api['run_times'] = 1
+      this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
     }
   },
   watch: {

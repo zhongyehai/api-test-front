@@ -86,7 +86,7 @@ export default {
   },
 
   created() {
-    console.log('step.index.created.this.stepList: ', JSON.stringify(this.stepList))
+    // console.log('step.index.created.this.stepList: ', JSON.stringify(this.stepList))
   },
 
 
