@@ -20,7 +20,7 @@
 
     </el-form>
 
-    <funcFileDialog :dialogIsShow="funcFileDialogIsShow"></funcFileDialog>
+    <funcFileDialog></funcFileDialog>
 
     <el-container>
 
@@ -58,13 +58,12 @@ export default {
       name: '',
       id: '',
       debugFuncData: '',
-      funcFileDialogIsShow: false,
     }
   },
   methods: {
 
     openFuncFileDialog() {
-      this.funcFileDialogIsShow = true
+      this.$bus.$emit(this.$busEvents.addFuncFileDialogIsShow, true)
     },
 
     // 提交修改函数文件

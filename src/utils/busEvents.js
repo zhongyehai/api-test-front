@@ -42,6 +42,7 @@ export default {
   editStepIsCommit: 'editStepIsCommit', // 编辑步骤提交
   stepTabIsCommit: 'stepTabIsCommit',  // 步骤编辑tab已经提交
 
+  addFuncFileDialogIsShow: 'addFuncFileDialogIsShow',  // 打开新增函数文件框
   editFuncFile: 'editFuncFile',  // 编辑函数文件
   editFuncFileIsCommit: 'editFuncFileIsCommit',  // 编辑函数文件已经提交
   addFuncFileIsCommit: 'addFuncFileIsCommit',  // 新增函数文件已经提交

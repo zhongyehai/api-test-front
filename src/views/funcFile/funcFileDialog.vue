@@ -28,16 +28,25 @@ import {postFuncFile} from '@/apis/funcFile'
 
 export default {
   name: "funcFileDialog",
-  props: ['dialogIsShow'],
   data() {
     return {
       currentDialogIsShow: false,
       name: ''
     }
   },
-  created() {
-    this.currentDialogIsShow = this.dialogIsShow
+
+  mounted(){
+    this.$bus.$on(this.$busEvents.addFuncFileDialogIsShow, (status) => {
+      this.name = ''
+      this.currentDialogIsShow = true
+    })
   },
+
+  // 组件销毁前，关闭bus监听事件
+  beforeDestroy() {
+    this.$bus.$off(this.$busEvents.addFuncFileDialogIsShow)
+  },
+
   methods: {
     creteFuncFile() {
       postFuncFile({'name': this.name}).then(response => {
@@ -48,13 +57,6 @@ export default {
       })
     }
   },
-  watch: {
-    'dialogIsShow': {
-      handler(newVaul, oldVal) {
-        this.currentDialogIsShow = newVaul
-      }
-    }
-  }
 }
 </script>
 
