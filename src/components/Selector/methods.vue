@@ -23,7 +23,7 @@ export default {
   ],
   data() {
     return {
-      tempMethod: '',
+      tempMethod: 'POST',
       methods_list: []
     }
   },
@@ -33,7 +33,7 @@ export default {
   },
 
   created() {
-    this.tempMethod = this.method
+    this.tempMethod = this.method ? this.method : 'POST'
     this.emitMethodSelectorChoiceMethod(this.tempMethod)
   },
 
@@ -62,8 +62,9 @@ export default {
   watch: {
     'method': {
       handler(newVal, oldVal) {
+        this.tempMethod = newVal ? newVal : 'POST'
         this.emitMethodSelectorChoiceMethod(newVal)
-        this.tempMethod = newVal
+        // this.tempMethod = newVal
       }
     }
   }

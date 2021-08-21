@@ -12,66 +12,65 @@
       <!-- 用例信息组件 -->
       <el-tab-pane label="用例信息" name="caseInFo">
 
-        <el-form size="small" :inline="true">
+        <el-form :inline="true" size="small" label-width="100px">
 
-          <!-- 项目选择 -->
-          <!--          <el-form-item label="项目选择" :label-width="'70px'">-->
-          <!--            <projectSelectorView-->
-          <!--              ref="projectSelectorView"-->
-          <!--              :projectId="tempCase.project_id"-->
-          <!--            ></projectSelectorView>-->
-          <!--          </el-form-item>-->
+          <el-row>
+            <!-- 用例集选择 -->
+            <el-col :span="6">
+              <el-form-item label="用例集" class="is-required">
+                <caseSetSelectorView
+                  ref="caseSetSelectorView"
+                  :projectId="tempCase.project_id"
+                  :caseSetId="tempCase.case_set_id"
+                  :isWatchStatus="dialogIsShow"
+                  :busOnEventName="$busEvents.projectTreeChoiceProject"
+                ></caseSetSelectorView>
+              </el-form-item>
+            </el-col>
+            <!-- 选择环境 -->
+            <el-col :span="6">
+              <el-tooltip class="item" effect="dark" placement="top-end">
+                <div slot="content">
+                  请确保此用例涉中及到的所有项目都配置了当前选中环境的域名 <br/>
+                  如：选测试环境，则需确保此用例涉及到的所有项目都配置了测试环境的域名
+                </div>
+                <el-form-item label="环境" class="is-required" style="margin-bottom: 5px">
+                  <environmentSelectorView
+                    :choice_environment="tempCase.choice_host"
+                    ref="environmentSelectorView"
+                  ></environmentSelectorView>
+                </el-form-item>
+              </el-tooltip>
+            </el-col>
+            <!-- 函数文件 -->
+            <el-col :span="6">
+              <el-form-item label="函数文件">
+                <funcFilesView :funcFiles="tempCase.func_files" ref="funcFilesView"></funcFilesView>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-          <el-form-item label="用例名称" :label-width="'70px'">
-            <el-input v-model="tempCase.name" class="minWidth"></el-input>
-          </el-form-item>
-
-          <el-form-item label="用例编号" :label-width="'70px'" v-if="tempCase.id">
-            <el-input v-model.number="tempCase.num" :minlength="215" class="minWidth"></el-input>
-          </el-form-item>
-
-          <el-form-item label="执行次数" label-width="70px" class="minWidth">
-            <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"
-            ></el-input-number>
-          </el-form-item>
-
-          <!-- 函数文件 -->
-          <el-form-item label="函数文件" labelWidth="70px">
-            <funcFilesView :funcFiles="tempCase.func_files" ref="funcFilesView"></funcFilesView>
-          </el-form-item>
-
-          <!-- 用例集选择 -->
-          <el-form-item label="用例集" :label-width="'70px'">
-            <caseSetSelectorView
-              ref="caseSetSelectorView"
-              :projectId="tempCase.project_id"
-              :caseSetId="tempCase.case_set_id"
-              :isWatchStatus="dialogIsShow"
-              :busOnEventName="$busEvents.projectTreeChoiceProject"
-            ></caseSetSelectorView>
-          </el-form-item>
-
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="用例名称" class="is-required">
+                <el-input v-model="tempCase.name"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="执行次数" class="is-required">
+                <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"
+                ></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="用例编号" v-if="tempCase.id">
+                <el-input v-model.number="tempCase.num" :minlength="215"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
-
-        <!--        <el-form :inline="true" size="small">-->
-
-        <!--          <el-form-item label="用例名称" :label-width="'70px'">-->
-        <!--            <el-input v-model="tempCase.name" class="minWidth"></el-input>-->
-        <!--          </el-form-item>-->
-
-        <!--&lt;!&ndash;          <el-form-item label="用例描述" :label-width="'70px'">&ndash;&gt;-->
-        <!--&lt;!&ndash;            <el-input v-model="tempCase.desc" class="minWidth"></el-input>&ndash;&gt;-->
-        <!--&lt;!&ndash;          </el-form-item>&ndash;&gt;-->
-
-        <!--          <el-form-item label="用例编号" :label-width="'70px'" v-if="tempCase.id">-->
-        <!--            <el-input v-model.number="tempCase.num" :minlength="215" class="minWidth"></el-input>-->
-        <!--          </el-form-item>-->
-
-        <!--          <el-form-item label="执行次数" label-width="70px" class="minWidth">-->
-        <!--            <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"-->
-        <!--            ></el-input-number>-->
-        <!--          </el-form-item>-->
-        <!--        </el-form>-->
 
 
         <el-form :inline="true" class="demo-form-inline " size="small">
@@ -130,6 +129,7 @@
 
 import projectSelectorView from "@/components/Selector/project";
 import caseSetSelectorView from "@/components/Selector/caseSet";
+import environmentSelectorView from "@/components/Selector/environment";
 import funcFilesView from '@/components/Selector/funcFile'
 import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
@@ -147,6 +147,7 @@ export default {
   components: {
     projectSelectorView,
     caseSetSelectorView,
+    environmentSelectorView,
     funcFilesView,
     headersView,
     variablesView,
@@ -164,6 +165,7 @@ export default {
         desc: '',
         is_run: true,
         run_times: '',
+        choice_host: '',
         func_files: [],
         variables: [{key: null, value: null, remark: null}],
         headers: [{key: null, value: null, remark: null}],
@@ -183,6 +185,7 @@ export default {
       this.tempCase.num = ''
       this.tempCase.desc = ''
       this.tempCase.run_times = ''
+      this.tempCase.choice_host = ''
       this.tempCase.func_files = []
       this.tempCase.variables = [{key: null, value: null, remark: null}]
       this.tempCase.headers = [{key: null, value: null, remark: null}]
@@ -206,6 +209,7 @@ export default {
     getCaseDataToCommit() {
       let caseData = this.tempCase
       caseData.case_set_id = this.$refs.caseSetSelectorView.tempCaseSetId
+      caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
       caseData.variables = this.$refs.variablesView.tempData
       caseData.headers = this.$refs.headersView.tempData

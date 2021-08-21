@@ -16,21 +16,15 @@
             <el-table
               ref="apiTree"
               v-loading="listLoading"
-              @selection-change="handleApiMsgSelection"
-              @row-dblclick="doubleClick"
               :data="apis.api_list"
               key="id"
               stripe
             >
-              <el-table-column type="selection"></el-table-column>
-
-              <el-table-column prop="num" label="编号" min-width="10%"></el-table-column>
+              <el-table-column prop="num" label="编号" min-width="7%"></el-table-column>
 
               <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="15%">
                 <template slot-scope="scope">
-                  <el-tooltip class="item" effect="dark" content="可双击修改" placement="right-end">
                     <span> {{ scope.row.name }} </span>
-                  </el-tooltip>
                 </template>
               </el-table-column>
 
@@ -38,7 +32,7 @@
                 :show-overflow-tooltip=true
                 prop="addr"
                 label="接口地址"
-                min-width="35%"
+                min-width="28%"
               ></el-table-column>
 
               <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
@@ -47,8 +41,14 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="接口操作" min-width="30%">
+              <el-table-column label="接口操作" min-width="37%">
                 <template slot-scope="scope">
+                  <el-button size="mini" type="success" @click="runApis(scope.row)">
+                    运行
+                  </el-button>
+                  <el-button size="mini" type="primary" @click="showEditForm(scope.row)">
+                    修改
+                  </el-button>
                   <el-tooltip class="item" effect="dark" content="复制接口" placement="top-end">
                     <el-button type="primary" size="mini" @click.native="copyApi(scope.row)">复制</el-button>
                   </el-tooltip>
@@ -82,20 +82,25 @@
       :currentModule="currentModule"
     ></apiDialog>
 
+    <!-- 接口运行结果 -->
+    <runApiResult :runApiResultData="runApiResultData"></runApiResult>
+
   </div>
 </template>
 
 <script>
 import {userList} from '@/apis/user'
-import {apiList, deleteApi} from '@/apis/api'
+import {apiList, deleteApi, runApi} from '@/apis/api'
 import Pagination from '@/components/Pagination'
 import apiDialog from '@/views/api/apiDialog'
+import runApiResult from '@/views/api/runApiResult'
 
 export default {
   name: 'index',
   components: {
     Pagination,
-    apiDialog
+    apiDialog,
+    runApiResult
   },
 
   // 接收父组件传参的key
@@ -131,6 +136,9 @@ export default {
         currentPage: undefined,
         currentApi: undefined
       },
+
+      // 调试接口的运行结果
+      runApiResultData: null
     }
   },
 
@@ -155,9 +163,9 @@ export default {
 
   methods: {
 
-    // 双击进入编辑接口，把被点击的接口信息赋值给临时接口模板
-    doubleClick(row, column, event) {
-      this.tempApi = row
+    // 打开编辑框
+    showEditForm(row){
+      this.tempApi = JSON.parse(JSON.stringify(row))
       this.$bus.$emit(this.$busEvents.apiDialogStatus, 'edit', this.tempApi)
     },
 
@@ -208,14 +216,15 @@ export default {
       this.listLoading = false
     },
 
-    handleApiMsgSelection(val) {
-      console.log(val)
+    // 运行接口
+    runApis(row) {
+      runApi({
+        'projectId': row.project_id,
+        'apis': [row.id]
+      }).then(response => {
+        this.runApiResultData = response.data.data
+      })
     },
-
-    //  清除接口选择复选框
-    cancelSelection() {
-      this.$refs.apiMultipleTable.clearSelection()
-    }
 
   },
   computed: {

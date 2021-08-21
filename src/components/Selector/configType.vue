@@ -4,7 +4,7 @@
     placeholder="选择配置类型"
     value-key="id"
     :disabled="dialogType === 'edit'"
-    style="min-width: 100%;padding-right:10px"
+    style="min-width: 100%"
     size="small"
   >
     <el-option v-for="item in configTypeList" :key="item.id" :label="item.name" :value="item.name">
@@ -27,6 +27,14 @@ export default {
   created() {
     this.tempConfigType = this.configType
   },
+
+  watch: {
+    'configType': {
+      handler(newVal, oldVal) {
+        this.tempConfigType = newVal
+      }
+    }
+  }
 }
 </script>
 

@@ -22,7 +22,6 @@
     <el-table
       ref="apiTree"
       v-loading="listLoading"
-      @row-dblclick="doubleClick"
       :data="mailService.list"
       stripe
     >
@@ -34,46 +33,52 @@
 
       <el-table-column :show-overflow-tooltip=true prop="name" label="配置名称" min-width="20%">
         <template slot-scope="scope">
-          <el-tooltip class="item" effect="dark" content="可双击修改" placement="right-end">
-            <span> {{ scope.row.name }} </span>
-          </el-tooltip>
+          <span> {{ scope.row.name }} </span>
         </template>
       </el-table-column>
 
       <el-table-column :show-overflow-tooltip=true prop="value" label="配置值" min-width="30%">
         <template slot-scope="scope">
-            <span> {{ scope.row.value }} </span>
+          <span> {{ scope.row.value }} </span>
         </template>
       </el-table-column>
 
       <el-table-column :show-overflow-tooltip=true prop="desc" label="备注" min-width="20%">
         <template slot-scope="scope">
-            <span> {{ scope.row.desc }} </span>
+          <span> {{ scope.row.desc }} </span>
         </template>
       </el-table-column>
 
       <el-table-column :show-overflow-tooltip=true prop="type" label="配置类型" min-width="10%">
         <template slot-scope="scope">
-            <span> {{ scope.row.type }} </span>
+          <span> {{ scope.row.type }} </span>
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
+      <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="8%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
       </el-table-column>
 
-<!--      <el-table-column label="操作" min-width="8%">-->
-<!--        <template slot-scope="scope">-->
+      <el-table-column label="操作" min-width="7%">
+        <template slot-scope="scope">
+          <el-tooltip class="item" effect="dark" content="若不清楚配置的规则，请勿修改" placement="right-end">
+            <el-button
+              :disabled="roles !== '2'"
+              type="primary"
+              size="mini"
+              @click.native="editConfig(scope.row)">修改
+            </el-button>
+          </el-tooltip>
 
-<!--          <el-button type="danger"-->
-<!--                     size="mini"-->
-<!--                     @click.native="confirmBox(delConfig, scope.row.id, scope.row.name)">删除-->
-<!--          </el-button>-->
+          <!--                    <el-button type="danger"-->
+          <!--                               size="mini"-->
+          <!--                               @click.native="confirmBox(delConfig, scope.row.id, scope.row.name)">删除-->
+          <!--                    </el-button>-->
 
-<!--        </template>-->
-<!--      </el-table-column>-->
+        </template>
+      </el-table-column>
 
     </el-table>
 
@@ -130,13 +135,17 @@ export default {
       user_list: [],
 
       // 配置类型列表
-      configTypeList: []
+      configTypeList: [],
+
+      // 用户权限
+      roles: localStorage.getItem('roles')
     }
   },
   methods: {
-    // 双击进入编辑参数，把被点击的用例信息赋值给临时模板
-    doubleClick(row, column, event) {
-      this.$bus.$emit(this.$busEvents.configDialogIsShow, 'edit', row)
+
+    // 点击编辑参数，把被点击的用例信息赋值给临时模板
+    editConfig(row) {
+      this.$bus.$emit(this.$busEvents.configDialogIsShow, 'edit', JSON.parse(JSON.stringify(row)))
     },
 
     // 添加参数

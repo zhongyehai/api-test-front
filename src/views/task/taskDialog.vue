@@ -8,51 +8,77 @@
 
     <el-tabs>
       <el-tab-pane>
-        <el-form>
-          <el-form-item label="选则用例" :label-width="labelWidth">
+        <el-form label-width="100px">
 
+          <el-row>
             <!-- 项目选择 -->
-            <projectSelector
-              ref="projectSelector"
-              :isDisabled="true"
-              :busEmitEventName="$busEvents.projectSelectorChoiceProject"
-              :projectId="tempTask.project_id"
-            ></projectSelector>
+            <el-col :span="12">
+              <el-form-item label="选择项目" class="is-required">
+                <projectSelector
+                  ref="projectSelector"
+                  :isDisabled="true"
+                  :busEmitEventName="$busEvents.projectSelectorChoiceProject"
+                  :projectId="tempTask.project_id"
+                ></projectSelector>
+              </el-form-item>
+            </el-col>
+            <!-- 选择环境 -->
+            <el-col :span="12">
+              <el-tooltip class="item" effect="dark" placement="top-end">
+                <div slot="content">
+                  请确保此定时任务中选中的用例涉及到的所有项目都配置了当前选中环境的域名 <br/>
+                  如：选测试环境，则需确保此定时任务中选中的用例涉及到的所有项目都配置了测试环境的域名
+                </div>
+                <el-form-item label="选择环境" class="is-required">
+                  <environmentSelectorView
+                    :choice_environment="tempTask.choice_host"
+                    ref="environmentSelectorView"
+                  ></environmentSelectorView>
+                </el-form-item>
+              </el-tooltip>
+            </el-col>
+          </el-row>
 
-            <!-- 用例集选择 -->
-            <caseSetSelector
-              ref="caseSetSelector"
-              :isMultiple="true"
-              :caseSetId="tempTask.set_id"
-              :projectId="tempTask.project_id"
-              :isWatchStatus="taskDialogIsShow"
-              :busOnEventName="$busEvents.projectTreeChoiceProject"
-              :busEmitEventName="$busEvents.caseSetSelectorChoiceCaseSet"
-            ></caseSetSelector>
+          <el-row>
+            <!-- 选则用例集 -->
+            <el-col :span="12">
+              <el-form-item label="选则用例集" class="is-required">
+                <caseSetSelector
+                  ref="caseSetSelector"
+                  :isMultiple="true"
+                  :caseSetId="tempTask.set_id"
+                  :projectId="tempTask.project_id"
+                  :isWatchStatus="taskDialogIsShow"
+                  :busOnEventName="$busEvents.projectTreeChoiceProject"
+                  :busEmitEventName="$busEvents.caseSetSelectorChoiceCaseSet"
+                ></caseSetSelector>
+              </el-form-item>
+            </el-col>
+            <!-- 选则用例 -->
+            <el-col :span="12">
+              <el-form-item label="选择用例" size="small">
+                <caseSelector
+                  ref="caseSelector"
+                  :caseIds="tempTask.case_id"
+                  :caseSetId="tempTask.set_id"
+                  :busOnEventName="$busEvents.caseSetSelectorChoiceCaseSet"
+                ></caseSelector>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
-            <!-- 用例选择 -->
-            <!--            :caseSetId="$refs.caseSetSelector ? $refs.caseSetSelector.tempCaseSetId : ''"-->
-            <caseSelector
-              ref="caseSelector"
-              :caseIds="tempTask.case_id"
-              :caseSetId="tempTask.set_id"
-              :busOnEventName="$busEvents.caseSetSelectorChoiceCaseSet"
-            ></caseSelector>
-
-          </el-form-item>
-
-          <el-form-item label="任务名称" :label-width="labelWidth" size="small">
+          <el-form-item label="任务名称" size="small" class="is-required">
             <el-input v-model="tempTask.name" auto-complete="off">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="发送报告" :label-width="labelWidth">
+          <el-form-item label="发送报告" class="is-required">
             <el-radio v-model="tempTask.is_send" label="1">不发送</el-radio>
             <el-radio v-model="tempTask.is_send" label="2">始终发送</el-radio>
             <el-radio v-model="tempTask.is_send" label="3">仅有不通过用例时发送</el-radio>
           </el-form-item>
 
-          <el-form-item v-show="tempTask.is_send !== '1'" label="接收报告" :label-width="labelWidth">
+          <el-form-item v-show="tempTask.is_send !== '1'" label="接收报告">
             <el-radio v-model="tempTask.send_type" label="all">都接收</el-radio>
             <el-radio v-model="tempTask.send_type" label="webhook">仅微信群</el-radio>
             <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
@@ -64,18 +90,19 @@
               </el-input>
             </div>
             <div v-show="tempTask.send_type !== 'webhook'">
-              <el-form-item label="邮箱服务器" :label-width="labelWidth">
-                <emailServerSelector ref="emailServerSelector" :oldEmailServer="tempTask.email_server"></emailServerSelector>
+              <el-form-item label="邮箱服务器">
+                <emailServerSelector ref="emailServerSelector"
+                                     :oldEmailServer="tempTask.email_server"></emailServerSelector>
               </el-form-item>
-              <el-form-item label="发件人邮箱" :label-width="labelWidth">
+              <el-form-item label="发件人邮箱">
                 <el-input v-model="tempTask.email_from" placeholder="默认支持QQ邮箱，可到全局参数添加对应的服务器，配置类型选邮箱">
                 </el-input>
               </el-form-item>
-              <el-form-item label="邮箱密码" :label-width="labelWidth" prop="desc">
+              <el-form-item label="邮箱密码" prop="desc">
                 <el-input v-model="tempTask.email_pwd" type="text">
                 </el-input>
               </el-form-item>
-              <el-form-item label="收件人邮箱" :label-width="labelWidth">
+              <el-form-item label="收件人邮箱">
                 <el-input
                   type="textarea"
                   :rows="2"
@@ -86,7 +113,7 @@
             </div>
           </el-form-item>
 
-          <el-form-item label="时间配置" :label-width="labelWidth" size="small">
+          <el-form-item label="时间配置" size="small" class="is-required">
             <el-input v-model="tempTask.cron" style="width: 70%"
                       placeholder="秒 分 时 日 月 周 年 (0 0 12 * * ? * 每天中午12点触发)">
             </el-input>
@@ -114,6 +141,7 @@
 <script>
 import projectSelector from "@/components/Selector/project";
 import caseSetSelector from "@/components/Selector/caseSet";
+import environmentSelectorView from "@/components/Selector/environment";
 import caseSelector from "@/components/Selector/case";
 import emailServerSelector from "@/components/Selector/email";
 
@@ -124,15 +152,15 @@ export default {
   components: {
     projectSelector,
     caseSetSelector,
+    environmentSelectorView,
     caseSelector,
     emailServerSelector
   },
   data() {
     return {
       taskDialogIsShow: false,
-      labelWidth: '90px',
       dialogStatus: '',
-      tempTask: {}
+      tempTask: {},
     }
   },
   methods: {
@@ -141,6 +169,7 @@ export default {
         id: '',
         num: '',
         name: '',
+        choice_host: '',
         task_type: 'cron',
         cron: '',
         is_send: '1',
@@ -160,6 +189,7 @@ export default {
         id: this.tempTask.id,
         num: this.tempTask.num,
         name: this.tempTask.name,
+        choice_host: this.$refs.environmentSelectorView.current_environment,
         task_type: this.tempTask.task_type,
         cron: this.tempTask.cron,
         is_send: this.tempTask.is_send,
@@ -175,7 +205,8 @@ export default {
       }
     },
 
-    initEditTask(task) {},
+    initEditTask(task) {
+    },
 
     busEmit() {
       this.taskDialogIsShow = false

@@ -2,31 +2,24 @@
 
 
   <el-tabs v-model="activeName">
-    <!--    用于调试-->
-    <!--    <div>-->
-    <!--      <br>-->
-    <!--      {{ `currentStep: \n${JSON.stringify(currentStep)}\n` }}-->
-    <!--      <br>-->
-    <!--      {{ `currentStepCopy: \n${JSON.stringify(currentStepCopy)}\n` }}-->
-    <!--    </div>-->
 
     <!-- 步骤信息 -->
     <el-tab-pane label="步骤信息" name="editStepInfo">
-      <el-form>
+      <el-form label-width="120px" >
 
-        <el-form-item label="步骤名称" prop="name" label-width="120px" size="small">
+        <el-form-item label="步骤名称" prop="name" size="small" class="is-required">
           <el-input v-model="currentStep.name" placeholder="步骤名称"></el-input>
         </el-form-item>
 
-        <el-form-item label="前置处理" label-width="120px" size="small">
+        <el-form-item label="前置处理" size="small">
           <el-input v-model="currentStep.up_func" placeholder="前置处理函数"></el-input>
         </el-form-item>
 
-        <el-form-item label="后置处理" label-width="120px" size="small">
+        <el-form-item label="后置处理" size="small">
           <el-input v-model="currentStep.down_func" placeholder="后置处理函数"></el-input>
         </el-form-item>
 
-        <el-form-item label="执行次数" label-width="120px">
+        <el-form-item label="执行次数" class="is-required">
           <el-input-number
             v-model="currentStep.run_times"
             size="mini"

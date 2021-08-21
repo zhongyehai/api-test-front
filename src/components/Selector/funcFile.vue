@@ -1,20 +1,18 @@
 <template>
 
-  <!--  <el-form-item label="函数文件" labelWidth="70px">-->
   <el-select
     v-model="tempFuncFiles"
     multiple
     filterable
     placeholder="请选择函数文件"
-    class="filter-item"
-    size="small">
+    style="width:100%"
+    class="filter-item">
     <el-option v-for="funcFile in funcFilesList"
                :key="funcFile.id"
                :label="funcFile.name"
                :value="funcFile.name"
     ></el-option>
   </el-select>
-  <!--  </el-form-item>-->
 
 </template>
 

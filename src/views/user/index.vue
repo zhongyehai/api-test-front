@@ -92,21 +92,24 @@
 
     <!-- 新增/修改表单 -->
     <el-dialog :title=" dialogStatus==='create'?'新增用户':'修改用户'" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="tempUser" label-position="left" label-width="70px"
-               style="min-width: 400px;">
+      <el-form
+        ref="dataForm"
+        :model="tempUser"
+        label-width="100px"
+        style="min-width: 400px;">
 
         <!-- 用户信息 -->
-        <el-form-item :label="'用户名'" prop="name" class="filter-item" size="mini">
+        <el-form-item :label="'用户名'" prop="name" class="is-required" size="mini">
           <el-input v-model="tempUser.name" placeholder="2~12位"/>
         </el-form-item>
-        <el-form-item :label="'账号'" prop="name" class="filter-item" size="mini">
+        <el-form-item :label="'账号'" prop="name" class="is-required" size="mini">
           <el-input v-model="tempUser.account" placeholder="2~12位"/>
         </el-form-item>
-        <el-form-item :label="'密码'" prop="name" class="filter-item" size="mini">
+        <el-form-item :label="'密码'" prop="name" class="is-required" size="mini">
           <el-input v-model="tempUser.password" placeholder="6~18位"/>
         </el-form-item>
-        <el-form-item :label="'角色'" class="filter-item" size="mini">
-          <el-select v-model="tempUser.role_id" class="filter-item" placeholder="请选择角色">
+        <el-form-item :label="'角色'" class="is-required" size="mini">
+          <el-select v-model="tempUser.role_id" placeholder="请选择角色" style="width:100%">
             <el-option
               v-for="role in role_list"
               :key="role.name"
@@ -114,7 +117,6 @@
               :value="role.id"/>
           </el-select>
         </el-form-item>
-
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -163,7 +165,7 @@ export default {
       user_list: [],
 
       // 角色列表
-      role_list: [],
+      role_list: [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}],
 
       // 状态列表
       status_list: [],
@@ -182,13 +184,6 @@ export default {
 
       // 请求加载状态
       listLoading: true,
-
-
-      rules: {
-        type: [{required: true, message: '类型必填', trigger: 'change'}],
-        timestamp: [{type: 'date', required: true, message: '时间必填', trigger: 'change'}],
-        title: [{required: true, message: '标题必填', trigger: 'blur'}]
-      },
 
     }
   },
@@ -209,7 +204,7 @@ export default {
   mounted() {
   },
   methods: {
-    //===================================== 初始化数据 相关 start ===================================
+
     // 初始化用户状态
     initStatus() {
       this.status_list = [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}]
@@ -254,10 +249,7 @@ export default {
         create_user: undefined, // 创建人
       }
     },
-    //===================================== 初始化数据 相关 end =====================================
 
-
-    //===================================== 请求相关 start =====================================
     // 获取角色列表
     getRoleList() {
       roleList().then(response => {
@@ -322,28 +314,10 @@ export default {
       this.listQuery.pageNum = 1
       this.getUserList()
     },
-    //===================================== 请求相关 end =====================================
 
   },
-  computed: {
-    // 获取host的值，方便监听，增加行
-    // monitorHostRows(){
-    //   console.log(`触发了project.computed.monitorHostRows`)
-    //   console.log(`project.this.tempUser.hosts: ${this.tempUser.hosts}`)
-    //   return this.tempUser.hosts
-    // }
-  },
+  computed: {},
 
-  watch: {
-    // 如果没有输入框，则加一个输入框，如果有输入框，且最后一个输入框不是空的，则新增一个输入框
-    // monitorHostRows(){
-    //   console.log(`触发了project.watch.monitorHostRows`)
-    //   console.log(`project.this.tempUser.hosts.length: ${this.tempUser.hosts.length}`)
-    //   console.log(`project.this.tempUser.hosts[this.tempUser.hosts.length -1].value: ${this.tempUser.hosts[this.tempUser.hosts.length -1].value}`)
-    //   if(this.tempUser.hosts.length === 0 || this.tempUser.hosts[this.tempUser.hosts.length -1].value){
-    //     this.addHostRow()
-    //   }
-    // }
-  },
+  watch: {},
 }
 </script>

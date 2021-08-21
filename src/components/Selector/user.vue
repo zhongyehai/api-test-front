@@ -1,5 +1,8 @@
 <template>
-  <el-select v-model="tempData" class="filter-item" placeholder="请选择用户">
+  <el-select
+    v-model="tempData"
+    style="width:100%"
+    placeholder="请选择用户">
     <el-option
       v-for="user in userList"
       :key="user.name"

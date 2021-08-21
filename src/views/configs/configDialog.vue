@@ -11,11 +11,10 @@
       ref="dataForm"
       :model="tempConfig"
       :rules="rules"
-      label-position="left"
-      label-width="70px"
+      label-width="80px"
       style="min-width: 400px;">
 
-      <el-form-item :label="'配置类型'" prop="type" class="filter-item" size="mini">
+      <el-form-item :label="'配置类型'" prop="type" class="is-required" size="mini">
         <configTypeSelector
           ref="configTypeSelector"
           :configTypeList="configTypeList"
@@ -24,15 +23,15 @@
         ></configTypeSelector>
       </el-form-item>
 
-      <el-form-item :label="'配置名'" prop="name" class="filter-item" size="mini">
+      <el-form-item :label="'配置名'" prop="name" class="is-required" size="mini">
         <el-input v-model="tempConfig.name" :disabled="dialogStatus === 'edit'" />
       </el-form-item>
 
-      <el-form-item :label="'配置值'" prop="value" class="filter-item" size="mini">
+      <el-form-item :label="'配置值'" prop="value" class="is-required" size="mini">
         <el-input type="textarea" :rows="2" v-model="tempConfig.value"/>
       </el-form-item>
 
-      <el-form-item :label="'描述'" prop="desc" class="filter-item" size="mini">
+      <el-form-item :label="'描述'" prop="desc" size="mini">
         <el-input v-model="tempConfig.desc"/>
       </el-form-item>
 

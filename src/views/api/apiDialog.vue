@@ -10,67 +10,73 @@
     >
 
       <!-- 接口所属信息 -->
-      <el-form :inline="true" style="padding: 10px 20px -10px 10px;">
-        <el-form-item label="项目信息" labelWidth="80px" style="margin-bottom: 5px">
+      <el-form :inline="true" style="padding: 20px 20px -10px 10px;" label-width="100px">
 
+        <el-row>
           <!-- 选择项目 -->
-          <projectSelectorView
-            ref="projectSelector"
-            :projectId="tempApi.project_id"
-            :busEmitEventName="$busEvents.projectSelectorChoiceProject"
-          ></projectSelectorView>
-
+          <el-col :span="6">
+            <el-form-item label="选择项目" class="is-required" style="margin-bottom: 5px">
+              <projectSelectorView
+                ref="projectSelector"
+                :projectId="tempApi.project_id"
+                :busEmitEventName="$busEvents.projectSelectorChoiceProject"
+              ></projectSelectorView>
+            </el-form-item>
+          </el-col>
+          <!-- 选择环境 -->
+          <el-col :span="6">
+            <el-form-item label="选择环境" class="is-required" style="margin-bottom: 5px">
+              <environmentSelectorView
+                :choice_environment="tempApi.choice_host"
+                ref="environmentSelectorView"
+              ></environmentSelectorView>
+            </el-form-item>
+          </el-col>
           <!-- 选择模块 -->
-          <moduleSelectorView
-            ref="moduleSelector"
-            :moduleId="tempApi.module_id"
-            :projectId="tempApi.project_id"
-            :status="dialogFormVisible"
-            :busOnEventName="$busEvents.projectSelectorChoiceProject"
-            :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
-            :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
-          ></moduleSelectorView>
+          <el-col :span="6">
+            <el-form-item label="选择模块" class="is-required" style="margin-bottom: 5px">
+              <moduleSelectorView
+                ref="moduleSelector"
+                :moduleId="tempApi.module_id"
+                :projectId="tempApi.project_id"
+                :status="dialogFormVisible"
+                :busOnEventName="$busEvents.projectSelectorChoiceProject"
+                :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
+                :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
+              ></moduleSelectorView>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+          </el-col>
+        </el-row>
 
-          <!-- 选择host -->
-          <hostSelectorView
-            :busOnEventName="$busEvents.projectSelectorChoiceProject"
-            :hostIndex="tempApi.host_index"
-            :hostList="currentChoiceProjectHosts"
-            ref="hostSelectorView"
-          ></hostSelectorView>
-
-        </el-form-item>
-      </el-form>
-
-      <el-form :inline="true" style="padding: 20px 20px -10px 10px;">
-
-        <!-- 接口名称 -->
-        <el-form-item label="接口信息" prop="name" style="min-width: 20%;margin-bottom: 5px; margin-left: 10px">
-          <el-input v-model="tempApi.name" placeholder="接口名称" size="small">
-          </el-input>
-        </el-form-item>
-
-        <!-- 接口编号 -->
-        <el-form-item label="接口编号" prop="num" v-if="tempApi.id" style="min-width: 5%;margin-bottom: 5px">
-          <el-input v-model.number="tempApi.num" placeholder="接口编号" size="small" style="text-align:center;">
-          </el-input>
-        </el-form-item>
-
-        <!-- 接口描述 -->
-        <!--        <el-form-item prop="desc" style="min-width: 5%;margin-bottom: 5px">-->
-        <!--          <el-input v-model="tempApi.desc" placeholder="接口描述" size="small" style="text-align:center;">-->
-        <!--          </el-input>-->
-        <!--        </el-form-item>-->
-
-        <!-- 前置条件 -->
-        <el-form-item prop="up_func" labelWidth="80px" style="margin-bottom: 5px">
-          <el-input v-model="tempApi.up_func" placeholder="前置条件" size="small"></el-input>
-        </el-form-item>
-
-        <!-- 后置条件 -->
-        <el-form-item prop="down_func" style="margin-bottom: 5px">
-          <el-input v-model="tempApi.down_func" placeholder="后置条件" size="small"></el-input>
-        </el-form-item>
+        <el-row>
+          <!-- 接口名称 -->
+          <el-col :span="6">
+            <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="small">
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 前置条件 -->
+          <el-col :span="6">
+            <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
+              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="small"></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 后置条件 -->
+          <el-col :span="6">
+            <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
+              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="small"></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 接口编号 -->
+          <el-col :span="6">
+            <el-form-item label="接口编号" v-if="tempApi.id" style="margin-bottom: 5px">
+              <el-input v-model.number="tempApi.num" placeholder="接口编号" size="small"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
       </el-form>
 
@@ -182,7 +188,7 @@
 <script>
 import projectSelectorView from "@/components/Selector/project";
 import moduleSelectorView from "@/components/Selector/module";
-import hostSelectorView from "@/components/Selector/host";
+import environmentSelectorView from "@/components/Selector/environment";
 import methodsSelectorView from "@/components/Selector/methods";
 import headersView from '@/components/Inputs/changeRow'
 import queryStringView from '@/components/Inputs/changeRow'
@@ -203,7 +209,7 @@ export default {
   components: {
     projectSelectorView,
     moduleSelectorView,
-    hostSelectorView,
+    environmentSelectorView,
     methodsSelectorView,
     queryStringView,
     headersView,
@@ -225,7 +231,7 @@ export default {
       methodSelectorChoiceMethod: '',
 
       // 当前选中的项目的hosts列表
-      currentChoiceProjectHosts: [],
+      // currentChoiceProjectHosts: [],
 
       // 是否展示请求接口时的等待状态
       saveRunStatus: false,
@@ -242,7 +248,7 @@ export default {
         up_func: '',
         down_func: '',
         method: '',
-        host_index: '',
+        choice_host: 'test',
         addr: '',
         headers: [{key: null, value: null, remark: null}],
         params: [{key: null, value: null}],
@@ -332,7 +338,7 @@ export default {
       this.tempApi.up_func = ''
       this.tempApi.down_func = ''
       this.tempApi.method = ''
-      this.tempApi.host_index = ''
+      this.tempApi.choice_host = 'test'
       this.tempApi.addr = ''
       this.tempApi.headers = [{key: null, value: null, remark: null}]
       this.tempApi.params = [{key: null, value: null}]
@@ -369,7 +375,7 @@ export default {
         addr: this.tempApi.addr,
 
         method: this.$refs.methodsSelectorView.tempMethod,
-        host_index: this.$refs.hostSelectorView.tempHostIndex,
+        choice_host: this.$refs.environmentSelectorView.current_environment,
         headers: this.$refs.headersView.tempData,
         params: this.$refs.queryStringView.tempData,
         extracts: this.$refs.extractsView.tempData,
@@ -408,11 +414,6 @@ export default {
     })
   },
 
-  created() {
-    // 初始化当前项目的host列表
-    this.currentChoiceProjectHosts = this.currentProject ? this.currentProject.hosts : ''
-  },
-
   // 组件销毁前，关闭bus监听事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.apiDialogStatus)
@@ -421,12 +422,12 @@ export default {
 
   watch: {
 
-    // 监控父组件选中的项目, 实时获取对应的host列表，模块列表
+    // 监控父组件选中的项目, 实时获取对应的模块列表
     'currentProject': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
         this.tempApi.project_id = newVal.id
-        this.currentChoiceProjectHosts = newVal.hosts
+        // this.currentChoiceProjectHosts = newVal.hosts
       }
     },
 

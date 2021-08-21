@@ -7,8 +7,8 @@
     width="40%"
   >
     <el-form ref="dataForm" label-position="left" label-width="100px" style="min-width: 400px;">
-      <!-- 用户信息 -->
-      <el-form-item :label="'函数文件名'" prop="name" class="filter-item" size="mini">
+      <!-- 函数文件名 -->
+      <el-form-item :label="'函数文件名'" prop="name" class="is-required" size="mini">
         <el-input v-model="name"/>
       </el-form-item>
     </el-form>

@@ -36,6 +36,7 @@ export default {
   },
   methods: {
     getCaseList() {
+      console.log('caseSetId: ', this.tempCaseSetId)
       caseList({caseSetId: this.tempCaseSetId}).then(response => {
         this.tempCaseList = response.data.data
       })

@@ -14,7 +14,6 @@
             <el-table
               ref="apiTree"
               v-loading="listLoading"
-              @row-dblclick="doubleClick"
               :data="apis.api_list"
               stripe
             >
@@ -26,9 +25,7 @@
 
               <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="30%">
                 <template slot-scope="scope">
-                  <el-tooltip class="item" effect="dark" content="可双击修改" placement="right-end">
                     <span> {{ scope.row.name }} </span>
-                  </el-tooltip>
                 </template>
               </el-table-column>
 
@@ -46,24 +43,25 @@
 
               <el-table-column label="用例操作" min-width="40%">
                 <template slot-scope="scope">
+                  <el-button type="primary" size="mini" @click.native="editCase(scope.row)">编辑</el-button>
+
                   <el-tooltip class="item" effect="dark" content="复制用例及其步骤" placement="top-end">
-                    <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">
-                      复制
-                    </el-button>
-                  </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
-                    <el-button type="primary" size="mini" @click.native="runCase(scope.row)">
-                      运行
-                    </el-button>
+                    <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">复制</el-button>
                   </el-tooltip>
 
+                  <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
+                    <el-button type="primary" size="mini" @click.native="runCase(scope.row)">运行</el-button>
+                  </el-tooltip>
+
+                  <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
                   <el-button type="danger" size="mini"
                              @click.native="confirmBox(
                                delCase,
                                scope.row.id,
-                               ` ${scope.row.name} 及 此用例下的步骤`)">
+                               `用例 ${scope.row.name}`)">
                     删除
                   </el-button>
+                  </el-tooltip>
                 </template>
               </el-table-column>
             </el-table>
@@ -171,8 +169,8 @@ export default {
 
   methods: {
 
-    // 双击进入编辑用例，把被点击的用例信息赋值给临时用例模板
-    doubleClick(row, column, event) {
+    // 编辑用例
+    editCase(row){
       this.tempCase = row
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'edit', this.tempCase)
     },

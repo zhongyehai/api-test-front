@@ -42,42 +42,54 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
-      @row-dblclick="doubleClick"
     >
       <el-table-column :label="'序号'" prop="id" align="center" min-width="5%">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'项目名'" prop="name" align="center" min-width="20%" :show-overflow-tooltip=true>
+
+      <el-table-column :label="'项目名'" prop="name" align="center" min-width="15%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
-          <el-tooltip class="item" effect="dark" content="可双击修改" placement="right-end">
-            <span> {{ scope.row.name }} </span>
-          </el-tooltip>
+          <span> {{ scope.row.name }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="'域名'" prop="id" align="center" min-width="35%" :show-overflow-tooltip=true>
+
+      <el-table-column :label="'测试环境'" prop="test" align="center" min-width="25%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
-          <span>{{ parsHosts(scope.row.hosts) }}</span>
+          <span>{{ scope.row.test }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'创建人'" prop="id" align="center" min-width="10%">
+
+      <el-table-column :label="'创建人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'负责人'" prop="id" align="center" min-width="10%">
+
+      <el-table-column :label="'创建时间'" prop="created_time" align="center" min-width="14%">
+        <template slot-scope="scope">
+          <span>{{ scope.row.created_time }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column :label="'负责人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.manager) }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'操作'" align="center" min-width="20%" class-name="small-padding fixed-width">
+
+      <el-table-column :label="'操作'" align="center" min-width="15%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
+          <el-button size="mini" type="primary" @click="showEditForm(row)">
+            {{ '修改' }}
+          </el-button>
           <el-button size="mini" type="danger" @click="confirmBox(delProject, row.id, row.name)">
             {{ '删除' }}
           </el-button>
         </template>
       </el-table-column>
+
     </el-table>
 
     <!-- 分页 -->
@@ -147,12 +159,6 @@ export default {
       // 请求加载状态
       listLoading: true,
 
-      rules: {
-        type: [{required: true, message: '类型必填', trigger: 'change'}],
-        timestamp: [{type: 'date', required: true, message: '时间必填', trigger: 'change'}],
-        title: [{required: true, message: '标题必填', trigger: 'blur'}]
-      },
-
     }
   },
 
@@ -168,8 +174,8 @@ export default {
 
   methods: {
 
-    // 双击进入编辑
-    doubleClick(row, column, event) {
+    // 编辑按钮
+    showEditForm(row){
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'edit', row)
     },
 
@@ -208,14 +214,6 @@ export default {
     // 点击添加项目
     addProject() {
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'add')
-    },
-
-    // 把hosts的 ["http://127.0.0.1:8010", "http://127.0.0.1:8011"] 展示为 索引0 + ...
-    parsHosts(hosts) {
-      if (hosts.length > 0) {
-        return hosts[0] + '...'
-      }
-      return '待设置'
     },
 
     // 把用户id解析为用户名

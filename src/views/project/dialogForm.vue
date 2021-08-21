@@ -11,33 +11,45 @@
       <el-form ref="dataForm"
                :model="tempProject"
                :rules="rules"
-               label-position="left"
-               label-width="70px"
-               style="min-width: 400px;"
+               label-width="100px"
+               style="min-width: 200px;"
       >
 
         <!-- 项目信息 -->
         <el-tabs>
           <el-tab-pane label="项目信息">
-            <el-form-item :label="'项目名'" prop="name" class="filter-item" size="mini">
+            <el-form-item :label="'项目名'" prop="name" size="mini" class="is-required">
               <el-input v-model="tempProject.name"/>
             </el-form-item>
 
-            <el-form-item :label="'负责人'" prop="manager" class="filter-item" size="mini">
+            <el-form-item :label="'负责人'" prop="manager" size="mini" class="is-required">
               <userSelector ref="userSelector" :user="tempProject.manager"></userSelector>
             </el-form-item>
 
             <!-- 函数文件 -->
-            <el-form-item label="函数文件" prop="func_files" class="filter-item" labelWidth="70px" size="mini">
+            <el-form-item label="函数文件" prop="func_files" size="mini">
               <funcFileView ref="funcFiles" :funcFiles="tempProject.func_files"></funcFileView>
             </el-form-item>
 
-            <!-- 环境地址 -->
-            <el-tabs type="card">
-              <el-tab-pane label="域名" prop="hosts">
-                <hostRowView ref="hostRowView" :host-list="tempProject.hosts"></hostRowView>
-              </el-tab-pane>
-            </el-tabs>
+            <!-- 开发环境 -->
+            <el-form-item :label="'开发环境'" prop="dev" class="filter-item" size="mini">
+              <el-input v-model="tempProject.dev"  placeholder="开发环境域名"/>
+            </el-form-item>
+
+            <!-- 测试环境 -->
+            <el-form-item :label="'测试环境'" prop="test" class="filter-item" size="mini">
+              <el-input v-model="tempProject.test"  placeholder="测试环境域名，必填"/>
+            </el-form-item>
+
+            <!-- uat环境 -->
+            <el-form-item :label="'uat环境'" prop="dev" class="filter-item" size="mini">
+              <el-input v-model="tempProject.uat"  placeholder="uat环境域名"/>
+            </el-form-item>
+
+            <!-- 生产环境 -->
+            <el-form-item :label="'生产环境'" prop="production" class="filter-item" size="mini">
+              <el-input v-model="tempProject.production" placeholder="生产环境域名"/>
+            </el-form-item>
           </el-tab-pane>
 
           <!-- 公用变量 -->
@@ -69,7 +81,6 @@
 <script>
 import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
-import hostRowView from '@/components/Inputs/hostRow'
 import funcFileView from '@/components/Selector/funcFile'
 import userSelector from "@/components/Selector/user";
 
@@ -85,8 +96,7 @@ export default {
     headersView,
     variablesView,
     funcFileView,
-    userSelector,
-    hostRowView
+    userSelector
   },
   data() {
     return {
@@ -96,7 +106,10 @@ export default {
         id: null,
         name: null,
         manager: null,
-        hosts: [{'value': ''}],
+        dev: '',
+        test: '',
+        uat: '',
+        production: '',
         variables: [{'key': null, 'value': null, 'remark': null}],
         headers: [{'key': null, 'value': null, 'remark': null}],
         func_files: [],
@@ -115,8 +128,20 @@ export default {
       // 校验规则
       rules: {
         name: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
-        // manager: [{ required: true, message: '请选择负责人', trigger: 'blur' }],
-        hosts: [{ required: true, message: '请输入项目域名', trigger: 'blur' }]
+        manager: [
+          // { required: true, message: '请选择负责人', trigger: 'blur' },
+          // {
+          //   validator: (rule, value, callback) => {
+          //     if (!value) {
+          //       callback('请选择负责人');
+          //     } else {
+          //       callback();
+          //     }
+          //   },
+          //   trigger: 'change',
+          // }
+        ],
+        test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }]
       }
     }
   },
@@ -128,7 +153,10 @@ export default {
         id: null,
         name: null,
         manager: null,
-        hosts: [{'value': ''}],
+        dev: '',
+        test: '',
+        uat: '',
+        production: '',
         variables: [{'key': null, 'value': null, 'remark': null}],
         headers: [{'key': null, 'value': null, 'remark': null}],
         func_files: []
@@ -140,33 +168,13 @@ export default {
       this.tempProject.id = row.id
       this.tempProject.name = row.name
       this.tempProject.manager = row.manager
-      this.tempProject.hosts = this.hostListToDict(row.hosts)
+      this.tempProject.dev = row.dev
+      this.tempProject.test = row.test
+      this.tempProject.uat = row.uat
+      this.tempProject.production = row.production
       this.tempProject.variables = row.variables
       this.tempProject.headers = row.headers
       this.tempProject.func_files = row.func_files
-    },
-
-    // 把[xxx1,xxx2] 转为 [{value:xxx1},{value:xxx2}]，用于将后端数据转为前端能渲染的格式
-    hostListToDict(data) {
-      let host_list = Array()
-      if (!data) {
-        return host_list
-      }
-      for (let i = 0; i < data.length; i++) {
-        host_list.push({value: data[i]})
-      }
-      return host_list
-    },
-
-    // 把[{value:xxx1},{value:xxx2}] 转为 [xxx1,xxx2]，用于将前端数据转为后端能解析的格式
-    hostDictToList(data) {
-      let host_list = Array()
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].value) {
-          host_list.push(data[i].value)
-        }
-      }
-      return host_list
     },
 
     // 获取数据提交给后端
@@ -175,7 +183,10 @@ export default {
         id: this.tempProject.id,
         name: this.tempProject.name,
         manager: this.$refs.userSelector.tempData,
-        hosts: this.hostDictToList(this.$refs.hostRowView.tempData),
+        dev: this.tempProject.dev,
+        test: this.tempProject.test,
+        uat: this.tempProject.uat,
+        production: this.tempProject.production,
         variables: this.tempProject.variables,
         headers: this.tempProject.headers,
         func_files: this.$refs.funcFiles.tempFuncFiles

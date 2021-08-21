@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="tempEmailServer"
-    placeholder="选择邮箱"
+    placeholder="选择邮箱服务器"
     value-key="id"
     style="min-width: 100%;padding-right:10px"
     size="small"
@@ -39,6 +39,14 @@ export default {
   created() {
     this.tempEmailServer = this.oldEmailServer
   },
+
+  watch: {
+    'oldEmailServer': {
+      handler(newVal, oldVal) {
+        this.tempEmailServer = newVal
+      }
+    },
+  }
 }
 </script>
 

@@ -24,22 +24,14 @@
               <el-table
                 ref="taskTable"
                 :data="taskList"
-                @row-dblclick="doubleClick"
                 stripe
               >
                 <el-table-column prop="num" label="编号" min-width="5%"></el-table-column>
 
                 <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="22%">
                   <template slot-scope="scope">
-                    <el-tooltip
-                      class="item"
-                      effect="dark"
-                      :content="scope.row.status === '禁用中' ? '禁用中的任务，可双击修改' : '启用中的任务，不可修改'"
-                      placement="right-end">
-                      <span> {{ scope.row.name }} </span>
-                    </el-tooltip>
+                    <span> {{ scope.row.name }} </span>
                   </template>
-
                 </el-table-column>
 
                 <el-table-column prop="cron" label="cron表达式" min-width="25%"></el-table-column>
@@ -51,26 +43,53 @@
                     </el-tag>
                   </template>
                 </el-table-column>
+
                 <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="9%">
                   <template slot-scope="scope">
                     <span>{{ parsUser(scope.row.create_user) }}</span>
                   </template>
                 </el-table-column>
+
                 <el-table-column label="操作" min-width="30%">
                   <template slot-scope="scope">
-                    <el-button type="primary" size="mini" v-if="scope.row.status === '启用中'"
-                               @click.native="disable(scope.row.id)">禁用
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      v-if="scope.row.status === '启用中'"
+                      @click.native="disable(scope.row.id)"
+                    >禁用
                     </el-button>
-                    <el-button type="primary" size="mini" v-if="scope.row.status === '禁用中'"
-                               @click.native="enable(scope.row.id)">启用
+
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      v-if="scope.row.status === '禁用中'"
+                      @click.native="enable(scope.row.id)"
+                    >启用
                     </el-button>
-                    <el-button type="success" size="mini" :loading="scope.row.isShow"
-                               @click.native="run(scope.row.id)">运行
+
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      :disabled="scope.row.status === '启用中'"
+                      @click.native="editTask(scope.row)"
+                    >修改
                     </el-button>
+
+                    <el-button
+                      type="success"
+                      size="mini"
+                      :loading="scope.row.isShow"
+                      @click.native="run(scope.row.id)"
+                    >运行
+                    </el-button>
+
                     <el-button type="danger"
                                size="mini"
-                               @click.native="confirmBox(delTask, scope.row.id, scope.row.name)">删除
+                               @click.native="confirmBox(delTask, scope.row.id, scope.row.name)"
+                    >删除
                     </el-button>
+
                   </template>
                 </el-table-column>
 
@@ -120,11 +139,10 @@ export default {
 
   methods: {
 
-    // 双击进入编辑
-    doubleClick(row, column, event) {
-      // console.log(JSON.stringify(row))
+    // 进入编辑
+    editTask(row) {
       if (row.status === '禁用中') {
-        this.$bus.$emit(this.$busEvents.taskDialogIsShow, 'update', row)
+        this.$bus.$emit(this.$busEvents.taskDialogIsShow, 'update', JSON.parse(JSON.stringify(row)))
       }
     },
 
@@ -139,7 +157,7 @@ export default {
 
     // 打开测试报告
     openReportById(reportId) {
-      console.log(`task.index.openReportById.reportId: ${JSON.stringify(reportId)}`)
+      // console.log(`task.index.openReportById.reportId: ${JSON.stringify(reportId)}`)
       let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
       window.open(href, '_blank')
     },
