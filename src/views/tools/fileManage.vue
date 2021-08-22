@@ -1,11 +1,29 @@
 <template>
   <div class="app-container">
 
-    <div style="margin: 10px;padding-left: 10px">
-      <el-tooltip class="item" effect="dark" content="可覆盖已存在的文件" placement="right-end">
-        <el-button type="primary" @click.native="openFileUploadDialog" size="small">上传文件</el-button>
-      </el-tooltip>
-    </div>
+    <el-form label-width="120px">
+      <el-form-item :label="'选择文件类型：'" size="mini">
+        <el-select
+          v-model="fType"
+          placeholder="请选择文件类型"
+          size="small"
+          @change="selectType"
+        >
+          <el-option
+            v-for="item in fileTypeList"
+            :key="item.key"
+            :label="item.value"
+            :value="item.key"
+          >
+          </el-option>
+        </el-select>
+        <el-tooltip v-show="fType === 'case'" class="item" effect="dark" content="可覆盖已存在的文件" placement="right-end"
+                    style="margin-left: 20px">
+          <el-button type="primary" @click.native="openFileUploadDialog" size="small">上传文件</el-button>
+        </el-tooltip>
+
+      </el-form-item>
+    </el-form>
 
     <el-table
       ref="apiTree"
@@ -87,6 +105,15 @@ export default {
       // 加载状态
       listLoading: false,
 
+      // 文件列类型
+      fType: 'case',
+
+      // 文件类型列表
+      fileTypeList: [
+        {'key': 'case', 'value': '用例文件'},
+        {'key': 'callBack', 'value': '回调文件'}
+      ],
+
       // 文件列表
       fileList: [],
 
@@ -100,15 +127,22 @@ export default {
 
     // 获取文件列表
     getFileList() {
-      fileList({'pageNum': this.PageNum, 'pageSize': this.PageSize}).then(response => {
+      fileList({'pageNum': this.PageNum, 'pageSize': this.PageSize, 'fileType': this.fType}).then(response => {
         this.fileList = response.data.data
         this.total = response.data.total
       })
     },
 
+    // 选中事件
+    selectType(value){
+      this.PageNum = 1
+      this.PageSize = 20
+      this.getFileList()
+    },
+
     // 下载文件
     downloadFile(fileName) {
-      fileDownload({'name': fileName}).then(response => {
+      fileDownload({'name': fileName, 'fileType': this.fType}).then(response => {
         let blob = new Blob([response], {
           type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
         });
@@ -127,7 +161,7 @@ export default {
 
     // 删除文件
     delFile(fileName) {
-      fileDelete({'name': fileName}).then(response => {
+      fileDelete({'name': fileName, 'fileType': this.fType}).then(response => {
         if (this.showMessage(this, response)) {
           this.getFileList()
         }
@@ -153,7 +187,7 @@ export default {
   // 组件销毁前，关闭bus监听事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.uploadFileIsCommit)
-  },
+  }
 }
 </script>
 
