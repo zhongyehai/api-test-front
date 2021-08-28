@@ -33,22 +33,22 @@
 
             <!-- 开发环境 -->
             <el-form-item :label="'开发环境'" prop="dev" class="filter-item" size="mini">
-              <el-input v-model="tempProject.dev"  placeholder="开发环境域名"/>
+              <el-input v-model="tempProject.dev"  placeholder="开发环境域名，100位以内"/>
             </el-form-item>
 
             <!-- 测试环境 -->
             <el-form-item :label="'测试环境'" prop="test" class="filter-item" size="mini">
-              <el-input v-model="tempProject.test"  placeholder="测试环境域名，必填"/>
+              <el-input v-model="tempProject.test"  placeholder="测试环境域名，必填，100位以内"/>
             </el-form-item>
 
             <!-- uat环境 -->
             <el-form-item :label="'uat环境'" prop="dev" class="filter-item" size="mini">
-              <el-input v-model="tempProject.uat"  placeholder="uat环境域名"/>
+              <el-input v-model="tempProject.uat"  placeholder="uat环境域名，100位以内"/>
             </el-form-item>
 
             <!-- 生产环境 -->
             <el-form-item :label="'生产环境'" prop="production" class="filter-item" size="mini">
-              <el-input v-model="tempProject.production" placeholder="生产环境域名"/>
+              <el-input v-model="tempProject.production" placeholder="生产环境域名，100位以内"/>
             </el-form-item>
           </el-tab-pane>
 

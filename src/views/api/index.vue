@@ -32,7 +32,7 @@
                 :show-overflow-tooltip=true
                 prop="addr"
                 label="接口地址"
-                min-width="28%"
+                min-width="26%"
               ></el-table-column>
 
               <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
@@ -41,7 +41,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="接口操作" min-width="37%">
+              <el-table-column label="接口操作" min-width="39%">
                 <template slot-scope="scope">
                   <el-button size="mini" type="success" @click="runApis(scope.row)">
                     运行
@@ -59,10 +59,6 @@
               </el-table-column>
 
             </el-table>
-
-            <el-button @click="cancelSelection()" size="mini" style="position: absolute;margin-top: 2px;">
-              取消选择
-            </el-button>
 
             <pagination
               v-show="apis.api_total>0"
