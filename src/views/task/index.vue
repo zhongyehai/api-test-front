@@ -26,9 +26,9 @@
                 :data="taskList"
                 stripe
               >
-                <el-table-column prop="num" label="编号" min-width="5%"></el-table-column>
+                <el-table-column prop="num" label="编号" min-width="7%"></el-table-column>
 
-                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="22%">
+                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="11%">
                   <template slot-scope="scope">
                     <span> {{ scope.row.name }} </span>
                   </template>
@@ -50,7 +50,7 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="操作" min-width="30%">
+                <el-table-column label="操作" min-width="39%">
                   <template slot-scope="scope">
                     <el-button
                       type="primary"
