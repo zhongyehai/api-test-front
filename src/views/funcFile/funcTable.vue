@@ -2,7 +2,6 @@
 
   <div>
     <el-table
-      ref="apiTree"
       v-loading="listLoading"
       :data="funcFiles.list"
       stripe
@@ -18,7 +17,7 @@
         :show-overflow-tooltip=true
         prop="name"
         label="文件名称"
-        min-width="33%"></el-table-column>
+        min-width="31%"></el-table-column>
 
       <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="20%">
         <template slot-scope="scope">

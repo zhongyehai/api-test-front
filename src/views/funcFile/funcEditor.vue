@@ -3,7 +3,7 @@
   <div>
     <el-form :inline="true" size="small">
 
-      <el-form-item label="函数文件名" :label-width="'100px'" size="mini">
+      <el-form-item label="函数文件名" :label-width="'90px'" size="mini">
         <el-input v-model="name" :minlength="215" style="width: 200px"></el-input>
       </el-form-item>
 
@@ -12,7 +12,7 @@
         </el-input>
       </el-form-item>
 
-      <el-button type="primary" style="margin-left: 10px" size="mini" @click="debugFunc">调试
+      <el-button type="primary" style="margin-left: 5px" size="mini" @click="debugFunc">调试
       </el-button>
 
       <el-button class="filter-item" type="primary" size="mini" @click="openFuncFileDialog()">新建
@@ -93,7 +93,7 @@ export default {
   computed: {
     // 实时获 取屏幕高度-150px 作为函数文件代码编辑器的高度
     funcFileEditHeight() {
-      return `${window.innerHeight - 150}px`
+      return `${window.innerHeight - 100}px`
     }
   },
 

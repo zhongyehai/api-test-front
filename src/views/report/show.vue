@@ -2,11 +2,10 @@
   <div>
     <!--    <reportHeader></reportHeader>-->
     <!--    <div class="reportShow" style="line-height: 36px;font-family:LiSu">-->
-<!--    <div class="reportShow" style="line-height: 36px;">-->
-    <div>
+    <div class="reportShow" style="line-height: 36px;">
       <el-row>
         <el-col :span="24">
-          <div class="grid-content" style="background-color: #f5f5f5 !important; height: 40px">
+          <div class="grid-content" style="background-color: #f5f5f5 !important;">
             <el-button type="primary" round style="padding: 4px 10px ;" v-show="false">{{ null }}</el-button>
             <el-button type="primary" size="mini" round style="margin-top: 5px;padding: 4px 10px ;"
                        @click.native="isShowPic(false)"
@@ -18,7 +17,7 @@
                        v-show="!this.picStatus"
             >展示统计图
             </el-button>
-            <el-dropdown @command="handleCommand" style="line-height:40px;margin-left:10px;color: #3a8ee6;">
+            <el-dropdown @command="handleCommand" style="line-height:15px;margin-left:10px;color: #3a8ee6;">
                           <span class="el-dropdown-link">
                             根据状态筛选用例<i class="el-icon-arrow-down el-icon--right"></i>
                           </span>
@@ -28,20 +27,17 @@
                 <el-dropdown-item command="error">失败的用例</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-            <span style="float: right;font-size: 13px;color: #3a8ee6;margin-right: 40px; line-height: 40px">
+            <span style="font-family: Source Sans Pro;float: right;font-size: 13px;color: #3a8ee6;margin-right: 40px">
             总共耗时: {{ this.reportData.time.duration }} 秒
           </span>
-            <span style="float: right;font-size: 13px;color: #3a8ee6;margin-right: 40px; line-height: 40px">
+            <span style="font-family: Source Sans Pro;float: right;font-size: 13px;color: #3a8ee6;margin-right: 40px">
             开始时间: {{ this.reportData.time.start_at }}
           </span>
           </div>
         </el-col>
       </el-row>
 
-
       <el-row v-show="this.picStatus">
-
-        <!-- 接口概况图 -->
         <el-col :span="10"
                 style="border-style:solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;border-width: 1px;"
         >
@@ -50,7 +46,7 @@
           </div>
 
           <ol style="margin-top:5px;font-size:14px;line-height:25px" class="remote-line">
-            <li style="font-weight:700;font-size:16px">步骤概况</li>
+            <li style="font-weight:700;font-size:16px">接口概况</li>
             <li style="font-weight:600;color: rgb(146, 123, 139)">总数:{{ this.reportData.stat.teststeps.total }}</li>
             <li style="color: rgb(25,212,174);font-weight:600">成功:{{ this.reportData.stat.teststeps.successes }}</li>
             <li style="color: rgb(250,110,134);font-weight:600">失败:{{ this.reportData.stat.teststeps.failures }}</li>
@@ -58,8 +54,6 @@
             <li style="color: #60C0DD;font-weight:600">跳过:{{ this.reportData.stat.teststeps.skipped }}</li>
           </ol>
         </el-col>
-
-        <!-- 用例概况图 -->
         <el-col :span="14" style="border-width: 1px;">
           <div style="height: 200px;float:left;">
             <ve-ring :data="suiteChartData" :settings="suiteChartSettings" height="200px"
@@ -144,8 +138,8 @@
               >
                 <thead>
                 <tr>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 20%">key</th>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 80%">value</th>
+                  <th style="border-bottom:1px solid #d0d0d0;width: 100px">key</th>
+                  <th style="border-bottom:1px solid #d0d0d0;width: 90%">value</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -244,21 +238,15 @@
 </template>
 
 <script>
-import RaddarChart from './components/RaddarChart'
-// import PieChart from './components/PieChart'
-import caseChart from './components/PieChart'
-import BarChart from './components/BarChart'
 
 import {getReport} from '@/apis/report'
 // import reportHeader from '@/views/report/reportHeader'
 
 export default {
   name: 'reportShow',
-  components: {
-    RaddarChart,
-    caseChart,
-    BarChart,
-  },
+  // components: {
+  //   reportHeader
+  // },
   data() {
     this.caseChartSettings = {
       radius: 80,
@@ -308,6 +296,7 @@ export default {
       }
     }
     return {
+
       caseChartSettings: {
         radius: 80,
         avoidLabelOverlap: false,

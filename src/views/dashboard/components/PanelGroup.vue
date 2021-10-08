@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             项目数
           </div>
-          <count-to :start-val="0" :end-val="title.project" :duration="2600" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.project" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -25,7 +25,7 @@
           <div class="card-panel-text">
             模块数
           </div>
-          <count-to :start-val="0" :end-val="title.module" :duration="3600" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.module" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -39,7 +39,7 @@
           <div class="card-panel-text">
             接口数
           </div>
-          <count-to :start-val="0" :end-val="title.api" :duration="3000" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.api" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -55,23 +55,7 @@
           <div class="card-panel-text">
             文件数
           </div>
-          <count-to :start-val="0" :end-val="title.file" :duration="3600" class="card-panel-num"/>
-        </div>
-      </div>
-    </el-col>
-
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="handleSetLineChartData('set')">
-        <!--  图标 -->
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <i class="el-icon-document-copy card-panel-icon" ></i>
-        </div>
-        <!-- 文案 -->
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            用例集数
-          </div>
-          <count-to :start-val="0" :end-val="title.set" :duration="3600" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.file" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -85,7 +69,23 @@
           <div class="card-panel-text">
             用例数
           </div>
-          <count-to :start-val="0" :end-val="title.case" :duration="3200" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.case" :duration="1" class="card-panel-num"/>
+        </div>
+      </div>
+    </el-col>
+
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="handleSetLineChartData('step')">
+        <!--  图标 -->
+        <div class="card-panel-icon-wrapper icon-shopping">
+          <i class="el-icon-document-copy card-panel-icon" ></i>
+        </div>
+        <!-- 文案 -->
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            测试步骤数
+          </div>
+          <count-to :start-val="0" :end-val="title.step" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -101,7 +101,7 @@
           <div class="card-panel-text">
             定时任务数
           </div>
-          <count-to :start-val="0" :end-val="title.task" :duration="3600" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.task" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>
@@ -117,7 +117,7 @@
           <div class="card-panel-text">
             测试报告数
           </div>
-          <count-to :start-val="0" :end-val="title.report" :duration="3600" class="card-panel-num"/>
+          <count-to :start-val="0" :end-val="title.report" :duration="1" class="card-panel-num"/>
         </div>
       </div>
     </el-col>

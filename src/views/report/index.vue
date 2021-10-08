@@ -8,10 +8,10 @@
       <projectTreeView
         ref="projectTree"
         class="projectTree"
-        :busEventNameOneClick="$busEvents.projectTreeChoiceProject"
-        :busEventNameTwoClick="$busEvents.taskDialogIsShow"
+        :busEventClickTree="$busEvents.projectTreeChoiceProject"
+        :busEventClickMenu="''"
+        :menuName="''"
       ></projectTreeView>
-
       <!-- 测试报告列表 -->
       <el-tabs v-model="reportTab" class="table_padding reportTab">
 
@@ -25,35 +25,31 @@
               <el-table
                 ref="reportTable"
                 :data="reportDataList"
-                @row-dblclick="doubleClick"
                 stripe
               >
-
                 <el-table-column
                   prop="id"
                   label="id"
-                  min-width="8%">
+                  min-width="5%">
                 </el-table-column>
 
-                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="25%">
-                  <template slot-scope="scope">
-                    <el-tooltip class="item" effect="dark" content="双击查看详情" placement="right-end">
-                      <span> {{ scope.row.name }} </span>
-                    </el-tooltip>
-
-                  </template>
+                <el-table-column
+                  :show-overflow-tooltip=true
+                  prop="name"
+                  label="任务名称"
+                  min-width="20%">
                 </el-table-column>
 
                 <el-table-column label="生成时间" min-width="17%">
                   <template slot-scope="scope">
-                    <span> {{ scope.row.created_time }} </span>
+                    <span> {{ parseTime(scope.row.created_time) }} </span>
                   </template>
                 </el-table-column>
 
                 <el-table-column
                   prop="performer"
                   label="创建者"
-                  min-width="8%">
+                  min-width="15%">
                 </el-table-column>
 
                 <el-table-column label="是否通过" min-width="10%">
@@ -72,9 +68,13 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="操作" min-width="22%">
+                <el-table-column label="操作" min-width="25%">
                   <template slot-scope="scope">
                     <el-button type="primary" size="mini" @click.native="downReport(scope.row.id)">下载</el-button>
+                    <el-button type="primary"
+                               size="mini"
+                               @click.native="openReportById(scope.row.id)">查看
+                    </el-button>
                     <el-button type="danger"
                                size="mini"
                                @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
@@ -125,10 +125,14 @@ export default {
   },
   methods: {
 
-    // 双击查看测试报告
-    doubleClick(row, column, event) {
-      let {href} = this.$router.resolve({path: 'reportShow', query: {id: row.id}})
-      window.open(href, '_blank')
+    // 解析时间
+    parseTime(time) {
+      let d = new Date(time)
+      return d.getFullYear() + '-' + this.p((d.getMonth() + 1)) + '-' + this.p(d.getDate()) + '  ' + String(Number(this.p(d.getHours())) - 8) + ':' + this.p(d.getMinutes()) + ':' + this.p(d.getSeconds())
+    },
+
+    p(s) {
+      return s < 10 ? '0' + s : s
     },
 
     // 获取项目对应的报告列表
@@ -140,11 +144,11 @@ export default {
     },
 
     // 打开测试报告
-    // openReportById(reportId) {
-    //   console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
-    //   let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
-    //   window.open(href, '_blank')
-    // },
+    openReportById(reportId) {
+      // console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
+      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+      window.open(href, '_blank')
+    },
 
     // 下载测试报告按钮
     downReport(reportId) {
@@ -246,7 +250,7 @@ export default {
   computed: {
     // 用例列表能用的宽度
     reportListTableWidth() {
-      return `${window.innerWidth - 700}px`
+      return `${window.innerWidth - 300}px`
     }
   },
 }

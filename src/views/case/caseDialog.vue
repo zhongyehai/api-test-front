@@ -15,17 +15,21 @@
         <el-form :inline="true" size="small" label-width="100px">
 
           <el-row>
-            <!-- 用例集选择 -->
+            <!-- 模块选择 -->
             <el-col :span="6">
-              <el-form-item label="用例集" class="is-required">
-                <caseSetSelectorView
-                  ref="caseSetSelectorView"
-                  :projectId="tempCase.project_id"
-                  :caseSetId="tempCase.case_set_id"
-                  :isWatchStatus="dialogIsShow"
-                  :busOnEventName="$busEvents.projectTreeChoiceProject"
-                ></caseSetSelectorView>
+
+              <el-form-item label="模块" class="is-required" style="margin-bottom: 5px">
+                <moduleSelectorView
+                  ref="moduleSelector"
+                  :moduleId="tempCase.module_id"
+                  :projectId="currentProject ? currentProject.id : ''"
+                  :status="dialogIsShow"
+                  :busOnEventName="$busEvents.projectSelectorChoiceProject"
+                  :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
+                  :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
+                ></moduleSelectorView>
               </el-form-item>
+
             </el-col>
             <!-- 选择环境 -->
             <el-col :span="6">
@@ -106,7 +110,7 @@
       <el-tab-pane label="步骤管理" name="stepInFo">
         <stepView
           ref="stepView"
-          :projectId="tempCase.project_id"
+          :projectId="currentProject ? currentProject.id : ''"
           :caseId="tempCase.id"
           :stepList="tempCase.steps"
         ></stepView>
@@ -128,6 +132,7 @@
 <script>
 
 import projectSelectorView from "@/components/Selector/project";
+import moduleSelectorView from "@/components/Selector/module";
 import caseSetSelectorView from "@/components/Selector/caseSet";
 import environmentSelectorView from "@/components/Selector/environment";
 import funcFilesView from '@/components/Selector/funcFile'
@@ -142,10 +147,11 @@ export default {
   name: 'caseDialog',
   props: [
     'currentProject',
-    'currentCaseSet'
+    'currentModule'
   ],
   components: {
     projectSelectorView,
+    moduleSelectorView,
     caseSetSelectorView,
     environmentSelectorView,
     funcFilesView,
@@ -169,8 +175,8 @@ export default {
         func_files: [],
         variables: [{key: null, value: null, remark: null}],
         headers: [{key: null, value: null, remark: null}],
-        project_id: '',
-        case_set_id: '',
+        // project_id: '',
+        module_id: '',
         steps: []  // 测试步骤
       },
 
@@ -183,6 +189,7 @@ export default {
     initNewTempCase() {
       this.tempCase.id = ''
       this.tempCase.num = ''
+      this.tempCase.name = ''
       this.tempCase.desc = ''
       this.tempCase.run_times = ''
       this.tempCase.choice_host = ''
@@ -190,8 +197,8 @@ export default {
       this.tempCase.variables = [{key: null, value: null, remark: null}]
       this.tempCase.headers = [{key: null, value: null, remark: null}]
       this.tempCase.steps = []
-      this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
-      this.tempCase.case_set_id = this.currentCaseSet ? this.currentCaseSet.id : ''
+      // this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
+      this.tempCase.module_id = this.currentModule ? this.currentModule.id : ''
       this.dialogStatus = 'add'
       this.dialogIsShow = true
     },
@@ -208,7 +215,7 @@ export default {
     // 获取当前的用例数据，用于提交给后端
     getCaseDataToCommit() {
       let caseData = this.tempCase
-      caseData.case_set_id = this.$refs.caseSetSelectorView.tempCaseSetId
+      caseData.module_id = this.$refs.moduleSelector.tempModuleId
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
       caseData.variables = this.$refs.variablesView.tempData
@@ -256,7 +263,7 @@ export default {
 
     // 监听 caseDialog 的状态
     this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
-      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
+      console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
       if (command === 'add') {
         this.initNewTempCase()
       } else if (command === 'edit') {
@@ -300,17 +307,17 @@ export default {
 
   watch: {
 
-    'currentProject': {
-      deep: true,
-      handler(newVal, oldVal) {
-        this.tempCase.project_id = newVal.id
-      }
-    },
+    // 'currentProject': {
+    //   deep: true,
+    //   handler(newVal, oldVal) {
+    //     this.tempCase.project_id = newVal.id
+    //   }
+    // },
 
-    'currentCaseSet': {
+    'currentModule': {
       deep: true,
       handler(newVal, oldVal) {
-        this.tempCase.case_set_id = newVal.id
+        this.tempCase.module_id = newVal.id
       }
     }
   }

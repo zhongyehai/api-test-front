@@ -28,8 +28,3 @@ export function deleteProject(data) {
 export function projectList(params) {
   return request({url: '/api/project/list', method: 'get', params: params});
 }
-
-// 获取项目基本信息
-export function proGatherList(params) {
-  return request({url: '/api/proGather/list', method: 'get', params: params});
-}

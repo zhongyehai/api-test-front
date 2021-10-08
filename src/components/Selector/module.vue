@@ -3,7 +3,6 @@
     v-model="tempModuleId"
     placeholder="请选择模块"
     size="small"
-    style="min-width: 20%;padding-right:10px"
     @change="clickModule"
     filterable
   >
@@ -19,7 +18,7 @@ export default {
   props: [
     "moduleId",
     "projectId",
-    "status",
+    "status",  // 编辑框的显示状态，显示编辑框时才请求模块列表
     'busOnEventName',
     'busOnModuleDialogCommit',
     'busEmitEventName',
@@ -40,14 +39,9 @@ export default {
     // 监听项目选择框选中的项目id，获取对应的模块列表
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
-        // console.log('module.mounted.busOnEventName.project: ', JSON.stringify(project))
         this.getModulesByProjectId(project.id)
       })
     }
-    // this.$bus.$on(this.$busEvents.projectSelectorChoiceProject, (projectId) => {
-    //   console.log('module.mounted.projectSelectorChoiceProject.projectId: ', JSON.stringify(projectId))
-    //   this.getModulesByProjectId(projectId)
-    // })
 
     // 是否监控模块的改变
     if (this.busOnModuleDialogCommit) {
@@ -65,7 +59,6 @@ export default {
     if (this.busOnModuleDialogCommit) {
       this.$bus.$off(this.busOnModuleDialogCommit)
     }
-    // this.$bus.$off(this.$busEvents.projectSelectorChoiceProject)
   },
 
   methods: {
@@ -85,19 +78,15 @@ export default {
 
     // 通过bus发送选中的模块
     clickModule(val) {
-      // console.log('module.methods.clickModule: ', JSON.stringify(val))
       this.sendEmit()
-      // this.$bus.$emit(this.$busEvents.moduleSelectorChoiceModule, this.tempModuleId)
     }
 
   },
 
   created() {
-    // console.log('module.created.moduleId: ', JSON.stringify(this.moduleId))
     this.tempModuleId = this.moduleId
 
     // 第一次加载的时候，获取对应的模块列表
-    // console.log('module.created.this.projectId: ', JSON.stringify(this.projectId))
     if (this.projectId) {
       this.getModulesByProjectId(this.projectId)
     }
@@ -108,21 +97,13 @@ export default {
     // 监控 状态，为true时，判断项目id是否有改变，有改变则重新请求模块列表
     "status": {
       handler(newVal, oldVal) {
-        // console.log('module.watch.status.oldVal: ', JSON.stringify(oldVal))
-        // console.log('module.watch.status.newVal: ', JSON.stringify(newVal))
-        // console.log('module.watch.projectIdHistory: ', JSON.stringify(this.projectIdHistory))
         if (newVal) {
           // 判断项目id是否有改变，有改变则重新请求模块列表
           if (this.projectIdHistory && this.projectIdHistory[0] !== this.projectIdHistory[1]) {
             this.getModulesByProjectId(this.projectIdHistory[0])
           } else {
-            // 判断模块列表是否有改变，有则重新请求模块列表
-            if (this.moduleListHistory.length > 0) {
-              this.getModulesByProjectId(this.projectId)
-            }
+            this.getModulesByProjectId(this.projectId)
           }
-
-
         }
       }
     },
@@ -130,8 +111,6 @@ export default {
     // 监控项目id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求模块列表
     'projectId': {
       handler(newVal, oldVal) {
-        // console.log('module.watch.projectId.oldVal: ', JSON.stringify(oldVal))
-        // console.log('module.watch.projectId.newVal: ', JSON.stringify(newVal))
         if (this.status) {
           this.getModulesByProjectId(newVal)
         } else {
@@ -142,43 +121,22 @@ export default {
 
     'moduleId': {
       handler(newVal, oldVal) {
-        // console.log('module.watch.moduleId.oldVal: ', JSON.stringify(oldVal))
-        // console.log('module.watch.moduleId.newVal: ', JSON.stringify(newVal))
         this.tempModuleId = newVal
       }
     },
 
-
     'tempModuleList': {
       handler(newVal, oldVal) {
-        // console.log('module.watch.tempModuleList.oldVal: ', JSON.stringify(oldVal))
-        // console.log('module.watch.tempModuleList.newVal: ', JSON.stringify(newVal))
-
         // 如果没有选中模块id，则默认选择模块列表中的第一条数据
         if (newVal && !this.tempModuleId) {
           // this.tempModuleId = newVal[0].id
           if (newVal[0]) {
             this.tempModuleId = newVal[0].id
           }
-
         }
-        // else {
-        //   this.tempModuleId = ''
-        // }
-        // this.$bus.$emit(this.$busEvents.moduleSelectorChoiceModule, this.tempModuleId)
         this.sendEmit()
       }
-    },
-
-    // 'tempModuleId': {
-    //   handler(newVal, oldVal) {
-    //     if (newVal){
-    //       this.$bus.$emit(this.$busEvents.moduleSelectorChoiceModule, newVal)
-    //     }
-    //     console.log('module.watch.tempModuleId.oldVal: ', JSON.stringify(oldVal))
-    //     console.log('module.watch.tempModuleId.newVal: ', JSON.stringify(newVal))
-    //   }
-    // },
+    }
   }
 }
 </script>

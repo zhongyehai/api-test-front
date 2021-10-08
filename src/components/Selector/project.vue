@@ -4,7 +4,6 @@
     placeholder="请选择项目"
     size="small"
     filterable
-    style="min-width: 20%;padding-right:10px"
     :disabled="isDisabled"
     @change="choiceProject"
   >

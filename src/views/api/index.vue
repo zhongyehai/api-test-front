@@ -75,7 +75,7 @@
 
     <apiDialog
       :currentProject="currentProject"
-      :currentModule="currentModule"
+      :currentModuleId="currentModuleId"
     ></apiDialog>
 
     <!-- 接口运行结果 -->
@@ -102,7 +102,7 @@ export default {
   // 接收父组件传参的key
   props: [
     'currentProject',
-    'currentModule'
+    'currentModuleId'
   ],
   data() {
     return {
@@ -202,7 +202,7 @@ export default {
     getApiList(params) {
       this.listLoading = true
       apiList({
-        'moduleId': this.currentModule.id,
+        'moduleId': this.currentModuleId,
         'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
@@ -226,18 +226,18 @@ export default {
   computed: {
     // 接口列表能用的宽度
     apiListTableWidth() {
-      return `${window.innerWidth - 700}px`
+      return `${window.innerWidth - 300}px`
     }
   },
 
   watch: {
 
     // 监听父组件传过来的当前选中的模块，实时获取父组件传过来的模块信息对应下的接口列表
-    'currentModule': {
+    'currentModuleId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
         this.getApiList({
-          'moduleId': newVal.id,
+          'moduleId': newVal,
           'pageNum': this.defaultPage.pageNum,
           'pageSize': this.defaultPage.apiPageSize
         })

@@ -5,7 +5,6 @@
     filterable
     placeholder="请选择运行环境"
     size="small"
-    style="min-width: 20%;padding-right:10px"
   >
     <el-option v-for="(item) in environments"
                :key="item.key"

@@ -19,16 +19,18 @@
                   :props="defaultProps"
                   @node-click="projectClick"
                 >
-
-                  <!-- 鼠标滑过事件 -->
                   <span class="custom-tree-node"
                         slot-scope="{ node, data }"
                         style="width:100%;"
                         @mouseenter="mouseenter(data)"
                         @mouseleave="mouseleave(data)">
                   <span>{{ node.label }}</span>
-                    <!--                  <span v-show="data.isShow" style="margin-left: 15px">添加</span>-->
-                  <span v-show="data.isShow" style="margin-left: 5px">添加</span>
+                  <span v-show="data.showMenu" style="margin-left: 10px">
+                    <el-button size="mini"
+                               type="text"
+                               @click="clickMenu(node, data)"
+                    >{{ menuName }}</el-button>
+                  </span>
                 </span>
 
                 </el-tree>
@@ -64,8 +66,9 @@ export default {
     Pagination
   },
   props: [
-    'busEventNameOneClick',
-    'busEventNameTwoClick',
+    'busEventClickTree',
+    'busEventClickMenu',
+    'menuName'  // 菜单名
   ],
 
   data() {
@@ -80,7 +83,7 @@ export default {
       defaultPage: {
         pageNum: 1,
         projectPageSize: 20,
-        modulePageSize: 19,  // 由于模块操作占了一行，所以只取19条
+        modulePageSize: 20,  // 由于模块操作占了一行，所以只取19条
         apiPageSize: 20
       },
 
@@ -111,56 +114,14 @@ export default {
 
   methods: {
 
+    // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
-      // console.log('mouseenter, data.show = true: ', data)
-      data.isShow = true
+      this.$set(data, 'showMenu', true);
     },
 
+    // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
-      // console.log('mouseleave, data.show = false: ', data)
-      data.isShow = false
-    },
-
-    /**这里是关键一步，实现hover */
-    renderContent(h, {node, data, store}) {
-      console.log(data)
-      return (
-        <span class="custom-tree-node"
-              on-mouseover={() => {
-                data.is_show = true
-              }}
-              on-mouseout={() => {
-                data.is_show = false
-              }}>
-            <span>{node.label}</span>
-          {data.is_show ? <span><el-button size="mini" type="text">添加</el-button></span> : null}
-          </span>);
-    },
-
-    append() {
-    },
-
-    // 点击项目时，单击则把项目提交到bus，双击则触发对应的新建事件
-    projectClick(project) {
-      this.treeClickCount++;  // 记录点击次数
-      // 计时器,计算300毫秒为单位,可自行修改
-      this.timer = window.setTimeout(() => {
-        if (this.treeClickCount === 1) {  // 单击，把项目提交到bus
-          if (this.busEventNameOneClick){
-            this.$bus.$emit(this.busEventNameOneClick, project)
-          }
-        } else if (this.treeClickCount > 1) {  // 双击，若传了事件名，则触发对应的新建事件
-          if (this.busEventNameTwoClick) {
-            // 如果当前任务列表的项目id不为当前点击的项目id，则请求当前点击的项目的任务列表
-            if (this.busEventNameOneClick && this.currentProjectId !== project.id){
-              this.$bus.$emit(this.busEventNameOneClick, project)
-            }
-            this.$bus.$emit(this.busEventNameTwoClick, 'add', project)
-          }
-        }
-        this.treeClickCount = 0  // 把次数归零
-        this.currentProjectId = project.id
-      }, 200);
+      this.$set(data, 'showMenu', false);
     },
 
     // 获取该分页的项目列表
@@ -183,6 +144,26 @@ export default {
           this.defaultSelectedProject.push(response.data.data[0].id)
         }
       })
+    },
+
+    // 点击项目时，提交单击的bus事件，当前选中的项目，当前所在页的项目列表
+    projectClick(project) {
+      if (this.busEventClickTree) {
+        this.$bus.$emit(this.busEventClickTree, project, this.projects.project_list)
+      }
+      this.currentProjectId = project.id
+    },
+
+    // 点击菜单时，提交点击菜单触发的bus事件
+    clickMenu(node, data) {
+      if (this.busEventClickMenu) {
+        // 如果当前任务列表的项目id不为当前点击的项目id，则请求当前点击的项目的任务列表
+        if (this.busEventClickTree && this.currentProjectId !== data.id) {
+          this.$bus.$emit(this.busEventClickTree, data)
+        }
+        this.$bus.$emit(this.busEventClickMenu, 'add', data)
+      }
+      this.currentProjectId = data.id
     }
   },
 

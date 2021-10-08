@@ -2,163 +2,213 @@
 
   <div class="app-container">
 
-    <!-- 搜索、添加栏 -->
-    <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'用例名'" style="width: 200px;" class="filter-item" size="mini"
-                @keyup.enter.native="handleFilter"
-      />
-      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" icon="el-icon-search" size="mini"
-                 @click="handleFilter"
-      >
-        {{ '搜索' }}
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" size="mini"
-                 @click="clickCreateCase"
-      >
-        {{ '添加用例' }}
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-refresh" size="mini"
-                 @click="handleInitListQuery"
-      >
-        {{ '重置' }}
-      </el-button>
-    </div>
-    <br>
+    <el-row>
 
-    <div class="tabs" style="width: 100%">
+      <!-- 第一列项目树 -->
+      <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
+        <el-tabs v-model="projectTab" class="table_padding table_project">
+          <el-tab-pane :label="projectTab" :name="projectTab">
+            <div class="custom-tree-container">
+              <div class="block">
+                <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
+                <el-tree
+                  ref="tree"
+                  :check-on-click-node="false"
+                  :data="dataList"
+                  :default-expanded-keys="[defaultModule]"
+                  :current-node-key="currentNodeKey	"
+                  :empty-text="'请先创建项目'"
+                  :expand-on-click-node="false"
+                  :filter-node-method="filterNode"
+                  :highlight-current="true"
+                  lazy
+                  node-key="id"
+                  @node-click="clickNode">
+          <span slot-scope="{ node, data }"
+                class="custom-tree-node"
+                @mouseenter="mouseenter(data)"
+                @mouseleave="mouseleave(data)">
+            <span>{{ data.name }}</span>
+            <span v-show="data.showMenu">
+              <el-tooltip class="item" content="为当前模块添加用例" effect="dark" placement="top-start">
+                <el-button v-if="node.level !== 1"
+                           size="mini"
+                           type="text"
+                           @click="addCase(node, data)"
+                > 添加用例 </el-button>
+              </el-tooltip>
+            </span>
+          </span>
+                </el-tree>
+              </div>
 
-      <!-- 项目列表树组件 -->
-      <projectTreeView
-        ref="projectTree"
-        class="projectTree"
-        :busEventNameOneClick="$busEvents.projectTreeChoiceProject"
-      ></projectTreeView>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
 
-      <!-- 用例集列表树组件 -->
-      <caseSetTree
-        ref="caseSetTree"
-        :busOnEventName="$busEvents.projectTreeChoiceProject"
-        :busEmitEventName="$busEvents.caseSetTreeChoiceCaseSet"
-      ></caseSetTree>
+      <!-- 第二列，用例列表 -->
+      <el-col style="width: 79%; margin-left: 5px">
+        <!-- 用例管理组件 -->
+        <caseManage
+          :currentProject="currentProject"
+          :currentModule="temp_data"
+        ></caseManage>
+      </el-col>
 
-      <!-- 新增/修改用例集表单 -->
-      <caseSetDialog
-        ref="dialog"
-        :currentProject="projectTreeSelectedProject"
-        :currentCaseSet="caseSetTreeSelectedCaseSet"
-      ></caseSetDialog>
-
-      <!-- 用例管理组件 -->
-      <caseManage
-        :currentProject="projectTreeSelectedProject"
-        :currentCaseSet="caseSetTreeSelectedCaseSet"
-      ></caseManage>
-
-    </div>
+    </el-row>
 
   </div>
+
 
 </template>
 
 <script>
-import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination'
-import projectTreeView from '@/components/Trees/projectTree' // 项目树组件
-import caseSetTree from '@/components/Trees/caseSetTree' // 模块树
-import caseSetDialog from '@/views/caseSet/caseSetDialog'  // 模块编辑组件
+import apiManage from '@/views/api'  // 接口管理组件
 import caseManage from '@/views/case'  // 接口管理组件
-import caseDialog from '@/views/case/caseDialog'  // 新增接口组件
+import waves from "@/directive/waves";
+import {projectList} from "@/apis/project";
+import {moduleTree} from "@/apis/module";
 
-import errorView from '@/components/errorView'  // 错误消息组件
 
 export default {
   name: 'index',
   components: {
-    Pagination,
-    projectTreeView,
-    caseSetTree,
-    caseSetDialog,
-    errorView,
-    caseDialog,
+    apiManage,
     caseManage
   },
   directives: {waves},
   data() {
     return {
+      // 查询关键字
+      filterText: '',
 
-      // 项目树选中的项目
-      projectTreeSelectedProject: null,
+      projectTab: '项目和模块',
 
-      // 模块树选中的模块
-      caseSetTreeSelectedCaseSet: null,
-
-      // 查询对象
-      listQuery: {
-        pageNum: 1,
-        pageSize: 20,
-        project_id: undefined,  // 项目id
-        module_id: undefined,  // 模块id
-        api_name: undefined // 接口名
-      }
+      defaultModule: {},
+      dataList: [],
+      temp_node: {},
+      temp_data: {},
+      currentNodeKey: '',
+      dialogFormVisible: false,
+      dialogStatus: '',
+      tempProjectList: [],
+      currentProject: {},
+      tempDataForm: {
+        name: '',
+        id: '',
+        num: '',
+        level: '',
+        up_module: '',
+        project_id: '',
+      },
+      // 检验规则
+      rules: {
+        name: [{required: true, message: '请输入模块名称', trigger: 'blur'}]
+      },
     }
   },
 
-  mounted() {
-
-    // 监听 项目树 选中 项目 事件
-    this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project) => {
-      this.projectTreeSelectedProject = project
-    })
-
-    // 监听 用例集树 选中 用例集 事件
-    this.$bus.$on(this.$busEvents.caseSetTreeChoiceCaseSet, (caseSet) => {
-      this.caseSetTreeSelectedCaseSet = caseSet
-    })
-
-  },
-
-  // 组件销毁前，关闭bus监听事件
-  beforeDestroy() {
-    this.$bus.$off(this.$busEvents.projectTreeChoiceProject)
-    this.$bus.$off(this.$busEvents.caseSetTreeChoiceCaseSet)
+  created() {
+    this.getProjectList()
   },
 
   methods: {
 
-
-    // TODO 搜索栏
-    handleFilter() {
+    // 鼠标滑入的时候，设置一个值，代表展示菜单
+    mouseenter(data) {
+      this.$set(data, 'showMenu', true);
     },
 
-    // 点击添加接口
-    clickCreateCase() {
+    // 鼠标滑出的时候，把可展示菜单的标识去掉
+    mouseleave(data) {
+      this.$set(data, 'showMenu', false);
+    },
+
+    // 递归把列表转为树行结构
+    arrayToTree(arr, parentId) {
+      //  arr 是返回的数据  parendId 父id
+      let temp = [];
+      let treeArr = arr;
+      treeArr.forEach((item, index) => {
+        if (item.up_module == parentId) {
+          if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
+            // 递归调用此函数
+            treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
+          }
+          temp.push(treeArr[index]);
+        }
+      });
+      return temp;
+    },
+
+    // 点击树的时候，获取到对应节点的数据
+    clickNode(data, node, element) {
+      this.temp_node = node
+      this.temp_data = node.level !== 1 ? data : this.temp_data
+      this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
+
+      // 点击的是项目，且项目下无节点，则获取项目下的节点
+      if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
+        moduleTree({'project_id': data.id}).then(response => {
+          if (this.showMessage(this, response)) {
+            var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
+            let parse_data = this.arrayToTree(response_data, null)
+            this.$set(data, 'children', parse_data)
+          }
+        })
+      }
+      // 展开/收缩节点
+      this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded
+    },
+
+    // 获取项目列表
+    getProjectList() {
+      projectList().then(response => {
+        this.tempProjectList = response.data.data
+        this.dataList = response.data.data  // this.setChildren(response.data.data)
+      })
+    },
+
+    // 获取项目
+    getCurrentProject(project_id) {
+      for (let index in this.tempProjectList) {
+        let currentProject = this.tempProjectList[index]
+        if (currentProject.id === project_id) {
+          return currentProject
+        }
+      }
+    },
+
+    // 关键字查询模块
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+
+    // 添加用例
+    addCase(node, data) {
+      this.temp_node = node
+      this.temp_data = data
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'add')
     },
 
-    handleInitListQuery() {
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
     }
   },
-  computed: {},
-
-  watch: {}
-}
+};
 </script>
 
-<style scoped>
-
-.projectTree {
-  float: left;
-  width: 200px;
-}
-
-.caseSetTree {
-  float: left;
-  width: 200px;
-  left: 200px;
-}
-
-.table_case {
-  float: left;
-  left: 400px;
+<style>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
 }
 </style>

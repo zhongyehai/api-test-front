@@ -6,10 +6,10 @@
       <projectTreeView
         ref="projectTree"
         class="projectTree"
-        :busEventNameOneClick="$busEvents.projectTreeChoiceProject"
-        :busEventNameTwoClick="$busEvents.taskDialogIsShow"
+        :busEventClickTree="$busEvents.projectTreeChoiceProject"
+        :busEventClickMenu="$busEvents.taskDialogIsShow"
+        :menuName="'添加任务'"
       ></projectTreeView>
-
 
       <!-- 定时任务列表 -->
       <el-tabs v-model="taskTab" class="table_padding taskTab">
@@ -223,6 +223,7 @@ export default {
       this.getTaskList()
     })
 
+    // 项目树选中项事件
     this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project) => {
       this.projectId = project.id
       this.getTaskList()
@@ -239,7 +240,7 @@ export default {
   computed: {
     // 用例列表能用的宽度
     caseSetListTableWidth() {
-      return `${window.innerWidth - 700}px`
+      return `${window.innerWidth - 300}px`
     }
   },
 }

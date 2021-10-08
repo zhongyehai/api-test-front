@@ -19,13 +19,13 @@
             >
               <el-table-column prop="num" label="编号" min-width="10%">
                 <template slot-scope="scope">
-                    <span> {{ scope.$index + 1 }} </span>
+                  <span> {{ scope.$index + 1 }} </span>
                 </template>
               </el-table-column>
 
               <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="30%">
                 <template slot-scope="scope">
-                    <span> {{ scope.row.name }} </span>
+                  <span> {{ scope.row.name }} </span>
                 </template>
               </el-table-column>
 
@@ -54,13 +54,13 @@
                   </el-tooltip>
 
                   <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
-                  <el-button type="danger" size="mini"
-                             @click.native="confirmBox(
+                    <el-button type="danger" size="mini"
+                               @click.native="confirmBox(
                                delCase,
                                scope.row.id,
                                `用例 ${scope.row.name}`)">
-                    删除
-                  </el-button>
+                      删除
+                    </el-button>
                   </el-tooltip>
                 </template>
               </el-table-column>
@@ -81,7 +81,7 @@
 
     <caseDialog
       :currentProject="currentProject"
-      :currentCaseSet="currentCaseSet"
+      :currentModule="currentModule"
     ></caseDialog>
 
   </div>
@@ -105,7 +105,7 @@ export default {
   // 接收父组件传参的key
   props: [
     'currentProject',
-    'currentCaseSet'
+    'currentModule'
   ],
   data() {
     return {
@@ -170,7 +170,7 @@ export default {
   methods: {
 
     // 编辑用例
-    editCase(row){
+    editCase(row) {
       this.tempCase = row
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'edit', this.tempCase)
     },
@@ -213,9 +213,7 @@ export default {
     // 运行用例
     runCase(caseData) {
       caseRun({
-        'caseName': caseData.name,
-        'caseIds': [caseData.id],
-        'projectId': caseData.project_id
+        caseId: [caseData.id]
       }).then(response => {
         // console.log('case.index.methods.runCase.response: ', JSON.stringify(response))
         this.openReportById(response.data.report_id)
@@ -240,7 +238,7 @@ export default {
     getCaseList(params) {
       this.listLoading = true
       caseList({
-        'caseSetId': this.currentCaseSet.id,
+        'moduleId': this.currentModule.id,
         'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
@@ -254,21 +252,24 @@ export default {
   computed: {
     // 用例列表能用的宽度
     caseSetListTableWidth() {
-      return `${window.innerWidth - 700}px`
+      return `${window.innerWidth - 300}px`
     }
   },
 
   watch: {
 
     // 监听父组件传过来的当前选中的用例集，实时获取父组件传过来的用例集对应下的用例列表
-    'currentCaseSet': {
+    'currentModule': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        this.getCaseList({
-          'caseSetId': newVal.id,
-          'pageNum': this.defaultPage.pageNum,
-          'pageSize': this.defaultPage.apiPageSize
-        })
+        // if (!oldVal && newVal.id !== oldVal.id){
+        if (newVal.id !== oldVal.id) {
+          this.getCaseList({
+            'caseSetId': newVal.id,
+            'pageNum': this.defaultPage.pageNum,
+            'pageSize': this.defaultPage.apiPageSize
+          })
+        }
       }
     },
 

@@ -5,7 +5,6 @@
     multiple
     filterable
     placeholder="请选择函数文件"
-    style="width:100%"
     class="filter-item">
     <el-option v-for="funcFile in funcFilesList"
                :key="funcFile.id"

@@ -1,67 +1,113 @@
 <template>
   <div class="app-container">
-    <el-upload
-      class="upload-demo"
-      ref="upload"
-      action="https://jsonplaceholder.typicode.com/posts/"
-      :on-change="onChange"
-      :on-preview="handlePreview"
-      :on-remove="handleRemove"
-      :file-list="fileList"
-      :auto-upload="false">
-      <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-    </el-upload>
+    <el-tree
+      :data="data"
+      node-key="id"
+      default-expand-all
+      @node-drag-start="handleDragStart"
+      @node-drag-enter="handleDragEnter"
+      @node-drag-leave="handleDragLeave"
+      @node-drag-over="handleDragOver"
+      @node-drag-end="handleDragEnd"
+      @node-drop="handleDrop"
+      draggable
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag"
+      @node-click="clickNode"
+    >
+
+    </el-tree>
   </div>
 </template>
 
 <script>
 export default {
+  name: "test",
   data() {
     return {
-      fileList: [{
-        name: 'food.jpeg',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+      data: [{
+        id: 1,
+        label: '一级 1',
+        children: [{
+          id: 4,
+          label: '二级 1-1',
+          children: [{
+            id: 9,
+            label: '三级 1-1-1'
+          }, {
+            id: 10,
+            label: '三级 1-1-2'
+          }]
+        }]
       }, {
-        name: 'food2.jpeg',
-        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-      }]
+        id: 2,
+        label: '一级 2',
+        children: [{
+          id: 5,
+          label: '二级 2-1'
+        }, {
+          id: 6,
+          label: '二级 2-2'
+        }]
+      }, {
+        id: 3,
+        label: '一级 3',
+        children: [{
+          id: 7,
+          label: '二级 3-1'
+        }, {
+          id: 8,
+          label: '二级 3-2',
+          children: [{
+            id: 11,
+            label: '三级 3-2-1'
+          }, {
+            id: 12,
+            label: '三级 3-2-2'
+          }, {
+            id: 13,
+            label: '三级 3-2-3'
+          }]
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     };
   },
   methods: {
-    submitUpload() {
-      this.$refs.upload.submit();
+    clickNode(){
+      console.log(1111111111)
     },
 
-    handleRemove(file, fileList) {
-      console.log('handleRemove.file: ', file);
-      console.log('handleRemove.fileList: ', fileList);
-      fileList.splice(fileList.indexOf(file), 1)
-      console.log('handleRemove.fileList: ', fileList);
-      console.log('this.fileList: ', this.fileList);
+    handleDragStart(node, ev) {
+      console.log('handleDragStart节点开始拖拽时触发的事件: ', node);
     },
-
-    handlePreview(file) {
-      console.log('handlePreview.file: ', file);
-      // console.log('handlePreview.fileList: ', fileList);
+    handleDragEnter(draggingNode, dropNode, ev) {
+      console.log('handleDragEnter拖拽进入其他节点时触发的事件: ', dropNode.label);
     },
-
-    // 选中文件事件
-    onChange(file, fileList){
-      // 检验文件是否已存在
-      console.log('onChange.file: ', file);
-      console.log('onChange.fileList: ', fileList);
-      console.log('onChange.this.fileList: ', this.fileList);
-      this.$confirm('服务器已存在相同名字文件，是否覆盖?', '提示', {
-        confirmButtonText: '覆盖',
-        cancelButtonText: '不覆盖',
-        type: 'warning'
-      }).then(() => {
-        console.log(1111111111111)
-      }).catch(() => {
-        this.handleRemove(file, fileList)
-      });
+    handleDragLeave(draggingNode, dropNode, ev) {
+      console.log('handleDragLeave拖拽离开某个节点时触发的事件: ', dropNode.label);
+    },
+    handleDragOver(draggingNode, dropNode, ev) {
+      console.log('handleDragOver在拖拽节点时触发的事件: ', dropNode.label);
+    },
+    handleDragEnd(draggingNode, dropNode, dropType, ev) {
+      console.log('handleDragEnd拖拽结束时触发的事件: ', dropNode && dropNode.label, dropType);
+    },
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('handleDrop拖拽成功完成时触发的事件: ', dropNode.label, dropType);
+    },
+    allowDrop(draggingNode, dropNode, type) {
+      if (dropNode.data.label === '二级 3-1') {
+        return type !== 'inner';
+      } else {
+        return true;
+      }
+    },
+    allowDrag(draggingNode) {
+      return draggingNode.data.label.indexOf('三级 3-2-2') === -1;
     }
   }
 }

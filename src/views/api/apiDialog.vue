@@ -204,7 +204,7 @@ export default {
   name: 'apiEditDialog',
   props: [
     'currentProject',
-    'currentModule',
+    'currentModuleId',
   ],
   components: {
     projectSelectorView,
@@ -348,9 +348,8 @@ export default {
       this.tempApi.data_json = {}
       this.tempApi.extracts = [{key: null, value: null, remark: null}]
       this.tempApi.validates = [{key: null, value: null, validate_type: null, remark: null}]
-      this.tempApi.module_id = this.currentModule ? this.currentModule.id : ''
+      this.tempApi.module_id = this.currentModuleId ? this.currentModuleId : ''
       this.tempApi.project_id = this.currentProject ? this.currentProject.id : ''
-      // console.log('apiDialog.initNewTempApi.tempApi: ', JSON.stringify(this.tempApi))
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
@@ -358,8 +357,6 @@ export default {
     // 点击修改接口时，初始化 dialog 数据
     initUpdateTempApi(api) {
       this.tempApi = api
-      // console.log('apiDialog.initUpdateTempApi.tempApi: ', JSON.stringify(this.tempApi))
-
       this.dialogFormVisible = true
     },
 
@@ -380,7 +377,6 @@ export default {
         params: this.$refs.queryStringView.tempData,
         extracts: this.$refs.extractsView.tempData,
         validates: this.$refs.validatesView.tempValidates,
-        // data_type: this.$refs.bodyView.tempDataType,
         data_type: this.$refs.bodyView.activeName,
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         data_json: this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
@@ -432,10 +428,10 @@ export default {
     },
 
     // 监控父组件选中的模块
-    'currentModule': {
+    'currentModuleId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        this.tempApi.module_id = newVal.id
+        this.tempApi.module_id = newVal
       }
     }
   }

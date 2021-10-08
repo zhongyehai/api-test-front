@@ -20,7 +20,7 @@ import {caseList} from '@/apis/case'
 export default {
   name: "caseSelector",
   props: [
-    'caseSetId',
+    'module_id',
     'caseIds',
     'busOnEventName',
     'busEmitEventName'
@@ -28,7 +28,7 @@ export default {
   data() {
     return {
       caseSelectorIsDisabled: false,
-      tempCaseSetId: '',
+      tempModuleId: '',
       tempCase: '',
       tempCaseList: [],
 
@@ -36,8 +36,8 @@ export default {
   },
   methods: {
     getCaseList() {
-      console.log('caseSetId: ', this.tempCaseSetId)
-      caseList({caseSetId: this.tempCaseSetId}).then(response => {
+      console.log('moduleId1111111: ', this.tempModuleId)
+      caseList({moduleId: this.tempModuleId}).then(response => {
         this.tempCaseList = response.data.data
       })
     },
@@ -51,32 +51,19 @@ export default {
   mounted() {
 
     if (this.busOnEventName) {
-      this.$bus.$on(this.busOnEventName, (caseSetList) => {
-        // 选中了多个用例集，则清空选中的用例，并把用例选择框置为不可编辑
-        if (caseSetList && caseSetList.length > 1) {
+      this.$bus.$on(this.busOnEventName, (ModuleList) => {
+        // 选中了多个模块，则清空选中的用例，并把用例选择框置为不可编辑
+        if (ModuleList && ModuleList.length > 1) {
           this.caseSelectorIsDisabled = true
         } else {
-          // 只选中了一个用例集的时候，获取该用例集下的用例渲染到下拉框
+          // 只选中了一个模块的时候，获取该用模块下的用例渲染到下拉框
           this.caseSelectorIsDisabled = false
-          this.tempCaseSetId = caseSetList[0]
+          this.tempModuleId = ModuleList[0]
           this.getCaseList()
         }
         this.tempCase = []
       })
     }
-
-    // this.$bus.$on(this.$busEvents.caseSetSelectorChoiceCaseSet, (caseSetList) => {
-    //   // 选中了多个用例集，则清空选中的用例，并把用例选择框置为不可编辑
-    //   if (caseSetList && caseSetList.length > 1) {
-    //     this.tempCase = ''
-    //     this.caseSelectorIsDisabled = true
-    //   } else {
-    //     // 只选中了一个用例集的时候，获取该用例集下的用例渲染到下拉框
-    //     this.caseSelectorIsDisabled = false
-    //     this.tempCaseSetId = caseSetList[0]
-    //     this.getCaseList()
-    //   }
-    // })
   },
 
   // 页面销毁前，关闭bus监听项目选中事件
@@ -88,11 +75,10 @@ export default {
   },
 
   created() {
-    this.tempCaseSetId = this.caseSetId
-
+    this.tempModuleId = this.module_id
     this.tempCase = this.caseIds
 
-    if (this.tempCaseSetId) {
+    if (this.tempModuleId) {
       this.getCaseList()
     }
   },
@@ -101,13 +87,18 @@ export default {
 
     'caseIds': {
       handler(newVal, oldVal) {
-        this.tempCase = newVal
+        console.log('watch.caseIds.oldVal: ', oldVal)
+        console.log('watch.caseIds.newVal: ', newVal)
+        this.tempCase = newVal ? newVal : []
       }
     },
 
-    'caseSetId': {
+    'module_id': {
       handler(newVal, oldVal) {
-        this.tempCaseSetId = newVal
+        console.log('watch.module_id.oldVal: ', oldVal)
+        console.log('watch.module_id.newVal: ', newVal)
+        this.tempModuleId = newVal
+        this.tempCase = []  // 模块变了，则把选中的用例清空掉
         this.getCaseList()
       }
     }
