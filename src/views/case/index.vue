@@ -43,23 +43,22 @@
 
               <el-table-column label="用例操作" min-width="40%">
                 <template slot-scope="scope">
+
+                  <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
+                    <el-button type="success" size="mini" :loading="scope.row.isLoading"
+                               @click.native="runCase(scope.row)">运行
+                    </el-button>
+                  </el-tooltip>
+
                   <el-button type="primary" size="mini" @click.native="editCase(scope.row)">编辑</el-button>
 
                   <el-tooltip class="item" effect="dark" content="复制用例及其步骤" placement="top-end">
                     <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">复制</el-button>
                   </el-tooltip>
 
-                  <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
-                    <el-button type="primary" size="mini" @click.native="runCase(scope.row)">运行</el-button>
-                  </el-tooltip>
-
                   <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
                     <el-button type="danger" size="mini"
-                               @click.native="confirmBox(
-                               delCase,
-                               scope.row.id,
-                               `用例 ${scope.row.name}`)">
-                      删除
+                               @click.native="confirmBox(delCase, scope.row.id, `用例 ${scope.row.name}`)">删除
                     </el-button>
                   </el-tooltip>
                 </template>
@@ -212,10 +211,12 @@ export default {
 
     // 运行用例
     runCase(caseData) {
+      this.$set(caseData, 'isLoading', true)
       caseRun({
         caseId: [caseData.id]
       }).then(response => {
         // console.log('case.index.methods.runCase.response: ', JSON.stringify(response))
+        this.$set(caseData, 'isLoading', false)
         this.openReportById(response.data.report_id)
       })
     },

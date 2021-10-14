@@ -24,7 +24,7 @@
 
               <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="15%">
                 <template slot-scope="scope">
-                    <span> {{ scope.row.name }} </span>
+                  <span> {{ scope.row.name }} </span>
                 </template>
               </el-table-column>
 
@@ -43,7 +43,8 @@
 
               <el-table-column label="接口操作" min-width="39%">
                 <template slot-scope="scope">
-                  <el-button size="mini" type="success" @click="runApis(scope.row)">
+
+                  <el-button size="mini" type="success" :loading="scope.row.isLoading" @click="runApis(scope.row)">
                     运行
                   </el-button>
                   <el-button size="mini" type="primary" @click="showEditForm(scope.row)">
@@ -110,6 +111,9 @@ export default {
       // 请求列表等待响应的状态
       listLoading: false,
 
+      // 运行接口按钮的loading状态
+      isLoading: false,
+
       //  tab页的显示
       apiTab: 'api',
 
@@ -160,7 +164,7 @@ export default {
   methods: {
 
     // 打开编辑框
-    showEditForm(row){
+    showEditForm(row) {
       this.tempApi = JSON.parse(JSON.stringify(row))
       this.$bus.$emit(this.$busEvents.apiDialogStatus, 'edit', this.tempApi)
     },
@@ -214,10 +218,12 @@ export default {
 
     // 运行接口
     runApis(row) {
+      this.$set(row, 'isLoading', true)
       runApi({
         'projectId': row.project_id,
         'apis': [row.id]
       }).then(response => {
+        this.$set(row, 'isLoading', false)
         this.runApiResultData = response.data.data
       })
     },

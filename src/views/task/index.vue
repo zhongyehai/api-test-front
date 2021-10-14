@@ -52,42 +52,25 @@
 
                 <el-table-column label="操作" min-width="39%">
                   <template slot-scope="scope">
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      v-if="scope.row.status === '启用中'"
-                      @click.native="disable(scope.row.id)"
-                    >禁用
+
+                    <el-button type="primary" size="mini" v-if="scope.row.status === '启用中'"
+                               @click.native="disable(scope.row.id)">禁用
                     </el-button>
 
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      v-if="scope.row.status === '禁用中'"
-                      @click.native="enable(scope.row.id)"
-                    >启用
+                    <el-button type="primary" size="mini" v-if="scope.row.status === '禁用中'"
+                               @click.native="enable(scope.row.id)">启用
                     </el-button>
 
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      :disabled="scope.row.status === '启用中'"
-                      @click.native="editTask(scope.row)"
-                    >修改
+                    <el-button type="primary" size="mini" :disabled="scope.row.status === '启用中'"
+                               @click.native="editTask(scope.row)">修改
                     </el-button>
 
-                    <el-button
-                      type="success"
-                      size="mini"
-                      :loading="scope.row.isShow"
-                      @click.native="run(scope.row.id)"
-                    >运行
+                    <el-button type="success" size="mini" :loading="scope.row.isLoading"
+                               @click.native="run(scope.row)">运行
                     </el-button>
 
-                    <el-button type="danger"
-                               size="mini"
-                               @click.native="confirmBox(delTask, scope.row.id, scope.row.name)"
-                    >删除
+                    <el-button type="danger" size="mini"
+                               @click.native="confirmBox(delTask, scope.row.id, scope.row.name)">删除
                     </el-button>
 
                   </template>
@@ -147,9 +130,11 @@ export default {
     },
 
     // 运行任务
-    run(taskId) {
-      runTask({id: taskId}).then(response => {
+    run(task) {
+      this.$set(task, 'isLoading', true)
+      runTask({id: task.id}).then(response => {
         if (this.showMessage(this, response)) {
+          this.$set(task, 'isLoading', false)
           this.openReportById(response.data.report_id)
         }
       })

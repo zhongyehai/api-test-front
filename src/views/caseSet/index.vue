@@ -99,7 +99,7 @@ export default {
         id: '',
         num: '',
         level: '',
-        up_module: '',
+        parent: '',
         project_id: '',
       },
       // 检验规则
@@ -131,7 +131,7 @@ export default {
       let temp = [];
       let treeArr = arr;
       treeArr.forEach((item, index) => {
-        if (item.up_module == parentId) {
+        if (item.parent == parentId) {
           if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
             // 递归调用此函数
             treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);

@@ -94,20 +94,13 @@
           ></methodsSelectorView>
 
           <!-- 接口地址 -->
-          <el-input placeholder="请输入接口地址"
-                    v-model="tempApi.addr"
-                    class="input-with-select"
-                    size="small"
-                    style="width: 80%;margin-right: 5px">
+          <el-input v-model="tempApi.addr" class="input-with-select" placeholder="请输入接口地址"
+                    size="small" style="width: 80%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->
           <el-tooltip class="item" effect="dark" content="会先自动保存，再触发调试" placement="right-end">
-            <el-button
-              type="primary"
-              @click.native="debugApi()"
-              size="small"
-              :loading="this.saveRunStatus">调试
+            <el-button type="primary" size="small" :loading="isLoading" @click.native="debugApi()">调试
             </el-button>
           </el-tooltip>
 
@@ -234,7 +227,7 @@ export default {
       // currentChoiceProjectHosts: [],
 
       // 是否展示请求接口时的等待状态
-      saveRunStatus: false,
+      isLoading: false,
 
       // 默认展示的tab页
       bodyShow: 'headers',
@@ -277,7 +270,7 @@ export default {
 
     // 调试api，先保存，走数据校验，再发送请求
     debugApi() {
-      this.saveRunStatus = true
+      this.isLoading = true
       if (this.tempApi.id) {
         putApi(this.getTempApi()).then(response => {
           if (this.showMessage(this, response)) {
@@ -295,7 +288,7 @@ export default {
         })
       }
       this.dialogStatus = 'update'
-      this.saveRunStatus = false
+      this.isLoading = false
 
     },
 

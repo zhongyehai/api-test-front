@@ -152,7 +152,7 @@ export default {
         id: '',
         num: '',
         level: '',
-        up_module: '',
+        parent: '',
         project_id: '',
       },
       // 检验规则
@@ -196,7 +196,7 @@ export default {
             id: '',
             num: '',
             level: this.dialog_temp_node.level + 1,
-            up_module: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
+            parent: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
             // node为第一级，则说明是项目级，直接取id，非第一级，则取当前node的project_id
             project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
           }).then(response => {
@@ -226,7 +226,7 @@ export default {
             id: this.dialog_temp_data.id,
             num: this.dialog_temp_data.num,
             level: this.dialog_temp_data.level,
-            up_module: this.dialog_temp_data.up_module,
+            parent: this.dialog_temp_data.parent,
             project_id: this.dialog_temp_data.project_id,
           }).then(response => {
             if (this.showMessage(this, response)) {
@@ -246,7 +246,7 @@ export default {
       let temp = [];
       let treeArr = arr;
       treeArr.forEach((item, index) => {
-        if (item.up_module == parentId) {
+        if (item.parent == parentId) {
           if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
             // 递归调用此函数
             treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
