@@ -42,7 +42,7 @@
 
                 <el-table-column label="生成时间" min-width="17%">
                   <template slot-scope="scope">
-                    <span> {{ parseTime(scope.row.created_time) }} </span>
+                    <span> {{ scope.row.created_time }} </span>
                   </template>
                 </el-table-column>
 
@@ -124,16 +124,6 @@ export default {
     }
   },
   methods: {
-
-    // 解析时间
-    parseTime(time) {
-      let d = new Date(time)
-      return d.getFullYear() + '-' + this.p((d.getMonth() + 1)) + '-' + this.p(d.getDate()) + '  ' + String(Number(this.p(d.getHours())) - 8) + ':' + this.p(d.getMinutes()) + ':' + this.p(d.getSeconds())
-    },
-
-    p(s) {
-      return s < 10 ? '0' + s : s
-    },
 
     // 获取项目对应的报告列表
     getReportList() {
