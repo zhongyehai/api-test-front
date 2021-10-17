@@ -4,6 +4,7 @@
     v-model="tempFuncFiles"
     multiple
     filterable
+    style="width:100%"
     placeholder="请选择函数文件"
     class="filter-item">
     <el-option v-for="funcFile in funcFilesList"
