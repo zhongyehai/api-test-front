@@ -96,18 +96,18 @@
             <el-radio v-model="tempTask.is_send" label="3">仅有不通过用例时发送</el-radio>
           </el-form-item>
 
-          <el-form-item v-show="tempTask.is_send !== '1'" label="接收报告">
+          <el-form-item v-show="tempTask.is_send !== '1'" label="接收方式">
             <el-radio v-model="tempTask.send_type" label="all">都接收</el-radio>
-            <el-radio v-model="tempTask.send_type" label="webhook">仅微信群</el-radio>
+            <el-radio v-model="tempTask.send_type" label="we_chat">仅企业微信群</el-radio>
+            <el-radio v-model="tempTask.send_type" label="ding_ding">仅钉钉群</el-radio>
             <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
-            <div v-show="tempTask.send_type !== 'email'">
-              <el-input
-                type="textarea"
-                v-model="tempTask.webhook"
-                placeholder="企业微信或钉钉webhook地址">
-              </el-input>
+            <div v-show="tempTask.send_type === 'we_chat'">
+              <el-input type="textarea" v-model="tempTask.we_chat" placeholder="企业微信机器人地址"></el-input>
             </div>
-            <div v-show="tempTask.send_type !== 'webhook'">
+            <div v-show="tempTask.send_type === 'ding_ding'">
+              <el-input type="textarea" v-model="tempTask.ding_ding" placeholder="钉钉机器人地址"></el-input>
+            </div>
+            <div v-show="tempTask.send_type === 'email'">
               <el-form-item label="邮箱服务器">
                 <emailServerSelector ref="emailServerSelector"
                                      :oldEmailServer="tempTask.email_server"></emailServerSelector>
@@ -191,7 +191,9 @@ export default {
     // 模块下拉框选中事件
     selectedModule(module_id) {
       this.tempTask.case_id = []  // 选中模块，则清空已选中的用例
-      this.getCaseList()
+      if (this.tempTask.module_id.length === 1){
+        this.getCaseList()
+      }
     },
 
     // 获取项目id对应的模块列表
@@ -203,7 +205,7 @@ export default {
 
     // 获取当前模块下的用例列表
     getCaseList() {
-      caseList({moduleId: this.tempTask.module_id}).then(response => {
+      caseList({moduleId: this.tempTask.module_id[0]}).then(response => {
         this.caseList = response.data.data
       })
     },
@@ -218,13 +220,14 @@ export default {
         task_type: 'cron',
         cron: '',
         is_send: '1',
-        send_type: 'webhook',
-        webhook: '',
+        send_type: 'ding_ding',
+        we_chat: '',
+        ding_ding: '',
         email_server: '',
         email_to: '',
         email_from: '',
         email_pwd: '',
-        module_id: '',
+        module_id: [],
         case_id: '',
         project_id: ''
       }
@@ -241,7 +244,8 @@ export default {
         cron: this.tempTask.cron,
         is_send: this.tempTask.is_send,
         send_type: this.tempTask.send_type,
-        webhook: this.tempTask.webhook,
+        we_chat: this.tempTask.we_chat,
+        ding_ding: this.tempTask.ding_ding,
         email_server: this.$refs.emailServerSelector.tempEmailServer,
         email_to: this.tempTask.email_to,
         email_from: this.tempTask.email_from,
@@ -314,11 +318,16 @@ export default {
     // 监听模块id，当模块id变了过后，清空已选中用例，并重新获取用例id
     'tempTask.module_id':{
         handler(newVal, oldVal) {
-          if (oldVal){  // 如果本来就没有已选中模块，则说明可能是修改，则不需要清空已选用例
+          // 模块有改变，则清除用例
+          this.caseList = []
+
+          // 如果本来就没有已选中模块，则说明是修改，则不需要清空已选用例
+          if (oldVal){
             this.tempTask.case_id = []
           }
 
-          if (!oldVal && newVal){  // 没有oldVal，有newVal，则说明是初始化修改框
+          // 没有oldVal，有newVal，则说明是初始化修改框
+          if (!oldVal && newVal){
             this.getCaseList()
           }
         }
