@@ -263,7 +263,7 @@ export default {
 
     // 监听 caseDialog 的状态
     this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
-      console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
+      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
       if (command === 'add') {
         this.initNewTempCase()
       } else if (command === 'edit') {
