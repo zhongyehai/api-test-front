@@ -24,6 +24,11 @@ export function deleteModule(data) {
   return Func('delete', data)
 }
 
+// 运行模块下的用例
+export function moduleRun(data) {
+  return request({url: '/api/module/run', method: 'post', data: data});
+}
+
 // 获取模块树
 export function moduleTree(params) {
   return request({url: '/api/module/tree', method: 'get', params: params});

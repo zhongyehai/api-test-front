@@ -82,6 +82,20 @@
       ></validatesView>
     </el-tab-pane>
 
+    <!-- 数据驱动 -->
+    <el-tab-pane label="数据驱动" name="editDataDriver">
+<!--      <validatesView-->
+<!--        ref="validatesView"-->
+<!--        :validates="currentStep.validates"-->
+<!--      ></validatesView>-->
+      <bodyView
+        ref="dataDriverView"
+        :data-type="'json'"
+        :data-json="currentStep.data_driver"
+        :data-form="''"
+      ></bodyView>
+    </el-tab-pane>
+
     <hr>
 
     <el-button size="mini" @click="initStep()"> {{ '还原' }}</el-button>
@@ -128,6 +142,7 @@ export default {
         "validates": [],
         "data_form": [],
         "data_json": '',
+        "data_driver": '',
         "case_id": this.caseId,
         "api_id": '',
         "project_id": ''
@@ -153,6 +168,7 @@ export default {
         "data_form": this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         // "data_json": JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson),
         "data_json": this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
+        "data_driver": this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson) : {},
         "case_id": this.caseId,
         "api_id": this.currentStep.api_id,
         "project_id": this.currentStep.project_id

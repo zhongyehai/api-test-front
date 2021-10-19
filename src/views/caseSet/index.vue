@@ -37,6 +37,11 @@
                            @click="addCase(node, data)"
                 > 添加用例 </el-button>
               </el-tooltip>
+                <el-tooltip class="item" content="运行当前模块下的用例" effect="dark" placement="top-start">
+                  <el-button v-if="node.level !== 1" size="mini" type="text" icon="el-icon-video-play"
+                             @click="runModule(node, data)"
+                  ></el-button>
+                </el-tooltip>
             </span>
           </span>
                 </el-tree>
@@ -68,7 +73,7 @@ import apiManage from '@/views/api'  // 接口管理组件
 import caseManage from '@/views/case'  // 接口管理组件
 import waves from "@/directive/waves";
 import {projectList} from "@/apis/project";
-import {moduleTree} from "@/apis/module";
+import {moduleTree, moduleRun} from "@/apis/module";
 
 
 export default {
@@ -191,6 +196,19 @@ export default {
       this.temp_node = node
       this.temp_data = data
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'add')
+    },
+
+    // 运行模块的用例
+    runModule(node, data) {
+      moduleRun({'id': data.id}).then(response => {
+        this.openReportById(response.data.report_id)
+      })
+    },
+
+    // 打开测试报告
+    openReportById(reportId) {
+      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+      window.open(href, '_blank')
     },
 
   },
