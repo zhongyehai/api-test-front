@@ -27,17 +27,13 @@
                 :data="reportDataList"
                 stripe
               >
-                <el-table-column
-                  prop="id"
-                  label="id"
-                  min-width="5%">
+                <el-table-column prop="id" label="序号" min-width="5%">
+                  <template slot-scope="scope">
+                    <span> {{ scope.$index + 1 }} </span>
+                  </template>
                 </el-table-column>
 
-                <el-table-column
-                  :show-overflow-tooltip=true
-                  prop="name"
-                  label="任务名称"
-                  min-width="20%">
+                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="20%">
                 </el-table-column>
 
                 <el-table-column label="生成时间" min-width="17%">

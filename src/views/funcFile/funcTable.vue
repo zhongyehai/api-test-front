@@ -7,7 +7,7 @@
       stripe
     >
 
-      <el-table-column label="编号" min-width="12%">
+      <el-table-column label="序号" min-width="12%">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>

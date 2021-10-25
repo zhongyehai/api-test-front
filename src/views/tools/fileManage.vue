@@ -134,7 +134,7 @@ export default {
     },
 
     // 选中事件
-    selectType(value){
+    selectType(value) {
       this.PageNum = 1
       this.PageSize = 20
       this.getFileList()
@@ -142,21 +142,17 @@ export default {
 
     // 下载文件
     downloadFile(fileName) {
+      console.log('fileName: ', fileName)
       fileDownload({'name': fileName, 'fileType': this.fType}).then(response => {
         let blob = new Blob([response], {
           type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
         });
-        let objectUrl = URL.createObjectURL(blob);  //生成一个url
-        this.download(objectUrl, fileName)
+        // 保存文件到本地
+        let a = document.createElement('a')
+        a.href = URL.createObjectURL(blob);  //生成一个url
+        a.download = fileName
+        a.click()
       })
-    },
-
-    // 保存文件到本地
-    download(content, filename) {
-      let a = document.createElement('a')
-      a.href = content
-      a.download = filename
-      a.click()
     },
 
     // 删除文件

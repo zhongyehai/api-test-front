@@ -17,7 +17,7 @@
               :data="apis.api_list"
               stripe
             >
-              <el-table-column prop="num" label="编号" min-width="10%">
+              <el-table-column prop="num" label="序号" min-width="10%">
                 <template slot-scope="scope">
                   <span> {{ scope.$index + 1 }} </span>
                 </template>

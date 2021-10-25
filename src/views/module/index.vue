@@ -59,15 +59,25 @@
                 ></el-button>
               </el-tooltip>
 
-              <el-tooltip class="item" content="为当前模块添加接口" effect="dark" placement="top-start">
+              <el-tooltip class="item" content="为当前模块添加单条接口" effect="dark" placement="top-start">
                 <el-button v-if="node.level !== 1"
+                           icon="el-icon-share"
                            size="mini"
                            type="text"
                            @click.stop="addApi(node, data)"
-                > 添加接口 </el-button>
+                ></el-button>
               </el-tooltip>
-            </span>
-          </span>
+
+              <el-tooltip class="item" content="从表格中导入接口" effect="dark" placement="top-start">
+                <el-button v-if="node.level !== 1"
+                           icon="el-icon-upload2"
+                           size="mini"
+                           type="text"
+                           @click.stop="showUploadFileDialog(node, data)"
+                ></el-button>
+              </el-tooltip>
+                    </span>
+                  </span>
                 </el-tree>
               </div>
 
@@ -86,6 +96,33 @@
       </el-col>
 
     </el-row>
+
+    <el-dialog :close-on-click-modal="false" :title="'上传接口文件'" :visible.sync="uploadFileDialogIsShow"
+               width="40%">
+      <el-row>
+
+        <el-col :span="12">
+          <el-upload
+            class="upload-demo"
+            :action="uploadApiMsg"
+            :show-file-list='false'
+            :on-success="uploadFile">
+            <el-button size="mini" type="primary">选择文件</el-button>
+          </el-upload>
+        </el-col>
+
+        <el-col :span="12">
+          <el-button size="mini" type="primary" style="float: right" @click="downloadTemplate">下载模板</el-button>
+        </el-col>
+
+      </el-row>
+
+
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="uploadFileDialogIsShow = false">关闭</el-button>
+      </div>
+
+    </el-dialog>
 
     <!-- 新增/修改模块表单 -->
     <el-dialog
@@ -122,6 +159,7 @@ import apiManage from '@/views/api'  // 接口管理组件
 import waves from "@/directive/waves";
 import {projectList} from "@/apis/project";
 import {moduleTree, deleteModule, postModule, putModule} from "@/apis/module";
+import {downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/api";
 
 
 export default {
@@ -155,6 +193,13 @@ export default {
         parent: '',
         project_id: '',
       },
+
+      // 文件上传框打开状态
+      uploadApiMsg: uploadApiMsg,
+      uploadFileDialogIsShow: false,
+      fileDataList: [],
+
+
       // 检验规则
       rules: {
         name: [{required: true, message: '请输入模块名称', trigger: 'blur'}]
@@ -205,7 +250,7 @@ export default {
               this.currentProject = this.getCurrentProject(this.dialog_temp_node.level === 1 ? this.dialog_temp_data.id : this.dialog_temp_data.project_id)
 
               // 把当前添加的节点加入到父节点下
-              if (!this.dialog_temp_data.children){
+              if (!this.dialog_temp_data.children) {
                 this.$set(this.dialog_temp_data, 'children', [])
               }
               this.dialog_temp_data.children.push(response.data)
@@ -260,7 +305,7 @@ export default {
     // 点击树的时候，获取到对应节点的数据
     getModuleList(data, node, element) {
       this.temp_node = node
-      if (node.level !== 1){
+      if (node.level !== 1) {
         this.temp_module_id = data.id
       }
       this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
@@ -341,6 +386,40 @@ export default {
       })
     },
 
+    // 下载接口模板
+    downloadTemplate() {
+      downloadApiMsgTemplate().then(response => {
+        let blob = new Blob([response], {
+          type: 'application/vnd.ms-excel'   //将会被放入到blob中的数组内容的MIME类型
+        });
+        // 保存文件到本地
+        let a = document.createElement('a')
+        a.href = URL.createObjectURL(blob);  //生成一个url
+        a.download = '接口导入模板'
+        a.click()
+      })
+    },
+
+    // 从excel导入接口
+    showUploadFileDialog(node, data) {
+      this.temp_node = node
+      this.temp_module_id = data.id
+      this.uploadFileDialogIsShow = true
+    },
+
+    // 从excel导入接口
+    uploadFile(response, file) {
+      let form = new FormData();
+      form.append("file", file.raw);
+      form.append("id", this.temp_module_id);
+      uploadApi(form).then((response) => {
+          if (this.showMessage(this, response)) {
+            this.fileDataList = []
+            this.uploadFileDialogIsShow = false
+          }
+        }
+      )
+    }
   },
   watch: {
     filterText(val) {

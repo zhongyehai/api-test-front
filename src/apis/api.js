@@ -1,5 +1,7 @@
 import request from '@/utils/request';  //加载请求配置文件
 
+export const uploadApiMsg = '/api/apiMsg/upload'
+
 function Func(method, data = null, params = null) {
   return request({url: '/api/apiMsg', method: method, data: data, params: params});
 }
@@ -25,8 +27,18 @@ export function deleteApi(data) {
 }
 
 // 指定模块下接口list
-export function apiList(data) {
-  return request({url: '/api/apiMsg/list', method: 'get', params: data});
+export function uploadApi(data) {
+  return request({url: '/api/apiMsg/upload', method: 'post', data: data});
+}
+
+// 下载接口模板
+export function downloadApiMsgTemplate() {
+  return request({url: '/api/apiMsg/template/download', method: 'get', responseType: 'blob'});
+}
+
+// 指定模块下接口list
+export function apiList(params) {
+  return request({url: '/api/apiMsg/list', method: 'get', params: params});
 }
 
 // 接口调试
