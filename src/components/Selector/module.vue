@@ -25,7 +25,6 @@ export default {
   ],
   data() {
     return {
-      tempProjectId: '',
       tempModuleId: '',
       tempModuleList: [],
 
@@ -129,7 +128,6 @@ export default {
       handler(newVal, oldVal) {
         // 如果没有选中模块id，则默认选择模块列表中的第一条数据
         if (newVal && !this.tempModuleId) {
-          // this.tempModuleId = newVal[0].id
           if (newVal[0]) {
             this.tempModuleId = newVal[0].id
           }

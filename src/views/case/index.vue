@@ -12,10 +12,10 @@
 
           <el-col :span="21" style="padding-left: 5px;">
             <el-table
-              ref="apiTree"
-              v-loading="listLoading"
-              :data="apis.api_list"
-              stripe
+                ref="apiTree"
+                v-loading="listLoading"
+                :data="apis.api_list"
+                stripe
             >
               <el-table-column prop="num" label="序号" min-width="10%">
                 <template slot-scope="scope">
@@ -66,11 +66,11 @@
             </el-table>
 
             <pagination
-              v-show="apis.api_total>0"
-              :total="apis.api_total"
-              :page.sync="defaultPage.pageNum"
-              :limit.sync="defaultPage.apiPageSize"
-              @pagination="getCaseList"
+                v-show="apis.api_total>0"
+                :total="apis.api_total"
+                :page.sync="defaultPage.pageNum"
+                :limit.sync="defaultPage.apiPageSize"
+                @pagination="getCaseList"
             />
           </el-col>
         </el-row>
@@ -79,8 +79,8 @@
     </el-tabs>
 
     <caseDialog
-      :currentProject="currentProject"
-      :currentModule="currentModule"
+        :currentProject="currentProject"
+        :currentCaseSet="currentCaseSet"
     ></caseDialog>
 
   </div>
@@ -104,7 +104,7 @@ export default {
   // 接收父组件传参的key
   props: [
     'currentProject',
-    'currentModule'
+    'currentCaseSet'
   ],
   data() {
     return {
@@ -170,6 +170,7 @@ export default {
 
     // 编辑用例
     editCase(row) {
+      // console.log('case.index.editCase.row: ', JSON.stringify(row))
       this.tempCase = row
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'edit', this.tempCase)
     },
@@ -239,7 +240,7 @@ export default {
     getCaseList(params) {
       this.listLoading = true
       caseList({
-        'moduleId': this.currentModule.id,
+        'setId': this.currentCaseSet.id,
         'pageNum': this.defaultPage.pageNum,
         'pageSize': this.defaultPage.apiPageSize
       }).then(response => {
@@ -260,7 +261,7 @@ export default {
   watch: {
 
     // 监听父组件传过来的当前选中的用例集，实时获取父组件传过来的用例集对应下的用例列表
-    'currentModule': {
+    'currentCaseSet': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
         // if (!oldVal && newVal.id !== oldVal.id){

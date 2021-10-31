@@ -15,33 +15,66 @@
                   ref="tree"
                   :check-on-click-node="false"
                   :data="dataList"
-                  :default-expanded-keys="[defaultModule]"
-                  :current-node-key="currentNodeKey	"
+                  :default-expanded-keys="[defaultCaseSet]"
                   :empty-text="'请先创建项目'"
                   :expand-on-click-node="false"
                   :filter-node-method="filterNode"
                   :highlight-current="true"
                   lazy
                   node-key="id"
-                  @node-click="clickNode">
+                  @node-click="getCaseSetList"
+                  @node-drag-end="nodeDragEnd">
           <span slot-scope="{ node, data }"
                 class="custom-tree-node"
                 @mouseenter="mouseenter(data)"
                 @mouseleave="mouseleave(data)">
             <span>{{ data.name }}</span>
             <span v-show="data.showMenu">
-              <el-tooltip class="item" content="为当前模块添加用例" effect="dark" placement="top-start">
+              <el-tooltip :content="node.level !== 1 ? '为当前用例集添加子用例集' : '为当前项目添加用例集'"
+                          class="item"
+                          effect="dark"
+                          placement="top-start">
+                <el-button icon="el-icon-plus"
+                           size="mini"
+                           type="text"
+                           @click.stop="showCaseSetDialog('add', node, data)"></el-button>
+              </el-tooltip>
+
+              <el-tooltip class="item" content="修改当前用例集名" effect="dark" placement="top-start">
+                <el-button v-if="node.level !== 1"
+                           icon="el-icon-edit"
+                           size="mini"
+                           type="text"
+                           @click.stop="showCaseSetDialog('edit', node, data)"
+                ></el-button>
+              </el-tooltip>
+
+              <el-tooltip class="item" content="删除当前用例集" effect="dark" placement="top-start">
+                <el-button v-if="node.level !== 1"
+                           icon="el-icon-delete"
+                           size="mini"
+                           type="text"
+                           @click.stop="clickDeleteChild(node, data)"
+                ></el-button>
+              </el-tooltip>
+
+              <el-tooltip class="item" content="为当前用例集添加用例" effect="dark" placement="top-start">
+                <el-button v-if="node.level !== 1"
+                           icon="el-icon-share"
+                           size="mini"
+                           type="text"
+                           @click.stop="addCase(node, data)"
+                ></el-button>
+              </el-tooltip>
+
+              <el-tooltip class="item" content="运行当前用例集下的用例" effect="dark" placement="top-start">
                 <el-button v-if="node.level !== 1"
                            size="mini"
                            type="text"
-                           @click="addCase(node, data)"
-                > 添加用例 </el-button>
+                           icon="el-icon-video-play"
+                           @click.stop="runCaseSet(node, data)"
+                ></el-button>
               </el-tooltip>
-                <el-tooltip class="item" content="运行当前模块下的用例" effect="dark" placement="top-start">
-                  <el-button v-if="node.level !== 1" size="mini" type="text" icon="el-icon-video-play"
-                             @click="runModule(node, data)"
-                  ></el-button>
-                </el-tooltip>
             </span>
           </span>
                 </el-tree>
@@ -56,12 +89,37 @@
       <el-col style="width: 79%; margin-left: 5px">
         <!-- 用例管理组件 -->
         <caseManage
+          :currentCaseSet="temp_data"
           :currentProject="currentProject"
-          :currentModule="temp_data"
         ></caseManage>
       </el-col>
 
     </el-row>
+
+    <!-- 新增/修改用例集表单 -->
+    <el-dialog
+      :close-on-click-modal="false"
+      :title=" dialogStatus === 'add' ? '新增用例集' : '修改用例集' "
+      :visible.sync="dialogFormVisible"
+      width="40%">
+      <el-form
+        ref="dataForm"
+        :model="tempDataForm"
+        :rules="rules"
+        label-position="left"
+        label-width="100px"
+        style="min-width: 400px;">
+        <el-form-item :label="'用例集名称'" class="filter-item" prop="name" size="mini">
+          <el-input v-model="tempDataForm.name" placeholder="同一节点下，用例集名称不可重复"/>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
+        <el-button size="mini" type="primary" @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
+          {{ '确定' }}
+        </el-button>
+      </div>
+    </el-dialog>
 
   </div>
 
@@ -69,17 +127,15 @@
 </template>
 
 <script>
-import apiManage from '@/views/api'  // 接口管理组件
-import caseManage from '@/views/case'  // 接口管理组件
+import caseManage from '@/views/case'  // 用例管理组件
 import waves from "@/directive/waves";
 import {projectList} from "@/apis/project";
-import {moduleTree, moduleRun} from "@/apis/module";
+import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/caseSet";
 
 
 export default {
   name: 'index',
   components: {
-    apiManage,
     caseManage
   },
   directives: {waves},
@@ -88,13 +144,14 @@ export default {
       // 查询关键字
       filterText: '',
 
-      projectTab: '项目和模块',
+      projectTab: '项目和用例集',
 
-      defaultModule: {},
+      defaultCaseSet: {},
       dataList: [],
       temp_node: {},
       temp_data: {},
-      currentNodeKey: '',
+      dialog_temp_node: {},
+      dialog_temp_data: {},
       dialogFormVisible: false,
       dialogStatus: '',
       tempProjectList: [],
@@ -109,7 +166,7 @@ export default {
       },
       // 检验规则
       rules: {
-        name: [{required: true, message: '请输入模块名称', trigger: 'blur'}]
+        name: [{required: true, message: '请输入用例集名称', trigger: 'blur'}]
       },
     }
   },
@@ -130,6 +187,68 @@ export default {
       this.$set(data, 'showMenu', false);
     },
 
+    // 打开用例集编辑框
+    showCaseSetDialog(command, node, data) {
+      this.dialog_temp_node = node
+      this.dialog_temp_data = data
+      this.dialogStatus = command
+      this.tempDataForm.name = command === 'edit' ? this.dialog_temp_data.name : ''
+      this.dialogFormVisible = true
+    },
+
+    // 添加用例集
+    addCaseSet() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          postCaseSet({
+            name: this.tempDataForm.name,
+            id: '',
+            num: '',
+            level: this.dialog_temp_node.level + 1,
+            parent: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
+            // node为第一级，则说明是项目级，直接取id，非第一级，则取当前node的project_id
+            project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
+          }).then(response => {
+            if (this.showMessage(this, response)) {
+              this.dialogFormVisible = false
+              this.currentProject = this.getCurrentProject(this.dialog_temp_node.level === 1 ? this.dialog_temp_data.id : this.dialog_temp_data.project_id)
+
+              // 把当前添加的节点加入到父节点下
+              if (!this.dialog_temp_data.children) {
+                this.$set(this.dialog_temp_data, 'children', [])
+              }
+              this.dialog_temp_data.children.push(response.data)
+            }
+          })
+        } else {
+          this.$message.error('请确认规则')
+        }
+      });
+    },
+
+    // 修改用例集
+    changCaseSet() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          putCaseSet({
+            name: this.tempDataForm.name,
+            id: this.dialog_temp_data.id,
+            num: this.dialog_temp_data.num,
+            level: this.dialog_temp_data.level,
+            parent: this.dialog_temp_data.parent,
+            project_id: this.dialog_temp_data.project_id,
+          }).then(response => {
+            if (this.showMessage(this, response)) {
+              this.dialogFormVisible = false
+              this.dialog_temp_data.name = response.data.name
+            }
+          })
+        } else {
+          this.$message.error('请确认规则')
+        }
+      });
+    },
+
     // 递归把列表转为树行结构
     arrayToTree(arr, parentId) {
       //  arr 是返回的数据  parendId 父id
@@ -148,14 +267,14 @@ export default {
     },
 
     // 点击树的时候，获取到对应节点的数据
-    clickNode(data, node, element) {
+    getCaseSetList(data, node, element) {
       this.temp_node = node
       this.temp_data = node.level !== 1 ? data : this.temp_data
       this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
 
       // 点击的是项目，且项目下无节点，则获取项目下的节点
       if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
-        moduleTree({'project_id': data.id}).then(response => {
+        caseSetTree({'project_id': data.id}).then(response => {
           if (this.showMessage(this, response)) {
             var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
             let parse_data = this.arrayToTree(response_data, null)
@@ -171,7 +290,7 @@ export default {
     getProjectList() {
       projectList().then(response => {
         this.tempProjectList = response.data.data
-        this.dataList = response.data.data  // this.setChildren(response.data.data)
+        this.dataList = response.data.data
       })
     },
 
@@ -185,10 +304,24 @@ export default {
       }
     },
 
-    // 关键字查询模块
+    // 关键字查询用例集
     filterNode(value, data) {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
+    },
+
+    // 点击删除节点
+    clickDeleteChild(node, data) {
+      this.confirmBox(this.deleteChild, data, data.name)
+    },
+
+    // 删除节点
+    deleteChild(data) {
+      deleteCaseSet({'id': data.id}).then(response => {
+        if (this.showMessage(this, response)) {
+          this.$refs.tree.remove(data)
+        }
+      })
     },
 
     // 添加用例
@@ -198,9 +331,9 @@ export default {
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'add')
     },
 
-    // 运行模块的用例
-    runModule(node, data) {
-      moduleRun({'id': data.id}).then(response => {
+    // 运行用例集的用例
+    runCaseSet(node, data) {
+      caseSetRun({'id': data.id}).then(response => {
         this.openReportById(response.data.report_id)
       })
     },
@@ -209,6 +342,16 @@ export default {
     openReportById(reportId) {
       let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
       window.open(href, '_blank')
+    },
+
+    /**
+     * 拖拽排序
+     * start_node: 被拖拽节点对应的 Node、
+     * end_node: 结束拖拽时最后进入的节点（可能为空）、
+     * position: 被拖拽节点的放置位置（before、after、inner）、event
+     * event
+     */
+    nodeDragEnd(start_node, end_node, position, event) {
     },
 
   },

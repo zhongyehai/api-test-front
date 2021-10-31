@@ -1,13 +1,10 @@
 <template>
-  <!--  class="minWidth"-->
   <el-select
     v-model="tempCaseSetId"
     placeholder="请选择用例集"
     value-key="id"
-    style="min-width: 20%;padding-right:10px"
     filterable
     size="small"
-    :multiple="isMultiple"
     @change="choiceCaseSet">
     <el-option v-for="item in caseSetLists" :key="item.id" :label="item.name" :value="item.id">
     </el-option>
@@ -25,52 +22,32 @@ export default {
     'isWatchStatus',
     'isMultiple',
     'busOnEventName',
-    'busEmitEventName'
+    'busEmitEventName',
+    'busOnCaseSetDialogCommit',
   ],
   data() {
     return {
       tempCaseSetId: '',
       caseSetLists: [],
-      projectIdHistory: []
-    }
-  },
 
-  created() {
-    this.tempCaseSetId = this.caseSetId
-
-    // 第一次加载的时候，如果传了项目id，则获取对应的用例集列表
-    if (this.projectId) {
-      this.getCaseSetListByProjectId(this.projectId)
+      projectIdHistory: [],  // 用于存项目改变的历史
+      caseSetIdHistory: []  // 用于存模块改变的历史
     }
   },
 
   mounted() {
 
-    // if (this.isBusOn) {
-    //   this.$bus.$on(this.$busEvents.projectSelectorChoiceProject, (projectId) => {
-    //     this.getCaseSetListByProjectId(projectId)
-    //   })
-    // }
-
-    // if (this.busOnEventName) {
-    //   this.$bus.$on(this.busOnEventName, (project) => {
-    //     console.log('caseSet.mounted.project: ', JSON.stringify(project))
-    //     this.getCaseSetListByProjectId(project.id)
-    //     this.tempCaseSetId = []
-    //     this.choiceCaseSet(this.tempCaseSetId)
-    //   })
-    // }
-
+    // 监听项目选择框选中的项目id，获取对应的模块列表
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
-        if (this.isWatchStatus) {
-          // console.log('caseSet.mounted.project: ', JSON.stringify(project))
-          this.getCaseSetListByProjectId(project.id)
-          this.tempCaseSetId = []
-          this.choiceCaseSet(this.tempCaseSetId)
-        } else {
-          this.projectIdHistory.push(project.id)
-        }
+        this.getCaseSetListByProjectId(project.id)
+      })
+    }
+
+    // 是否监控用例集的改变
+    if (this.busOnCaseSetDialogCommit) {
+      this.$bus.$on(this.busOnCaseSetDialogCommit, (status) => {
+        this.caseSetIdHistory.push(status)
       })
     }
   },
@@ -80,6 +57,9 @@ export default {
     // this.$bus.$off(this.$busEvents.projectSelectorChoiceProject)
     if (this.busOnEventName) {
       this.$bus.$off(this.busOnEventName)
+    }
+    if (this.busOnCaseSetDialogCommit) {
+      this.$bus.$off(this.busOnCaseSetDialogCommit)
     }
   },
 
@@ -92,24 +72,24 @@ export default {
       })
     },
 
-    // 遍历用例集列表，获取对应id的用例集信息
-    getCaseSetFromList(caseSetId) {
-      for (let index in this.caseSetLists) {
-        if (this.caseSetLists[index]['id'] === caseSetId) {
-          return this.caseSetLists[index]
-        }
+    sendEmit() {
+      if (this.busEmitEventName) {
+        this.$bus.$emit(this.busEmitEventName, this.tempCaseSetId)
       }
     },
 
-    // 选择用例集过后向bus发送用例集id
+    // 通过bus发送选中的模块
     choiceCaseSet(val) {
-      if (this.busEmitEventName) {
-        if (this.isMultiple) {
-          this.$bus.$emit(this.busEmitEventName, this.tempCaseSetId)
-        } else {
-          this.$bus.$emit(this.busEmitEventName, this.getCaseSetFromList(this.tempCaseSetId))
-        }
-      }
+      this.sendEmit()
+    }
+  },
+
+  created() {
+    this.tempCaseSetId = this.caseSetId
+
+    // 第一次加载的时候，如果传了项目id，则获取对应的用例集列表
+    if (this.projectId) {
+      this.getCaseSetListByProjectId(this.projectId)
     }
   },
 
@@ -118,12 +98,11 @@ export default {
     // 监控 状态，为true时，判断项目id是否有改变，有改变则重新请求用例集列表，用于监控dialog是否为打开状态
     "isWatchStatus": {
       handler(newVal, oldVal) {
-        // console.log('caseSet.watch.isWatchStatus.oldVal: ', JSON.stringify(oldVal))
-        // console.log('caseSet.watch.isWatchStatus.newVal: ', JSON.stringify(newVal))
-        // console.log('caseSet.watch.projectIdHistory: ', JSON.stringify(this.projectIdHistory))
         if (newVal) {
           if (this.projectIdHistory && this.projectIdHistory[0] !== this.projectIdHistory[1]) {
             this.getCaseSetListByProjectId(this.projectIdHistory[0])
+          } else {
+            this.getCaseSetListByProjectId(this.projectId)
           }
         }
       }
@@ -132,13 +111,29 @@ export default {
     // 监控项目id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求用例集列表
     'projectId': {
       handler(newVal, oldVal) {
-        this.projectIdHistory = [newVal, oldVal]
+        if (this.isWatchStatus) {
+          this.getCaseSetListByProjectId(newVal)
+        } else {
+          this.projectIdHistory = [newVal, oldVal]
+        }
       }
     },
 
     'caseSetId': {
       handler(newVal, oldVal) {
         this.tempCaseSetId = newVal
+      }
+    },
+
+    'caseSetLists': {
+      handler(newVal, oldVal) {
+        // 如果没有选中用例集id，则默认选择用例集列表中的第一条数据
+        if (newVal && !this.caseSetId) {
+          if (newVal[0]) {
+            this.caseSetId = newVal[0].id
+          }
+        }
+        this.sendEmit()
       }
     }
   }

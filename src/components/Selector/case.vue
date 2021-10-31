@@ -87,16 +87,12 @@ export default {
 
     'caseIds': {
       handler(newVal, oldVal) {
-        console.log('watch.caseIds.oldVal: ', oldVal)
-        console.log('watch.caseIds.newVal: ', newVal)
         this.tempCase = newVal ? newVal : []
       }
     },
 
     'module_id': {
       handler(newVal, oldVal) {
-        console.log('watch.module_id.oldVal: ', oldVal)
-        console.log('watch.module_id.newVal: ', newVal)
         this.tempModuleId = newVal
         this.tempCase = []  // 模块变了，则把选中的用例清空掉
         this.getCaseList()

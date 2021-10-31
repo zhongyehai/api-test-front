@@ -1,5 +1,4 @@
 <template>
-  <!--  :title=" dialogStatus === 'update' ? '修改用例' : '新增用例'"-->
   <el-dialog
     :title=" dialogStatus === 'add' ? '新增用例' : dialogStatus === 'update' ? '修改用例' : '复制用例' "
     :visible.sync="dialogIsShow"
@@ -18,16 +17,16 @@
             <!-- 模块选择 -->
             <el-col :span="6">
 
-              <el-form-item label="模块" class="is-required" style="margin-bottom: 5px">
-                <moduleSelectorView
-                  ref="moduleSelector"
-                  :moduleId="tempCase.module_id"
+              <el-form-item label="用例集" class="is-required" style="margin-bottom: 5px">
+                <caseSetSelectorView
+                  ref="caseSetSelector"
                   :projectId="currentProject ? currentProject.id : ''"
-                  :status="dialogIsShow"
-                  :busOnEventName="$busEvents.projectSelectorChoiceProject"
-                  :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
-                  :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
-                ></moduleSelectorView>
+                  :caseSetId="tempCase.set_id"
+                  :isWatchStatus="dialogIsShow"
+                  :busOnEventName="$busEvents.projectTreeChoiceProject"
+                  :busOnModuleDialogCommit="$busEvents.moduleDialogCommit">
+                  >
+                </caseSetSelectorView>
               </el-form-item>
 
             </el-col>
@@ -75,7 +74,6 @@
             </el-col>
           </el-row>
         </el-form>
-
 
         <el-form :inline="true" class="demo-form-inline " size="small">
 
@@ -147,7 +145,7 @@ export default {
   name: 'caseDialog',
   props: [
     'currentProject',
-    'currentModule'
+    'currentCaseSet'
   ],
   components: {
     projectSelectorView,
@@ -175,8 +173,8 @@ export default {
         func_files: [],
         variables: [{key: null, value: null, remark: null}],
         headers: [{key: null, value: null, remark: null}],
-        // project_id: '',
-        module_id: '',
+        project_id: '',
+        set_id: '',
         steps: []  // 测试步骤
       },
 
@@ -197,8 +195,8 @@ export default {
       this.tempCase.variables = [{key: null, value: null, remark: null}]
       this.tempCase.headers = [{key: null, value: null, remark: null}]
       this.tempCase.steps = []
-      // this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
-      this.tempCase.module_id = this.currentModule ? this.currentModule.id : ''
+      this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
+      this.tempCase.set_id = this.currentCaseSet ? this.currentCaseSet.id : ''
       this.dialogStatus = 'add'
       this.dialogIsShow = true
     },
@@ -215,7 +213,7 @@ export default {
     // 获取当前的用例数据，用于提交给后端
     getCaseDataToCommit() {
       let caseData = this.tempCase
-      caseData.module_id = this.$refs.moduleSelector.tempModuleId
+      caseData.set_id = this.$refs.caseSetSelector.tempCaseSetId
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
       caseData.variables = this.$refs.variablesView.tempData
@@ -264,12 +262,12 @@ export default {
     // 监听 caseDialog 的状态
     this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
       // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
+      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.currentCase: ', JSON.stringify(currentCase))
       if (command === 'add') {
         this.initNewTempCase()
       } else if (command === 'edit') {
         this.initUpdateTempCase(currentCase)
       } else if (command === 'copy') {  // 复制用例
-        // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.currentCase: ', JSON.stringify(currentCase))
         copyCase({id: currentCase.id}).then(response => {
             if (this.showMessage(this, response)) {
               this.tempCase = response.data.case
@@ -307,17 +305,17 @@ export default {
 
   watch: {
 
-    // 'currentProject': {
-    //   deep: true,
-    //   handler(newVal, oldVal) {
-    //     this.tempCase.project_id = newVal.id
-    //   }
-    // },
-
-    'currentModule': {
+    'currentProject': {
       deep: true,
       handler(newVal, oldVal) {
-        this.tempCase.module_id = newVal.id
+        this.tempCase.project_id = newVal.id
+      }
+    },
+
+    'currentCaseSet': {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.tempCase.set_id = newVal.id
       }
     }
   }

@@ -29,6 +29,16 @@ export function caseSetList(params) {
   return request({url: '/api/caseSet/list', method: 'get', params: params});
 }
 
+// 获取用例集树
+export function caseSetTree(params) {
+  return request({url: '/api/caseSet/tree', method: 'get', params: params});
+}
+
+// 运行用例集下的用例
+export function caseSetRun(data) {
+  return request({url: '/api/caseSet/run', method: 'post', data: data});
+}
+
 // 置顶用例集
 export function caseSetStick(data) {
   return request({url: '/api/caseSet/stick', method: 'put', data: data});

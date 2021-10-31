@@ -34,9 +34,7 @@
                           class="item"
                           effect="dark"
                           placement="top-start">
-                <el-button icon="el-icon-plus"
-                           size="mini"
-                           type="text"
+                <el-button icon="el-icon-plus" size="mini" type="text"
                            @click.stop="showModuleDialog('add', node, data)"
                 ></el-button>
               </el-tooltip>
@@ -369,10 +367,7 @@ export default {
      * position: 被拖拽节点的放置位置（before、after、inner）、event
      * event
      */
-    nodeDragEnd(start_node, end_node, position, event) {
-
-
-    },
+    nodeDragEnd(start_node, end_node, position, event) {},
 
     // 添加接口
     addApi(node, data) {

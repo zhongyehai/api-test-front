@@ -40,7 +40,7 @@
                 action="/api/upload"
                 :show-file-list='false'
                 :on-success="uploadFile">
-                <el-button size="mini" type="primary" @click="changPageFileName(scope.$index)">点击上传</el-button>
+                <el-button size="mini" type="primary" @click="changPageFileName(scope.$index)">选择文件</el-button>
               </el-upload>
             </el-col>
           </el-row>

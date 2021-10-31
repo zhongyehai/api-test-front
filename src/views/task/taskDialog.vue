@@ -48,19 +48,19 @@
 
           <el-row>
 
-            <!-- 选则模块 -->
+            <!-- 选则用例集 -->
             <el-col :span="12">
-              <el-form-item label="选则模块">
+              <el-form-item label="选则用例集">
                 <el-select
-                  v-model="tempTask.module_id"
-                  placeholder="请选择模块"
+                  v-model="tempTask.set_id"
+                  placeholder="请选择用例集"
                   multiple
                   size="small"
                   style="min-width: 20%;padding-right:10px"
-                  @change="selectedModule"
+                  @change="selectedCaseSet"
                   filterable
                 >
-                  <el-option v-for="(item) in tempModuleList" :key="item.id" :label="item.name"
+                  <el-option v-for="(item) in tempCaseSetList" :key="item.id" :label="item.name"
                              :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -161,7 +161,7 @@ import environmentSelectorView from "@/components/Selector/environment";
 import emailServerSelector from "@/components/Selector/email";
 
 import {postTask, putTask} from '@/apis/task'
-import {moduleList} from "@/apis/module";
+import {caseSetList} from "@/apis/caseSet";
 import {caseList} from '@/apis/case'
 
 export default {
@@ -179,7 +179,7 @@ export default {
       projectLists: '',  // 项目列表
       projectSelectedId: '',  // 项目选择框选择的项目id
 
-      tempModuleList: '',  // 当前选中项目下的模块列表
+      tempCaseSetList: '',  // 当前选中项目下的用例集列表
 
       caseSelectorIsDisabled: false,  // 用例选择框是否只读
       caseList: [],  // 当前选中模块下的用例列表
@@ -188,24 +188,24 @@ export default {
   },
   methods: {
 
-    // 模块下拉框选中事件
-    selectedModule(module_id) {
-      this.tempTask.case_id = []  // 选中模块，则清空已选中的用例
-      if (this.tempTask.module_id.length === 1){
+    // 用例集下拉框选中事件
+    selectedCaseSet(set_id) {
+      this.tempTask.case_id = []  // 选中用例集，则清空已选中的用例
+      if (this.tempTask.set_id.length === 1) {
         this.getCaseList()
       }
     },
 
-    // 获取项目id对应的模块列表
-    getModulesByProjectId(project_id) {
-      moduleList({'projectId': project_id}).then(response => {
-        this.tempModuleList = response.data.data
+    // 获取项目id对应的用例集列表
+    getCaseSetByProjectId(project_id) {
+      caseSetList({'projectId': project_id}).then(response => {
+        this.tempCaseSetList = response.data.data
       })
     },
 
     // 获取当前模块下的用例列表
     getCaseList() {
-      caseList({moduleId: this.tempTask.module_id[0]}).then(response => {
+      caseList({setId: this.tempTask.set_id[0]}).then(response => {
         this.caseList = response.data.data
       })
     },
@@ -227,7 +227,7 @@ export default {
         email_to: '',
         email_from: '',
         email_pwd: '',
-        module_id: [],
+        set_id: [],
         case_id: '',
         project_id: ''
       }
@@ -251,7 +251,7 @@ export default {
         email_from: this.tempTask.email_from,
         email_pwd: this.tempTask.email_pwd,
         project_id: this.tempTask.project_id,
-        module_id: this.tempTask.module_id,
+        set_id: this.tempTask.set_id,
         case_id: this.tempTask.case_id,
       }
     },
@@ -287,7 +287,7 @@ export default {
     this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project, project_list) => {
       this.projectLists = project_list  // 当前项目所在的项目列表
       if (project.id !== this.projectSelectedId) {  // 如果项目变了，则把已选中模块置为''
-        this.tempTask.module_id = ''
+        this.tempTask.set_id = ''
       }
       this.projectSelectedId = project.id  // 当前选中的项目
     })
@@ -303,8 +303,8 @@ export default {
         this.initNewTask()
         this.tempTask.project_id = taskOrProject.id
       }
-      // 获取当前项目对应的模块列表
-      this.getModulesByProjectId(this.projectSelectedId)
+      // 获取当前项目对应的用例集列表
+      this.getCaseSetByProjectId(this.projectSelectedId)
     })
   },
 
@@ -315,23 +315,23 @@ export default {
   },
 
   watch: {
-    // 监听模块id，当模块id变了过后，清空已选中用例，并重新获取用例id
-    'tempTask.module_id':{
-        handler(newVal, oldVal) {
-          // 模块有改变，则清除用例
-          this.caseList = []
+    // 监听模块id，当用例集id变了过后，清空已选中用例，并重新获取用例id
+    'tempTask.set_id': {
+      handler(newVal, oldVal) {
+        // 用例集有改变，则清除用例
+        this.caseList = []
 
-          // 如果本来就没有已选中模块，则说明是修改，则不需要清空已选用例
-          if (oldVal){
-            this.tempTask.case_id = []
-          }
-
-          // 没有oldVal，有newVal，则说明是初始化修改框
-          if (!oldVal && newVal){
-            this.getCaseList()
-          }
+        // 如果本来就没有已选中用例集，则说明是修改，则不需要清空已选用例
+        if (oldVal) {
+          this.tempTask.case_id = []
         }
-      },
+
+        // 没有oldVal，有newVal，则说明是初始化修改框
+        if (!oldVal && newVal) {
+          this.getCaseList()
+        }
+      }
+    },
   }
 }
 </script>

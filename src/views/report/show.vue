@@ -38,15 +38,15 @@
       </el-row>
 
       <el-row v-show="this.picStatus">
+        <!-- 步骤 -->
         <el-col :span="10"
                 style="border-style:solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;border-width: 1px;"
         >
           <div style="height: 200px;float:left;">
-            <ve-pie :data="caseChartData" :settings="caseChartSettings" height="200px" width="350px"></ve-pie>
+            <ve-pie :data="caseChartData" :settings="caseChartSettings" height="200px" width="400px"></ve-pie>
           </div>
-
           <ol style="margin-top:5px;font-size:14px;line-height:25px" class="remote-line">
-            <li style="font-weight:700;font-size:16px">接口概况</li>
+            <li style="font-weight:700;font-size:16px">步骤概况</li>
             <li style="font-weight:600;color: rgb(146, 123, 139)">总数:{{ this.reportData.stat.teststeps.total }}</li>
             <li style="color: rgb(25,212,174);font-weight:600">成功:{{ this.reportData.stat.teststeps.successes }}</li>
             <li style="color: rgb(250,110,134);font-weight:600">失败:{{ this.reportData.stat.teststeps.failures }}</li>
@@ -54,6 +54,8 @@
             <li style="color: #60C0DD;font-weight:600">跳过:{{ this.reportData.stat.teststeps.skipped }}</li>
           </ol>
         </el-col>
+
+        <!-- 用例 -->
         <el-col :span="14" style="border-width: 1px;">
           <div style="height: 200px;float:left;">
             <ve-ring :data="suiteChartData" :settings="suiteChartSettings" height="200px"
@@ -70,6 +72,7 @@
           </ol>
         </el-col>
       </el-row>
+
       <el-row>
         <el-col :span="6"
                 style="border-style:solid;border-color: rgb(234, 234, 234) #ffffff #ffffff #ffffff;border-width: 1px;"
@@ -240,13 +243,9 @@
 <script>
 
 import {getReport} from '@/apis/report'
-// import reportHeader from '@/views/report/reportHeader'
 
 export default {
   name: 'reportShow',
-  // components: {
-  //   reportHeader
-  // },
   data() {
     this.caseChartSettings = {
       radius: 80,
@@ -363,8 +362,8 @@ export default {
       caseChartData: {
         columns: ['caseName', 'num'],
         rows: [
-          {'caseName': '成功api', num: 0}, {'caseName': '失败api', num: 0},
-          {'caseName': '错误api', num: 0}, {'caseName': '跳过api', num: 0}
+          {'caseName': '成功步骤', num: 0}, {'caseName': '失败步骤', num: 0},
+          {'caseName': '错误步骤', num: 0}, {'caseName': '跳过步骤', num: 0}
         ]
       },
       suiteChartData: {
