@@ -199,6 +199,12 @@ export const constantRoutes = [
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
       {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/views/tools/accountManage'),
+        meta: {title: '测试账号', icon: 'el-icon-s-check'}
+      },
+      {
         path: 'file',
         name: 'File',
         component: () => import('@/views/tools/fileManage'),
