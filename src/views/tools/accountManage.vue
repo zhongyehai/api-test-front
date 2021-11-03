@@ -35,25 +35,31 @@
         </template>
       </el-table-column>
 
+      <el-table-column :show-overflow-tooltip=true prop="project" label="项目" min-width="10%">
+        <template slot-scope="scope">
+          <span> {{ scope.row.project }} </span>
+        </template>
+      </el-table-column>
+
       <el-table-column :show-overflow-tooltip=true prop="name" label="账户名" min-width="20%">
         <template slot-scope="scope">
           <span> {{ scope.row.name }} </span>
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="account" label="账号" min-width="20%">
+      <el-table-column :show-overflow-tooltip=true prop="account" label="账号" min-width="15%">
         <template slot-scope="scope">
           <span> {{ scope.row.account }} </span>
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="password" label="密码" min-width="20%">
+      <el-table-column :show-overflow-tooltip=true prop="password" label="密码" min-width="15%">
         <template slot-scope="scope">
           <span> {{ scope.row.password }} </span>
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="desc" label="备注" min-width="20%">
+      <el-table-column :show-overflow-tooltip=true prop="desc" label="备注" min-width="15%">
         <template slot-scope="scope">
           <span> {{ scope.row.desc }} </span>
         </template>
@@ -95,14 +101,17 @@
         label-position="right"
         label-width="90px"
         style="min-width: 400px;">
+        <el-form-item :label="'项目名'" class="filter-item is-required" prop="name" size="mini">
+          <el-input v-model="currentAccount.project" placeholder="项目名称"/>
+        </el-form-item>
         <el-form-item :label="'账户名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="currentAccount.name" placeholder="账户名称"/>
         </el-form-item>
-        <el-form-item :label="'账号'" class="filter-item is-required" prop="account" size="mini">
-          <el-input v-model="currentAccount.account" placeholder="账号"/>
+        <el-form-item :label="'登录账号'" class="filter-item is-required" prop="account" size="mini">
+          <el-input v-model="currentAccount.account" placeholder="登录账号，不可重复"/>
         </el-form-item>
-        <el-form-item :label="'密码'" class="filter-item is-required" prop="password" size="mini">
-          <el-input v-model="currentAccount.password" placeholder="密码"/>
+        <el-form-item :label="'登录密码'" class="filter-item is-required" prop="password" size="mini">
+          <el-input v-model="currentAccount.password" placeholder="登录密码"/>
         </el-form-item>
         <el-form-item :label="'备注'" class="filter-item" prop="desc" size="mini">
           <el-input type="textarea" v-model="currentAccount.desc" placeholder="备注"></el-input>
@@ -160,6 +169,7 @@ export default {
       // 账号
       currentAccount: {
         id: '',
+        project: '',
         name: '',
         account: '',
         password: '',
@@ -213,6 +223,7 @@ export default {
 
     initNewAccount() {
       this.currentAccount.id = ''
+      this.currentAccount.project = ''
       this.currentAccount.name = ''
       this.currentAccount.account = ''
       this.currentAccount.password = ''
@@ -233,6 +244,7 @@ export default {
     // 添加账号
     addAccount() {
       postAccount({
+        project: this.currentAccount.project,
         name: this.currentAccount.name,
         account: this.currentAccount.account,
         password: this.currentAccount.password,
@@ -250,6 +262,7 @@ export default {
     changeAccount() {
       putAccount({
         id: this.currentAccount.id,
+        project: this.currentAccount.project,
         name: this.currentAccount.name,
         account: this.currentAccount.account,
         password: this.currentAccount.password,
