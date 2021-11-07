@@ -255,7 +255,7 @@ export default {
       let temp = [];
       let treeArr = arr;
       treeArr.forEach((item, index) => {
-        if (item.parent == parentId) {
+        if (item.parent === parentId) {
           if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
             // 递归调用此函数
             treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
@@ -275,11 +275,9 @@ export default {
       // 点击的是项目，且项目下无节点，则获取项目下的节点
       if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
         caseSetTree({'project_id': data.id}).then(response => {
-          if (this.showMessage(this, response)) {
-            var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-            let parse_data = this.arrayToTree(response_data, null)
-            this.$set(data, 'children', parse_data)
-          }
+          var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
+          let parse_data = this.arrayToTree(response_data, null)
+          this.$set(data, 'children', parse_data)
         })
       }
       // 展开/收缩节点

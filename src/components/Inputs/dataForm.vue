@@ -37,9 +37,10 @@
             <el-col :span="2" style="padding-left:10px;">
               <el-upload
                 class="upload-demo"
-                action="/api/upload"
+                :action="uploadAddr"
+                :auto-upload="false"
                 :show-file-list='false'
-                :on-success="uploadFile">
+                :on-change="onChange">
                 <el-button size="mini" type="primary" @click="changPageFileName(scope.$index)">选择文件</el-button>
               </el-upload>
             </el-col>
@@ -90,7 +91,7 @@
 </template>
 
 <script>
-import {fileUpload} from "@/apis/file";
+import {fileCheck, fileUpload, uploadAddr} from "@/apis/file";
 
 export default {
   name: "dataForm",
@@ -99,7 +100,9 @@ export default {
     return {
       // form-data的类型，文本还是文件
       formDataTypes: ['string', 'file'],
-      tempDataForm: ''
+      tempDataForm: '',
+      fileType: 'case',
+      uploadAddr: uploadAddr
     }
   },
 
@@ -115,28 +118,30 @@ export default {
       )
     },
 
-    // 上传文件
-    uploadFile(response, file) {
-      // 响应文件已存在
-      if (response.message.indexOf('文件已存在') !== -1) {
+    // 选中文件事件, 检验文件是否已存在
+    onChange(file) {
+      // 检验文件是否已存在
+      fileCheck({'fileType': this.fileType, 'name': file.name}).then(response => {
+
         let form = new FormData();
         form.append("file", file.raw);
-        this.$confirm(
-          '服务器已存在相同名字文件，是否覆盖?',
-          '提示',
-          {
-            confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'
+        form.append("fileType", this.fileType);
+
+        if (response.message.indexOf('已存在') !== -1) {
+
+          // 确认是否覆盖已存在文件，不覆盖则不上传
+          this.$confirm(`${response.message}，是否覆盖?`, '提示', {
+            confirmButtonText: '覆盖',
+            cancelButtonText: '不覆盖',
+            type: 'warning'
           }).then(() => {
-          form.append("skip", '1');  // 覆盖已有文件
+            this.uploadFileToServer(form)
+          }).catch(() => {
+          });
+        }else {
           this.uploadFileToServer(form)
-        }).catch(() => {
-          form.append("skip", '0');  // 不覆盖已有文件
-          this.uploadFileToServer(form)
-        });
-      } else {
-        this.showMessage(this, response)
-        this.tempDataForm[this.currentTempApiDataFormIndex]['value'] = response['data']  // 修改页面上的文件名
-      }
+        }
+      })
     },
 
     // 获取当前上传文件的数据的索引

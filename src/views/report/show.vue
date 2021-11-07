@@ -86,12 +86,15 @@
                   v-show="item.success === true ? showScene[0]: showScene[1]"
                 >
                   <template slot="title">
-                    <div style="font-weight:600 ;font-size: 15px;margin-left: 10px"
-                         :style="item.success === true ? 'color:#409eff': 'color:rgb(255, 74, 74)'"
-                    >
-                      {{ item.name }}
-                    </div>
-
+                    <el-tooltip class="item"
+                                effect="dark"
+                                :content="item.records ? `${item.records.length}个步骤` : ''"
+                                placement="top-start">
+                      <div style="font-weight:600 ;font-size: 15px;margin-left: 10px"
+                           :style="item.success === true ? 'color:#409eff': 'color:rgb(255, 74, 74)'">
+                        {{ item.name }}
+                      </div>
+                    </el-tooltip>
                   </template>
                   <div>
                     <ol id="test" style="padding:5px;font-family:Times New Roman">
@@ -141,8 +144,8 @@
               >
                 <thead>
                 <tr>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 100px">key</th>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 90%">value</th>
+                  <th style="border-bottom:1px solid #d0d0d0;width: 20%">key</th>
+                  <th style="border-bottom:1px solid #d0d0d0;width: 80%">value</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -203,22 +206,18 @@
                 <tr v-show="statusShow[8]">
                   <td class="my-table">响应体数据</td>
                   <td class="content">
-                  <pre
-                    style="white-space: pre-wrap;word-wrap: break-word;"
-                  >{{
-                      this.meta_datas.data[0].response.json
-                    }}</pre>
+                    <pre
+                      style="white-space: pre-wrap;word-wrap: break-word;">{{
+                        this.meta_datas.data[0].response.json
+                      }}</pre>
                   </td>
                 </tr>
 
                 <tr v-show="statusShow[8]">
                   <td class="my-table">响应文本</td>
                   <td class="content">
-                  <pre
-                    style="white-space: pre-wrap;word-wrap: break-word;"
-                  >{{
-                      this.meta_datas.data[0].response.text
-                    }}</pre>
+                    <pre
+                      style="white-space: pre-wrap;word-wrap: break-word;">{{ this.meta_datas.data[0].response.text }}</pre>
                   </td>
                 </tr>
 
@@ -434,7 +433,7 @@ export default {
 
     getReportDataById() {
       getReport({'id': this.$route.query.id}).then((response) => {
-          console.log(response)
+          // console.log(response)
           if (this.showMessage(this, response)) {
             this.reportData = response['data']
             this.meta_datas = this.reportData['details'][0]['records'][0]['meta_datas']

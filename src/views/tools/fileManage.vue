@@ -4,7 +4,7 @@
     <el-form label-width="120px">
       <el-form-item :label="'选择文件类型：'" size="mini">
         <el-select
-          v-model="fType"
+          v-model="fileType"
           placeholder="请选择文件类型"
           size="small"
           @change="selectType"
@@ -17,8 +17,8 @@
           >
           </el-option>
         </el-select>
-        <el-tooltip v-show="fType === 'case'" class="item" effect="dark" content="可覆盖已存在的文件" placement="right-end"
-                    style="margin-left: 20px">
+
+        <el-tooltip class="item" effect="dark" content="可覆盖已存在的文件" placement="right-end" style="margin-left: 20px">
           <el-button type="primary" @click.native="openFileUploadDialog" size="small">上传文件</el-button>
         </el-tooltip>
 
@@ -106,7 +106,7 @@ export default {
       listLoading: false,
 
       // 文件列类型
-      fType: 'case',
+      fileType: 'case',
 
       // 文件类型列表
       fileTypeList: [
@@ -129,7 +129,7 @@ export default {
 
     // 获取文件列表
     getFileList() {
-      fileList({'pageNum': this.PageNum, 'pageSize': this.PageSize, 'fileType': this.fType}).then(response => {
+      fileList({'pageNum': this.PageNum, 'pageSize': this.PageSize, 'fileType': this.fileType}).then(response => {
         this.fileList = response.data.data
         this.total = response.data.total
       })
@@ -145,7 +145,7 @@ export default {
     // 下载文件
     downloadFile(fileName) {
       console.log('fileName: ', fileName)
-      fileDownload({'name': fileName, 'fileType': this.fType}).then(response => {
+      fileDownload({'name': fileName, 'fileType': this.fileType}).then(response => {
         let blob = new Blob([response], {
           type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
         });
@@ -159,7 +159,7 @@ export default {
 
     // 删除文件
     delFile(fileName) {
-      fileDelete({'name': fileName, 'fileType': this.fType}).then(response => {
+      fileDelete({'name': fileName, 'fileType': this.fileType}).then(response => {
         if (this.showMessage(this, response)) {
           this.getFileList()
         }
@@ -168,7 +168,8 @@ export default {
 
     // 打开文件上传窗口
     openFileUploadDialog() {
-      this.$bus.$emit(this.$busEvents.uploadFileDialogIsShow, true)
+      console.log('this.fileType: ', this.fileType)
+      this.$bus.$emit(this.$busEvents.uploadFileDialogIsShow, this.fileType)
     }
   },
 

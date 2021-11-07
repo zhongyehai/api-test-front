@@ -84,10 +84,6 @@
 
     <!-- 数据驱动 -->
     <el-tab-pane label="数据驱动" name="editDataDriver">
-<!--      <validatesView-->
-<!--        ref="validatesView"-->
-<!--        :validates="currentStep.validates"-->
-<!--      ></validatesView>-->
       <bodyView
         ref="dataDriverView"
         :data-type="'json'"

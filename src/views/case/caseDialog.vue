@@ -75,7 +75,7 @@
           </el-row>
         </el-form>
 
-        <el-form :inline="true" class="demo-form-inline " size="small">
+        <el-form :inline="true" class="demo-form-inline" size="small">
 
           <el-tabs type="border-card">
 
@@ -102,6 +102,17 @@
           </el-tabs>
 
         </el-form>
+      </el-tab-pane>
+
+      <!-- 引用用例 -->
+      <el-tab-pane label="引用用例" name="quoteCase">
+        <quoteCaseView
+          ref="quoteCase"
+          :tempCase="tempCase"
+          :beforeCase="tempCase.before_case"
+          :afterCase="tempCase.after_case"
+          :dialogIsShow="dialogIsShow"
+        ></quoteCaseView>
       </el-tab-pane>
 
       <!-- 步骤管理组件 -->
@@ -137,7 +148,7 @@ import funcFilesView from '@/components/Selector/funcFile'
 import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
 import stepView from '@/views/step/index'
-
+import quoteCaseView from "@/views/case/quoteCase";
 import {postCase, putCase, copyCase} from "@/apis/case";
 import {stepList} from "@/apis/step";
 
@@ -155,7 +166,8 @@ export default {
     funcFilesView,
     headersView,
     variablesView,
-    stepView
+    stepView,
+    quoteCaseView
   },
   data() {
     return {
@@ -173,6 +185,8 @@ export default {
         func_files: [],
         variables: [{key: null, value: null, remark: null}],
         headers: [{key: null, value: null, remark: null}],
+        before_case: [],
+        after_case: [],
         project_id: '',
         set_id: '',
         steps: []  // 测试步骤
@@ -192,6 +206,8 @@ export default {
       this.tempCase.run_times = ''
       this.tempCase.choice_host = ''
       this.tempCase.func_files = []
+      this.tempCase.before_case = []
+      this.tempCase.after_case = []
       this.tempCase.variables = [{key: null, value: null, remark: null}]
       this.tempCase.headers = [{key: null, value: null, remark: null}]
       this.tempCase.steps = []
@@ -216,6 +232,8 @@ export default {
       caseData.set_id = this.$refs.caseSetSelector.tempCaseSetId
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
+      caseData.before_case = this.$refs.quoteCase.tempBeforeCaseIdList
+      caseData.after_case = this.$refs.quoteCase.tempAfterCaseIdList
       caseData.variables = this.$refs.variablesView.tempData
       caseData.headers = this.$refs.headersView.tempData
       caseData.steps = this.$refs.stepView.$refs.stepListView.stepList

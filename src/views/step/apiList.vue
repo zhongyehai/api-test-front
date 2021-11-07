@@ -139,16 +139,19 @@ export default {
         this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
       }
 
-      this.activeName = 'editStepInfo'
+      // 如果用例已存在，则添加步骤
+      if (this.caseId){
+        this.activeName = 'editStepInfo'
 
-      // 把当前选中的接口，传给步骤编辑tab
-      // 初始化步骤的默认值
-      var new_api = JSON.parse(JSON.stringify(api))
-      new_api['api_id'] = new_api['id']
-      new_api['id'] = ''
-      new_api['is_run'] = true
-      new_api['run_times'] = 1
-      this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
+        // 把当前选中的接口，传给步骤编辑tab
+        // 初始化步骤的默认值
+        var new_api = JSON.parse(JSON.stringify(api))
+        new_api['api_id'] = new_api['id']
+        new_api['id'] = ''
+        new_api['is_run'] = true
+        new_api['run_times'] = 1
+        this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
+      }
     }
   },
   watch: {

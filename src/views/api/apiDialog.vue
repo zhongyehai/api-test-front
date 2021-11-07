@@ -276,6 +276,8 @@ export default {
           if (this.showMessage(this, response)) {
             this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
             this.runApis()
+          } else {
+            this.isLoading = false
           }
         })
       } else {
@@ -284,12 +286,12 @@ export default {
             this.tempApi = response.data
             this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
             this.runApis()
+          } else {
+            this.isLoading = false
           }
         })
       }
       this.dialogStatus = 'update'
-      this.isLoading = false
-
     },
 
     runApis() {
@@ -297,8 +299,8 @@ export default {
         'projectId': this.tempApi.project_id,
         'apis': [this.tempApi.id]
       }).then(response => {
+        this.isLoading = false
         this.runApiResultData = response.data.data
-        // this.openReportById(response.data.report_id)
       })
     },
 

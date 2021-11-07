@@ -43,6 +43,9 @@ export default {
 
       // 上传文件窗口
       fileUploadDialogIsShow: false,
+
+      // 文件类型
+      fileType: 'case'
     }
   },
 
@@ -51,7 +54,7 @@ export default {
     // 选中文件事件, 检验文件是否已存在
     onChange(file, fileList) {
       // 检验文件是否已存在
-      fileCheck({'name': file.name}).then(response => {
+      fileCheck({fileType: this.fileType, 'name': file.name}).then(response => {
         if (response.message.indexOf('已存在') !== -1) {
           // 确认是否继续上传，不上传则从缓存中删除
           this.$confirm(`${response.message}，是否覆盖?`, '提示', {
@@ -83,6 +86,7 @@ export default {
 
       // 把文件添加到form
       let form = new FormData()
+      form.append('fileType', this.fileType)
       this.tempFileList.forEach(file => {
         form.append('files', file.raw)
       });
@@ -107,7 +111,8 @@ export default {
 
   mounted() {
     // 监听 Dialog 打开事件
-    this.$bus.$on(this.$busEvents.uploadFileDialogIsShow, (status) => {
+    this.$bus.$on(this.$busEvents.uploadFileDialogIsShow, (fileType) => {
+      this.fileType = fileType
       this.fileUploadDialogIsShow = true
     })
   },

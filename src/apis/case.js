@@ -40,6 +40,16 @@ export function caseList(params) {
   return request({url: '/api/case/list', method: 'get', params: params});
 }
 
+// 根据用例id获取用例名
+export function caseName(params) {
+  return request({url: '/api/case/name', method: 'get', params: params});
+}
+
+// 修改用例的引用关系
+export function changeCaseQuote(data) {
+  return request({url: '/api/case/quote', method: 'put', data: data});
+}
+
 // 复制用例
 export function copyCase(params) {
   return request({url: '/api/case/copy', method: 'get', params: params});
