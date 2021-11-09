@@ -32,7 +32,10 @@
 
     <el-table-column property="value" label="Value" header-align="center" min-width="25%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.value" size="mini" placeholder="预期结果，严格区分字符类型，字符串请加引号：'123'">
+        <el-input v-model="scope.row.value"
+                  size="mini"
+                  :type="['契约校验', 'json相等'].indexOf(scope.row.validate_type) !== -1 ? 'textarea' : 'text'"
+                  placeholder="预期结果，严格区分字符类型，字符串请加引号：'123'">
         </el-input>
       </template>
     </el-table-column>

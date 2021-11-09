@@ -37,16 +37,16 @@
       <el-tabs v-model="caseTreeActiveName">
         <el-tab-pane label="用例列表" name="caseTreeActiveName">
 
-          <el-form label-width="100px">
+          <el-form label-width="60px">
 
             <el-row>
 
               <!-- 项目选择 -->
               <el-col :span="12">
-                <el-form-item label="选择项目">
+                <el-form-item label="项目">
                   <el-select
                     v-model="projectSelectedId"
-                    placeholder="请选择项目"
+                    placeholder="选择项目"
                     size="small"
                     filterable
                     style="min-width: 20%;padding-right:10px"
@@ -62,10 +62,10 @@
 
               <!-- 选则用例集 -->
               <el-col :span="12">
-                <el-form-item label="选则用例集">
+                <el-form-item label="用例集">
                   <el-select
                     v-model="currentCaseSetId"
-                    placeholder="请选择用例集"
+                    placeholder="选择用例集"
                     size="small"
                     style="min-width: 20%;padding-right:10px"
                     @change="getCaseList"
@@ -199,7 +199,7 @@ export default {
       currentProjectList: [],
       currentCaseSetList: [],
       pageNum: 1,
-      pageSize: 5,
+      pageSize: 10,
       caseList: [],
       caseTotal: 0,
     }
@@ -221,6 +221,7 @@ export default {
     // 选中项目，获取对应的用例集
     selectedProject(projectId) {
       caseSetTree({'project_id': projectId}).then(response => {
+        this.currentCaseSetId = ''
         this.currentCaseSetList = response.data
       })
     },
@@ -284,6 +285,22 @@ export default {
     },
   },
   watch: {
+
+    'beforeCase': {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.tempBeforeCaseList = []
+        this.tempBeforeCaseIdList = newVal
+      }
+    },
+
+    'afterCase': {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.tempAfterCaseList = []
+        this.tempAfterCaseIdList = newVal
+      }
+    },
 
     'dialogIsShow': {
       deep: true,
