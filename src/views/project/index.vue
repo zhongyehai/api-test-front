@@ -55,7 +55,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'测试环境'" prop="test" align="center" min-width="25%" :show-overflow-tooltip=true>
+      <el-table-column :label="'测试环境'" prop="test" align="center" min-width="23%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{ scope.row.test }}</span>
         </template>
@@ -79,11 +79,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'操作'" align="center" min-width="15%" class-name="small-padding fixed-width">
+      <el-table-column :label="'操作'" align="center" min-width="17%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
+
+          <el-tooltip v-show="row.yapi_id" class="item" effect="dark" content="从yapi拉取此项目下的模块、接口信息" placement="top-start">
+            <el-button size="mini" :loading="row.isLoading" type="success" @click="pullByYapi(row)">
+              {{ '同步' }}
+            </el-button>
+          </el-tooltip>
+
           <el-button size="mini" type="primary" @click="showEditForm(row)">
             {{ '修改' }}
           </el-button>
+
           <el-button size="mini" type="danger" @click="confirmBox(delProject, row.id, row.name)">
             {{ '删除' }}
           </el-button>
@@ -110,7 +118,7 @@
 </template>
 
 <script>
-import {deleteProject, projectList} from '@/apis/project'
+import {deleteProject, projectList, projectPull} from '@/apis/project'
 import {userList} from '@/apis/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
@@ -159,6 +167,9 @@ export default {
       // 请求加载状态
       listLoading: true,
 
+      // 按钮运行状态
+      isLoading: false,
+
     }
   },
 
@@ -177,6 +188,15 @@ export default {
     // 编辑按钮
     showEditForm(row){
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'edit', row)
+    },
+
+    // 从yapi同步项目信息
+    pullByYapi(row){
+      this.$set(row, 'isLoading', true)
+      projectPull({id: row.id}).then(response => {
+        this.showMessage(this, response)
+        this.$set(row, 'isLoading', false)
+      })
     },
 
     // 请求用户信息

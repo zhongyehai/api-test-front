@@ -228,7 +228,7 @@ export default {
 
     // 获取当前的用例数据，用于提交给后端
     getCaseDataToCommit() {
-      let caseData = this.tempCase
+      let caseData = JSON.parse(JSON.stringify(this.tempCase))
       caseData.set_id = this.$refs.caseSetSelector.tempCaseSetId
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles

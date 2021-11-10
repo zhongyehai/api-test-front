@@ -153,7 +153,7 @@
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="解除当前用例对此用例的引用" placement="top-end">
                   <el-button type="danger" size="mini"
-                             @click.native="updateQuote('after', 'del', scope.row, scope.$index)">解除引用
+                             @click.native="updateQuote('after_case', 'del', scope.row, scope.$index)">解除引用
                   </el-button>
                 </el-tooltip>
               </template>
@@ -189,7 +189,6 @@ export default {
       tempBeforeCaseList: [],
       tempAfterCaseIdList: [],
       tempAfterCaseList: [],
-      isGetCaseName: false,  // 是否查询前后置用例的名字
       beforeCaseActiveName: 'beforeCaseActiveName',
       caseTreeActiveName: 'caseTreeActiveName',
       afterCaseActiveName: 'afterCaseActiveName',
@@ -204,10 +203,26 @@ export default {
       caseTotal: 0,
     }
   },
+  mounted() {
+    // 获取项目列表
+    this.getProjectList()
+  },
   created() {
-    this.tempBeforeCaseIdList = this.beforeCase
-    this.tempAfterCaseIdList = this.afterCase
-    this.isGetCaseName = this.dialogIsShow
+    // 前置用例
+    this.tempBeforeCaseIdList = this.beforeCase ? JSON.parse(JSON.stringify(this.beforeCase)) : []
+    if (this.tempBeforeCaseIdList.length > 0) {
+      caseName({'caseId': this.tempBeforeCaseIdList + ''}).then(response => {
+        this.tempBeforeCaseList = response.data
+      })
+    }
+
+    // 后置用例
+    this.tempAfterCaseIdList = this.afterCase ? JSON.parse(JSON.stringify(this.afterCase)) : []
+    if (this.tempAfterCaseIdList.length > 0) {
+      caseName({'caseId': this.tempAfterCaseIdList + ''}).then(response => {
+        this.tempAfterCaseList = response.data
+      })
+    }
   },
   methods: {
 
@@ -291,6 +306,14 @@ export default {
       handler(newVal, oldVal) {
         this.tempBeforeCaseList = []
         this.tempBeforeCaseIdList = newVal
+        if (this.dialogIsShow) {
+          // 获取前置用例
+          if (this.tempBeforeCaseIdList && this.tempBeforeCaseIdList.length > 0) {
+            caseName({'caseId': this.tempBeforeCaseIdList + ''}).then(response => {
+              this.tempBeforeCaseList = response.data
+            })
+          }
+        }
       }
     },
 
@@ -299,37 +322,13 @@ export default {
       handler(newVal, oldVal) {
         this.tempAfterCaseList = []
         this.tempAfterCaseIdList = newVal
-      }
-    },
-
-    'dialogIsShow': {
-      deep: true,
-      handler(newVal, oldVal) {
-        this.isGetCaseName = newVal
-      }
-    },
-
-    'isGetCaseName': {
-      deep: true,
-      handler(newVal, oldVal) {
-        if (newVal) {
-          // 获取项目列表
-          this.getProjectList()
-
-          // 获取前置用例
-          if (this.tempBeforeCaseIdList && this.tempBeforeCaseIdList.length > 0) {
-            caseName({'caseId': this.tempBeforeCaseIdList + ''}).then(response => {
-              this.tempBeforeCaseList = response.data
-            })
-          }
-
+        if (this.dialogIsShow) {
           // 获取后置用例
           if (this.tempAfterCaseIdList && this.tempAfterCaseIdList.length > 0) {
             caseName({'caseId': this.tempAfterCaseIdList + ''}).then(response => {
               this.tempAfterCaseList = response.data
             })
           }
-
         }
       }
     },

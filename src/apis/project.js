@@ -28,3 +28,8 @@ export function deleteProject(data) {
 export function projectList(params) {
   return request({url: '/api/project/list', method: 'get', params: params});
 }
+
+// 同步yapi的信息
+export function projectPull(data) {
+  return request({url: '/api/project/pull', method: 'post', data: data});
+}
