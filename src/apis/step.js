@@ -19,7 +19,6 @@ export function putStep(data) {
   return Func('put', data)
 }
 
-
 // 删除步骤
 export function deleteStep(data) {
   return Func('delete', data)
@@ -33,4 +32,9 @@ export function putStepIsRun(data) {
 // 获取步骤list
 export function stepList(params) {
   return request({url: '/api/step/list', method: 'get', params: params});
+}
+
+// 修改步骤排序
+export function stepSort(data) {
+  return request({url: '/api/step/sort', method: 'put', data: data});
 }

@@ -65,13 +65,6 @@
                 ></el-input-number>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="用例编号" v-if="tempCase.id">
-                <el-input v-model.number="tempCase.num" :minlength="215"></el-input>
-              </el-form-item>
-            </el-col>
           </el-row>
         </el-form>
 
@@ -176,7 +169,7 @@ export default {
       activeName: 'caseInFo',
       tempCase: {
         id: '',
-        num: '',
+        // num: '',
         name: '',
         desc: '',
         is_run: true,
@@ -200,7 +193,7 @@ export default {
     // 初始化新增用例模板
     initNewTempCase() {
       this.tempCase.id = ''
-      this.tempCase.num = ''
+      // this.tempCase.num = ''
       this.tempCase.name = ''
       this.tempCase.desc = ''
       this.tempCase.run_times = ''
@@ -255,7 +248,7 @@ export default {
           // console.log('caseDialog.addCase.response: ', JSON.stringify(response.data))
           this.dialogIsShow = false
           this.tempCase.id = response.data.id
-          this.tempCase.num = response.data.num
+          // this.tempCase.num = response.data.num
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
         }
       })
@@ -306,7 +299,7 @@ export default {
         if (this.showMessage(this, response)) {
           // 把接口返回的用例id赋值给this.tempCase.id
           this.tempCase.id = response.data.id
-          this.tempCase.num = response.data.num
+          // this.tempCase.num = response.data.num
           this.dialogStatus = 'update'  // 新增完后把状态改为编辑
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
         }

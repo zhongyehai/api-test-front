@@ -71,11 +71,11 @@
             </el-form-item>
           </el-col>
           <!-- 接口编号 -->
-          <el-col :span="6">
-            <el-form-item label="接口编号" v-if="tempApi.id" style="margin-bottom: 5px">
-              <el-input v-model.number="tempApi.num" placeholder="接口编号" size="small"></el-input>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="6">-->
+<!--            <el-form-item label="接口编号" v-if="tempApi.id" style="margin-bottom: 5px">-->
+<!--              <el-input v-model.number="tempApi.num" placeholder="接口编号" size="small"></el-input>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
         </el-row>
 
       </el-form>
@@ -139,6 +139,7 @@
             :data-type="tempApi.data_type"
             :data-json="tempApi.data_json"
             :data-form="tempApi.data_form"
+            :data-xml="tempApi.data_xml"
           ></bodyView>
         </el-tab-pane>
 
@@ -235,7 +236,7 @@ export default {
       // 接口新增/编辑临时数据
       tempApi: {
         id: '',
-        num: '',
+        // num: '',
         name: '',
         desc: '',
         up_func: '',
@@ -248,6 +249,7 @@ export default {
         data_type: '',
         data_form: [{key: null, form_data_type: null, remark: null, value: null}],
         data_json: JSON.stringify({}),
+        data_xml: '',
         extracts: [{key: null, value: null, remark: null}],
         validates: [{key: null, value: null, validate_type: null, remark: null}],
         module_id: '',
@@ -327,7 +329,7 @@ export default {
     // 点击新增接口时，初始化 dialog 数据
     initNewTempApi() {
       this.tempApi.id = ''
-      this.tempApi.num = ''
+      // this.tempApi.num = ''
       this.tempApi.name = ''
       this.tempApi.desc = ''
       this.tempApi.up_func = ''
@@ -341,6 +343,7 @@ export default {
       this.tempApi.data_form = [{key: null, data_type: null, remark: null, value: null}]
       // this.tempApi.data_json = JSON.stringify({})
       this.tempApi.data_json = {}
+      this.tempApi.data_xml = ''
       this.tempApi.extracts = [{key: null, value: null, remark: null}]
       this.tempApi.validates = [{key: null, value: null, validate_type: null, remark: null}]
       this.tempApi.module_id = this.currentModuleId ? this.currentModuleId : ''
@@ -359,7 +362,7 @@ export default {
     getTempApi() {
       return {
         id: this.tempApi.id,
-        num: this.tempApi.num,
+        // num: this.tempApi.num,
         name: this.tempApi.name,
         desc: this.tempApi.desc,
         up_func: this.tempApi.up_func,
@@ -375,6 +378,7 @@ export default {
         data_type: this.$refs.bodyView.activeName,
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         data_json: this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
+        data_xml: this.$refs.bodyView.tempDataXml,
 
         module_id: this.$refs.moduleSelector.tempModuleId,
         project_id: this.$refs.projectSelector.tempProjectId
@@ -398,7 +402,7 @@ export default {
         this.initUpdateTempApi(api)  // 修改
         this.dialogStatus = 'update'
       } else if (command === 'copy') {
-        api.num = ''
+        // api.num = ''
         this.initUpdateTempApi(api)  // 复制
         this.dialogStatus = 'add'
       }

@@ -42,7 +42,7 @@
 <script>
 import Sortable from 'sortablejs'
 
-import {deleteStep, putStepIsRun} from "@/apis/step"
+import {deleteStep, putStepIsRun, stepSort} from "@/apis/step"
 
 export default {
   name: 'stepList',
@@ -75,19 +75,17 @@ export default {
 
     // 新增步骤提交事件，把此步骤添加到步骤列表
     this.$bus.$on(this.$busEvents.addStepIsCommit, (step) => {
-      // console.log('stepList.mounted.this.$bus.$on.addStepIsCommit: ', JSON.stringify(step))
-      // this.stepList = this.stepList.push(step)
       this.stepList.push(step)
+
+      this.oldList = this.stepList.map(v => v.id)
+      this.newList = this.oldList.slice()
     })
 
     // 修改步骤提交事件，更改对应的步骤数据
     this.$bus.$on(this.$busEvents.editStepIsCommit, (step) => {
-      // console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.step: ', JSON.stringify(step))
-      // console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.step : ', JSON.stringify(step))
       for (let index in this.stepList) {
         if (this.stepList[index].id === step.id) {
           this.stepList[index] = step
-          // console.log('stepList.mounted.this.$bus.$on.stepTabIsCommit.this.stepList.new: ', JSON.stringify(this.stepList))
           return
         }
       }
@@ -103,9 +101,7 @@ export default {
   created() {
 
     // 初始化父组件传过来的步骤列表
-    // console.log('step.stepList.created.this.caseStepList: ', JSON.stringify(this.caseStepList))
     this.stepList = this.caseStepList ? this.caseStepList : []
-    // console.log('step.stepList.created.this.stepList: ', JSON.stringify(this.stepList))
 
     this.oldList = this.stepList.map(v => v.id)
     this.newList = this.oldList.slice()
@@ -125,7 +121,6 @@ export default {
 
     // 删除步骤
     deleteStepOnList(stepInfo) {
-      // console.log('stepInfo: ', JSON.stringify(stepInfo))
       deleteStep({"id": stepInfo.id}).then(response => {
         if (this.showMessage(this, response)) {
           this.stepList.splice(stepInfo.index, 1)  // 从步骤列表中删除步骤
@@ -136,7 +131,6 @@ export default {
     // 点击编辑步骤
     editStep(row, index) {
       this.currentStep = row
-      // this.currentStep.num = index
       this.$bus.$emit(this.$busEvents.editStep, this.currentStep)
     },
 
@@ -153,6 +147,12 @@ export default {
           this.stepList.splice(evt.newIndex, 0, targetRow)
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
+
+          stepSort({
+            List: this.newList
+          }).then(response => {
+            this.showMessage(this, response)
+          })
         }
       })
     }
@@ -161,13 +161,14 @@ export default {
     'caseStepList': {
 
       handler(newVal, oldVal) {
-        // console.log('step.stepList.watch.caseStepList.oldVal: ', JSON.stringify(oldVal))
-        // console.log('step.stepList.watch.caseStepList.newVal: ', JSON.stringify(newVal))
         if (newVal && newVal.length > 0) {
           this.stepList = newVal
         } else {
           this.stepList = []
         }
+
+        this.oldList = this.stepList.map(v => v.id)
+        this.newList = this.oldList.slice()
       }
     }
   }

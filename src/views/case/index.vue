@@ -7,92 +7,88 @@
       <!-- 用例管理 -->
       <el-tab-pane label="用例列表" name="case">
 
-        <!-- 根据当前窗口宽度，实时计算用例列表能展示的宽度 -->
-        <el-row :style="{'min-width': caseSetListTableWidth}">
+        <el-table
+          ref="caseTable"
+          v-loading="listLoading"
+          :data="case_list"
+          row-key="id"
+          stripe
+        >
+          <el-table-column prop="num" label="序号" min-width="10%">
+            <template slot-scope="scope">
+              <span> {{ scope.row.num }} </span>
+            </template>
+          </el-table-column>
 
-          <el-col :span="21" style="padding-left: 5px;">
-            <el-table
-                ref="apiTree"
-                v-loading="listLoading"
-                :data="apis.api_list"
-                stripe
-            >
-              <el-table-column prop="num" label="序号" min-width="10%">
-                <template slot-scope="scope">
-                  <span> {{ scope.$index + 1 }} </span>
-                </template>
-              </el-table-column>
+          <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="30%">
+            <template slot-scope="scope">
+              <span> {{ scope.row.name }} </span>
+            </template>
+          </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="30%">
-                <template slot-scope="scope">
-                  <span> {{ scope.row.name }} </span>
-                </template>
-              </el-table-column>
+          <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
+            <template slot-scope="scope">
+              <span>{{ parsUser(scope.row.create_user) }}</span>
+            </template>
+          </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
-                <template slot-scope="scope">
-                  <span>{{ parsUser(scope.row.create_user) }}</span>
-                </template>
-              </el-table-column>
+          <el-table-column align="center" label="执行" min-width="10%">
+            <template slot-scope="scope">
+              <el-switch v-model="scope.row.is_run" @change="changeCaseIsRun(scope.row)"></el-switch>
+            </template>
+          </el-table-column>
 
-              <el-table-column align="center" label="执行" min-width="10%">
-                <template slot-scope="scope">
-                  <el-switch v-model="scope.row.is_run" @change="changeCaseIsRun(scope.row)"></el-switch>
-                </template>
-              </el-table-column>
+          <el-table-column label="用例操作" min-width="40%">
+            <template slot-scope="scope">
 
-              <el-table-column label="用例操作" min-width="40%">
-                <template slot-scope="scope">
+              <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
+                <el-button type="success" size="mini" :loading="scope.row.isLoading"
+                           @click.native="runCase(scope.row)">运行
+                </el-button>
+              </el-tooltip>
 
-                  <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
-                    <el-button type="success" size="mini" :loading="scope.row.isLoading"
-                               @click.native="runCase(scope.row)">运行
-                    </el-button>
-                  </el-tooltip>
+              <el-button type="primary" size="mini" @click.native="editCase(scope.row)">编辑</el-button>
 
-                  <el-button type="primary" size="mini" @click.native="editCase(scope.row)">编辑</el-button>
+              <el-tooltip class="item" effect="dark" content="复制用例及其步骤" placement="top-end">
+                <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">复制</el-button>
+              </el-tooltip>
 
-                  <el-tooltip class="item" effect="dark" content="复制用例及其步骤" placement="top-end">
-                    <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">复制</el-button>
-                  </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
+                <el-button type="danger" size="mini"
+                           @click.native="confirmBox(delCase, scope.row.id, `用例 ${scope.row.name}`)">删除
+                </el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+        </el-table>
 
-                  <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
-                    <el-button type="danger" size="mini"
-                               @click.native="confirmBox(delCase, scope.row.id, `用例 ${scope.row.name}`)">删除
-                    </el-button>
-                  </el-tooltip>
-                </template>
-              </el-table-column>
-            </el-table>
 
-            <pagination
-                v-show="apis.api_total>0"
-                :total="apis.api_total"
-                :page.sync="defaultPage.pageNum"
-                :limit.sync="defaultPage.apiPageSize"
-                @pagination="getCaseList"
-            />
-          </el-col>
-        </el-row>
+        <pagination
+          v-show="case_total>0"
+          :total="case_total"
+          :page.sync="pageNum"
+          :limit.sync="pageSize"
+          @pagination="getCaseList"
+        />
       </el-tab-pane>
 
     </el-tabs>
 
     <caseDialog
-        :currentProject="currentProject"
-        :currentCaseSet="currentCaseSet"
+      :currentProject="currentProject"
+      :currentCaseSet="currentCaseSet"
     ></caseDialog>
 
   </div>
 </template>
 
 <script>
-
+import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
 import caseDialog from '@/views/case/caseDialog'
 
 import {userList} from '@/apis/user'
-import {caseList, caseRun, deleteCase, putCaseIsRun} from '@/apis/case'
+import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/case'
 
 export default {
   name: 'index',
@@ -116,10 +112,8 @@ export default {
       caseTab: 'case',
 
       // 初始化数据默认的数据
-      defaultPage: {
-        pageNum: 1,
-        apiPageSize: 20
-      },
+      pageNum: 1,
+      pageSize: 20,
 
       // 用例新增/编辑临时数据
       tempCase: {},
@@ -134,22 +128,28 @@ export default {
       user_list: [],
 
       // 用例数据列表
-      apis: {
-        api_total: 0,
-        api_list: [],
-        currentPage: undefined,
-        currentApi: undefined
-      },
+      case_total: 0,
+      case_list: [],
 
       // dialog框状态，edit为编辑数据, create为新增数据
-      caseDialogStatus: ''
+      caseDialogStatus: '',
 
+      // 拖拽排序参数
+      sortable: null,
+      oldList: [],
+      newList: [],
     }
   },
 
   created() {
     // 初始化用户列表
     this.getUserList()
+
+    this.oldList = this.case_list.map(v => v.id)
+    this.newList = this.oldList.slice()
+    this.$nextTick(() => {
+      this.setSort()
+    })
   },
 
 
@@ -241,20 +241,43 @@ export default {
       this.listLoading = true
       caseList({
         'setId': this.currentCaseSet.id,
-        'pageNum': this.defaultPage.pageNum,
-        'pageSize': this.defaultPage.apiPageSize
+        'pageNum': this.pageNum,
+        'pageSize': this.pageSize
       }).then(response => {
-        this.apis.api_list = response.data.data
-        this.apis.api_total = response.data.total
+        this.case_list = response.data.data
+        this.case_total = response.data.total
+
+        this.oldList = this.case_list.map(v => v.id)
+        this.newList = this.oldList.slice()
       })
       this.listLoading = false
-    }
-  },
+    },
 
-  computed: {
-    // 用例列表能用的宽度
-    caseSetListTableWidth() {
-      return `${window.innerWidth - 300}px`
+    // 拖拽排序
+    setSort() {
+      const el = this.$refs.caseTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.case_list.splice(evt.oldIndex, 1)[0]
+          this.case_list.splice(evt.newIndex, 0, targetRow)
+
+          const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
+          this.newList.splice(evt.newIndex, 0, tempIndex)
+
+          // 发送请求，改变排序
+          caseSort({
+            List: this.newList,
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+          }).then(response => {
+            this.showMessage(this, response)
+          })
+        }
+      })
     }
   },
 
@@ -268,8 +291,8 @@ export default {
         if (newVal.id !== oldVal.id) {
           this.getCaseList({
             'caseSetId': newVal.id,
-            'pageNum': this.defaultPage.pageNum,
-            'pageSize': this.defaultPage.apiPageSize
+            'pageNum': this.pageNum,
+            'pageSize': this.pageSize
           })
         }
       }

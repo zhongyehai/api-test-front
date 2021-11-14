@@ -15,6 +15,16 @@
       <dataJsonView :data-json="tempDataJson" ref="dataJsonView"></dataJsonView>
     </el-tab-pane>
 
+    <el-tab-pane label="xml" name="xml">
+      <el-button type="primary" size="mini"
+                 v-show="tempDataType === 'xml'"
+                 style="margin-left:20px; float: right"
+                 @click="formatDataToJson()">格式化
+      </el-button>
+      <el-input v-model="tempDataXml" type="textarea" :rows="10"></el-input>
+<!--      <dataJsonView :data-json="tempDataJson" ref="dataJsonView"></dataJsonView>-->
+    </el-tab-pane>
+
   </el-tabs>
 
 </template>
@@ -30,7 +40,7 @@ export default {
     dataFormView,
     dataJsonView
   },
-  props: ['dataType', 'dataJson', 'dataForm'],
+  props: ['dataType', 'dataJson', 'dataForm', 'dataXml'],
   data() {
     return {
       activeName: 'json',
@@ -47,6 +57,7 @@ export default {
       tempDataType: '',
       tempDataJson: '',
       tempDataForm: '',
+      tempDataXml: '',
     }
   },
 
@@ -55,6 +66,7 @@ export default {
       this.tempDataType = api.data_type
       this.tempDataJson = JSON.stringify(api.data_json)
       this.tempDataForm = api.data_form
+      this.tempDataXml = api.data_xml
     })
   },
 
@@ -67,6 +79,7 @@ export default {
     this.tempDataType = this.dataType || 'json'
     this.tempDataJson = JSON.stringify(this.dataJson) || JSON.stringify({})
     this.tempDataForm = this.dataForm || [{key: null, data_type: null, remark: null, value: null}]
+    this.tempDataXml = this.dataXml || ''
   },
 
   methods: {
@@ -97,6 +110,12 @@ export default {
     'dataForm': {
       handler(newVal, oldVal) {
         this.tempDataForm = newVal || [{key: null, data_type: null, remark: null, value: null}]
+      }
+    },
+
+    'dataXml': {
+      handler(newVal, oldVal) {
+        this.tempDataXml = newVal
       }
     },
 

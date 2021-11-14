@@ -4,7 +4,7 @@
       title="测试结果"
       :visible.sync="resultViewStatus"
       :close-on-click-modal="false"
-      width="40%"
+      width="60%"
     >
       <el-collapse accordion>
         <el-collapse-item
@@ -16,83 +16,87 @@
           </template>
 
           <el-tabs type="card">
-            <el-tab-pane label="返回结果">
-              <el-scrollbar wrapStyle="max-height:540px;">
-                <div>
-                  <pre style="overflow: auto;">{{ parseResultDeal(item.meta_datas.data[0].response.json) }}</pre>
-                </div>
-              </el-scrollbar>
+            <!--            <el-tab-pane label="返回结果">-->
+            <!--              <el-scrollbar wrapStyle="max-height:540px;">-->
+            <!--                <div>-->
+            <!--                  <pre style="overflow: auto;">{{ parseResultDeal(item.meta_datas.data[0].response.json) }}</pre>-->
+            <!--                </div>-->
+            <!--              </el-scrollbar>-->
+            <!--            </el-tab-pane>-->
+
+
+            <el-tab-pane label="返回信息">
+              <el-collapse v-model="defaultShowResponseInFo">
+                <el-collapse-item title="响应状态码：" name="1">
+                  <div>{{ item.meta_datas.data[0].response.status_code }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="响应数据：" name="2">
+                  <pre style="overflow: auto;color: #000000">{{
+                      parseResultDeal(item.meta_datas.data[0].response.json)
+                    }}</pre>
+                </el-collapse-item>
+                <el-collapse-item title="头部信息：" name="3">
+                  <pre style="overflow: auto;color: #000000">{{ item.meta_datas.data[0].response.headers }}</pre>
+                </el-collapse-item>
+                <el-collapse-item title="cookies：" name="4">
+                  <pre style="overflow: auto;color: #000000">{{ item.meta_datas.data[0].response.cookies }}</pre>
+                </el-collapse-item>
+                <el-collapse-item title="content-type：" name="5">
+                  <div>{{ item.meta_datas.data[0].response.content_type }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="encoding：" name="6">
+                  <div>{{ item.meta_datas.data[0].response.encoding }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="地址：" name="7">
+                  <div>{{ item.meta_datas.data[0].response.url }}</div>
+                </el-collapse-item>
+              </el-collapse>
             </el-tab-pane>
+
+            <el-tab-pane label="提取信息">
+              <div v-for="(value, key) in item.meta_datas.data[0].extract_msgs" :key="key">
+                <el-row v-if="JSON.stringify(value) !== '{}'">
+                  <el-col :span="8">
+                    <div style="color: #409eff">{{ key }}：</div>
+                  </el-col>
+                  <el-col :span="16">
+                    <pre style="color: #000000">{{ value }}</pre>
+                  </el-col>
+                </el-row>
+                <hr>
+              </div>
+            </el-tab-pane>
+
+            <el-tab-pane label="请求信息">
+              <el-collapse v-model="defaultShowRequestInFo">
+                <el-collapse-item title="请求方法：" name="1">
+                  <div>{{ item.meta_datas.data[0].request.method }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="请求地址：" name="2">
+                  <div>{{ item.meta_datas.data[0].request.url }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="查询字符串参数：" name="3">
+                  <div>{{ item.meta_datas.data[0].request.params }}</div>
+                </el-collapse-item>
+                <el-collapse-item title="头部参数：" name="4">
+                  <pre style="overflow: auto;color: #000000">{{ item.meta_datas.data[0].request.headers }}</pre>
+                </el-collapse-item>
+                <el-collapse-item title="json参数：" name="5">
+                  <pre style="overflow: auto;color: #000000">{{ item.meta_datas.data[0].request.json }}</pre>
+                </el-collapse-item>
+                <el-collapse-item title="data参数：" name="6">
+                  <div v-html="item.meta_datas.data[0].request.data"></div>
+                </el-collapse-item>
+              </el-collapse>
+            </el-tab-pane>
+
             <el-tab-pane label="错误信息" v-if="item.attachment">
               <div>
                 <pre style="overflow: auto">{{ item.attachment }}</pre>
               </div>
             </el-tab-pane>
-            <el-tab-pane label="返回信息">
-              <div v-for="(value, key) in item.meta_datas.data[0].response"
-                   :key="key"
-              >
-                <div style="color: #409eff"
-                     v-if="JSON.stringify(value) !== '{}' && key !== 'start_timestamp' && value && key !== 'json'"
-                >
-                  {{ key }}：
-                  <div style="color: #000000">{{ value }}</div>
-                </div>
-              </div>
-            </el-tab-pane>
 
-            <el-tab-pane label="请求信息">
-              <!--<div style="color: #409eff"-->
-              <!--v-if="!item.meta_datas.data[0].request.body">-->
-              <!--body：-->
-              <!--<pre style="overflow: auto;color: #000000">{{dealBody(item.meta_datas.data[0].request.body)}}</pre>-->
-              <!--</div>-->
-              <div v-for="(value, key) in item.meta_datas.data[0].request"
-                   :key="key"
-              >
-                <div style="color: #409eff"
-                     v-if="JSON.stringify(value) !== '{}' && key !== 'timeout'&& key !== 'verify' && value && key !== 'body'"
-                >
-                  {{ key }}：
-                  <pre style="overflow: auto;color: #000000">{{ value }}</pre>
-                </div>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane label="提取信息" v-if="JSON.stringify(item.meta_datas.data[0].extract_msgs) !== '{}'">
-              <div v-for="(value, key) in item.meta_datas.data[0].extract_msgs"
-                   :key="key"
-              >
-                <div style="color: #409eff"
-                     v-if="JSON.stringify(value) !== '{}' && key !== 'start_timestamp' && value && key !== 'json'"
-                >
-                  {{ key }}：
-                  <div style="color: #000000">{{ value }}</div>
-                </div>
-              </div>
-            </el-tab-pane>
           </el-tabs>
-          <!--<el-button type="primary" v-clipboard:copy="JSON.stringify(item.meta_data.response_body)"-->
-          <!--size="small"-->
-          <!--style="position:absolute;right: 3%;">复制-->
-          <!--</el-button>-->
-
-          <!--<div v-for="(value, key) in item.meta_data.request">-->
-          <!--<div style="color: #409eff" v-if="JSON.stringify(value) !== '{}' && key !== 'start_timestamp'">-->
-          <!--{{ key }}：-->
-          <!--<div  style="color: #000000">{{ value }}</div>-->
-          <!--</div>-->
-
-          <!--</div>-->
-
-          <!--<div style="color: #409eff">返回结果：</div>-->
-          <!--<div>-->
-          <!--<pre style="overflow: auto" >{{parseResultDeal(item.meta_data.response.content)}}</pre>-->
-          <!--</div>-->
-          <!--<div style="color: red">错误信息：</div>-->
-          <!--<div>-->
-          <!--<pre style="overflow: auto">{{item.attachment}}</pre>-->
-          <!--</div>-->
-
         </el-collapse-item>
       </el-collapse>
     </el-dialog>
@@ -107,6 +111,8 @@ export default {
   ],
   data() {
     return {
+      defaultShowRequestInFo: ['1', '2', '3', '4', '5', '6'],  // 请求信息，默认展开全部
+      defaultShowResponseInFo: ['1', '2', '3', '4', '5', '6', '7'],  // 响应信息，默认展开全部
       resultViewStatus: false,
       resultData: {
         out: '',
@@ -125,7 +131,7 @@ export default {
                   params: null,
                   json: null
                 },
-                response: { content: null, json: null }
+                response: {content: null, json: null}
               }]
             }
           }

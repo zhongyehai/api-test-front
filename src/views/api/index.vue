@@ -1,5 +1,5 @@
 <template>
-  <!--  <div class="tabs" style="width: 100%">-->
+
   <div>
 
     <!-- 结构树/接口列表 -->
@@ -8,72 +8,65 @@
       <!-- 模块管理 -->
       <el-tab-pane label="接口列表" name="api">
 
-        <!-- 根据当前窗口宽度，实时计算接口列表能展示的宽度 -->
-        <el-row :style="{'min-width': apiListTableWidth}">
+        <el-table
+          ref="apiListTable"
+          v-loading="listLoading"
+          :data="api_list"
+          row-key="id"
+          stripe
+        >
+          <el-table-column prop="num" label="序号" min-width="7%">
+            <template slot-scope="scope">
+              <span> {{ scope.row.num }} </span>
+            </template>
+          </el-table-column>
 
-          <!-- 第一列，模块对应的接口列表 -->
-          <el-col :span="21" style="padding-left: 5px;">
-            <el-table
-              ref="apiTree"
-              v-loading="listLoading"
-              :data="apis.api_list"
-              key="id"
-              stripe
-            >
-              <el-table-column prop="num" label="序号" min-width="7%">
-                <template slot-scope="scope">
-                  <span> {{ scope.$index + 1 }} </span>
-                </template>
-              </el-table-column>
+          <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="15%">
+            <template slot-scope="scope">
+              <span> {{ scope.row.name }} </span>
+            </template>
+          </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="15%">
-                <template slot-scope="scope">
-                  <span> {{ scope.row.name }} </span>
-                </template>
-              </el-table-column>
+          <el-table-column
+            :show-overflow-tooltip=true
+            prop="addr"
+            label="接口地址"
+            min-width="26%"
+          ></el-table-column>
 
-              <el-table-column
-                :show-overflow-tooltip=true
-                prop="addr"
-                label="接口地址"
-                min-width="26%"
-              ></el-table-column>
+          <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
+            <template slot-scope="scope">
+              <span>{{ parsUser(scope.row.create_user) }}</span>
+            </template>
+          </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
-                <template slot-scope="scope">
-                  <span>{{ parsUser(scope.row.create_user) }}</span>
-                </template>
-              </el-table-column>
+          <el-table-column label="接口操作" min-width="39%">
+            <template slot-scope="scope">
 
-              <el-table-column label="接口操作" min-width="39%">
-                <template slot-scope="scope">
+              <el-button size="mini" type="success" :loading="scope.row.isLoading" @click="runApis(scope.row)">
+                运行
+              </el-button>
+              <el-button size="mini" type="primary" @click="showEditForm(scope.row)">
+                修改
+              </el-button>
+              <el-tooltip class="item" effect="dark" content="复制接口" placement="top-end">
+                <el-button type="primary" size="mini" @click.native="copyApi(scope.row)">复制</el-button>
+              </el-tooltip>
+              <el-button type="danger" size="mini" @click.native="confirmBox(delApi, scope.row.id, scope.row.name)">
+                删除
+              </el-button>
+            </template>
+          </el-table-column>
 
-                  <el-button size="mini" type="success" :loading="scope.row.isLoading" @click="runApis(scope.row)">
-                    运行
-                  </el-button>
-                  <el-button size="mini" type="primary" @click="showEditForm(scope.row)">
-                    修改
-                  </el-button>
-                  <el-tooltip class="item" effect="dark" content="复制接口" placement="top-end">
-                    <el-button type="primary" size="mini" @click.native="copyApi(scope.row)">复制</el-button>
-                  </el-tooltip>
-                  <el-button type="danger" size="mini" @click.native="confirmBox(delApi, scope.row.id, scope.row.name)">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
+        </el-table>
 
-            </el-table>
-
-            <pagination
-              v-show="apis.api_total>0"
-              :total="apis.api_total"
-              :page.sync="defaultPage.pageNum"
-              :limit.sync="defaultPage.apiPageSize"
-              @pagination="getApiList"
-            />
-          </el-col>
-        </el-row>
+        <pagination
+          v-show="api_total>0"
+          :total="api_total"
+          :page.sync="pageNum"
+          :limit.sync="pageSize"
+          @pagination="getApiList"
+        />
       </el-tab-pane>
 
     </el-tabs>
@@ -90,11 +83,13 @@
 </template>
 
 <script>
-import {userList} from '@/apis/user'
-import {apiList, deleteApi, runApi} from '@/apis/api'
+import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
 import apiDialog from '@/views/api/apiDialog'
 import runApiResult from '@/views/api/runApiResult'
+
+import {userList} from '@/apis/user'
+import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/api'
 
 export default {
   name: 'index',
@@ -121,12 +116,6 @@ export default {
       //  tab页的显示
       apiTab: 'api',
 
-      // 初始化数据默认的数据
-      defaultPage: {
-        pageNum: 1,
-        apiPageSize: 20
-      },
-
       // 接口新增/编辑临时数据
       tempApi: {},
 
@@ -134,15 +123,18 @@ export default {
       user_list: [],
 
       // 接口数据列表
-      apis: {
-        api_total: 0,
-        api_list: [],
-        currentPage: undefined,
-        currentApi: undefined
-      },
+      pageNum: 1,
+      pageSize: 20,
+      api_total: 0,
+      api_list: [],
 
       // 调试接口的运行结果
-      runApiResultData: null
+      runApiResultData: null,
+
+      // 拖拽排序参数
+      sortable: null,
+      oldList: [],
+      newList: [],
     }
   },
 
@@ -150,6 +142,12 @@ export default {
 
     // 初始化用户列表
     this.getUserList()
+
+    this.oldList = this.api_list.map(v => v.id)
+    this.newList = this.oldList.slice()
+    this.$nextTick(() => {
+      this.setSort()
+    })
   },
 
   mounted() {
@@ -211,11 +209,14 @@ export default {
       this.listLoading = true
       apiList({
         'moduleId': this.currentModuleId,
-        'pageNum': this.defaultPage.pageNum,
-        'pageSize': this.defaultPage.apiPageSize
+        'pageNum': this.pageNum,
+        'pageSize': this.pageSize
       }).then(response => {
-        this.apis.api_list = response.data.data
-        this.apis.api_total = response.data.total
+        this.api_list = response.data.data
+        this.api_total = response.data.total
+
+        this.oldList = this.api_list.map(v => v.id)
+        this.newList = this.oldList.slice()
       })
       this.listLoading = false
     },
@@ -232,12 +233,32 @@ export default {
       })
     },
 
-  },
-  computed: {
-    // 接口列表能用的宽度
-    apiListTableWidth() {
-      return `${window.innerWidth - 300}px`
+    // 拖拽排序
+    setSort() {
+      const el = this.$refs.apiListTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.api_list.splice(evt.oldIndex, 1)[0]
+          this.api_list.splice(evt.newIndex, 0, targetRow)
+          const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
+          this.newList.splice(evt.newIndex, 0, tempIndex)
+
+          // 发送请求，改变排序
+          apiMsgSort({
+            List: this.newList,
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+          }).then(response => {
+            this.showMessage(this, response)
+          })
+        }
+      })
     }
+
   },
 
   watch: {
@@ -248,8 +269,8 @@ export default {
       handler(newVal, oldVal) {
         this.getApiList({
           'moduleId': newVal,
-          'pageNum': this.defaultPage.pageNum,
-          'pageSize': this.defaultPage.apiPageSize
+          'pageNum': this.pageNum,
+          'pageSize': this.pageSize
         })
       }
     }

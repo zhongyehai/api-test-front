@@ -19,7 +19,6 @@ export function putCase(data) {
   return Func('put', data)
 }
 
-
 // 删除用例
 export function deleteCase(data) {
   return Func('delete', data)
@@ -27,7 +26,7 @@ export function deleteCase(data) {
 
 // 运行测试用例，并生成报告
 export function caseRun(data) {
-  return request({ url: '/api/case/run', method: 'post', data: data })
+  return request({url: '/api/case/run', method: 'post', data: data})
 }
 
 // 修改用例状态
@@ -53,4 +52,9 @@ export function changeCaseQuote(data) {
 // 复制用例
 export function copyCase(params) {
   return request({url: '/api/case/copy', method: 'get', params: params});
+}
+
+// 修改用例排序
+export function caseSort(data) {
+  return request({url: '/api/case/sort', method: 'put', data: data});
 }

@@ -60,6 +60,7 @@
         :data-type="currentStep.data_type"
         :data-json="currentStep.data_json"
         :data-form="currentStep.data_form"
+        :data-xml="currentStep.data_xml"
       ></bodyView>
     </el-tab-pane>
 
@@ -126,7 +127,7 @@ export default {
       currentStepCopy: '',
       currentStep: {
         'id': '',
-        "num": '',
+        // "num": '',
         "is_run": '',
         "name": '',
         "up_func": '',
@@ -138,6 +139,7 @@ export default {
         "validates": [],
         "data_form": [],
         "data_json": '',
+        "data_xml": '',
         "data_driver": '',
         "case_id": this.caseId,
         "api_id": '',
@@ -151,7 +153,7 @@ export default {
     getStepForCommit() {
       return {
         'id': this.currentStep.id,
-        "num": this.currentStep.num,
+        // "num": this.currentStep.num,
         "is_run": this.currentStep.is_run,
         "name": this.currentStep.name,
         "up_func": this.currentStep.up_func,
@@ -164,6 +166,7 @@ export default {
         "data_form": this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         // "data_json": JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson),
         "data_json": this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
+        "data_xml": this.$refs.bodyView.tempDataXml,
         "data_driver": this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson) : {},
         "case_id": this.caseId,
         "api_id": this.currentStep.api_id,

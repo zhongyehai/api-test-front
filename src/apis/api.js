@@ -55,3 +55,8 @@ export function getMethodsMapping() {
 export function getAssertMapping() {
   return request({url: '/api/apiMsg/assertMapping', method: 'get'});
 }
+
+// 修改接口排序
+export function apiMsgSort(data) {
+  return request({url: '/api/apiMsg/sort', method: 'put', data: data});
+}
