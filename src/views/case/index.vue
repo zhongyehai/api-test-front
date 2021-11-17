@@ -89,6 +89,7 @@ import caseDialog from '@/views/case/caseDialog'
 
 import {userList} from '@/apis/user'
 import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/case'
+import {reportIsDone} from "@/apis/report";
 
 export default {
   name: 'index',
@@ -215,10 +216,37 @@ export default {
       this.$set(caseData, 'isLoading', true)
       caseRun({
         caseId: [caseData.id]
-      }).then(response => {
+      }).then(runResponse => {
         // console.log('case.index.methods.runCase.response: ', JSON.stringify(response))
-        this.$set(caseData, 'isLoading', false)
-        this.openReportById(response.data.report_id)
+        if (this.showMessage(this, runResponse)) {
+
+          // 触发运行成功，每三秒查询一次，
+          // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
+          // 已出结果，则停止查询，展示测试报告
+          var that = this
+          var queryCount = 0
+          var timer = setInterval(function () {
+            if (queryCount <= 10) {
+              reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
+                if (queryResponse.data === 1) {
+                  that.$set(caseData, 'isLoading', false)
+                  that.openReportById(runResponse.data.report_id)
+                  clearInterval(timer)  // 关闭定时器
+                }
+              })
+              queryCount += 1
+            } else {
+              that.$set(caseData, 'isLoading', false)
+              that.$notify({
+                title: '测试长时间未运行结束',
+                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
+                type: 'warning',
+                duration: 0
+              });
+              clearInterval(timer)  // 关闭定时器
+            }
+          }, 3000)
+        }
       })
     },
 

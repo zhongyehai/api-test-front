@@ -80,6 +80,7 @@
           <el-scrollbar>
             <div :style={height:picHeight}>
               <el-collapse accordion>
+                <!-- 遍历用例 -->
                 <el-collapse-item
                   v-for="(item, index) in reportData['details']"
                   :key="index"
@@ -98,9 +99,9 @@
                   </template>
                   <div>
                     <ol id="test" style="padding:5px;font-family:Times New Roman">
+                      <!-- 遍历步骤 -->
                       <li style="list-style-type:none;border-bottom: 1px solid #eee;margin-left: 10px"
-                          :class="{'active':index === showColor[0] && index1 === showColor[1],
-                                            'wire': index1 === 0}"
+                          :class="{'active':index === showColor[0] && index1 === showColor[1], 'wire': index1 === 0}"
                           v-for="(item1, index1) in item['records']"
                           :key="index1"
                           @click="handleNodeClick(index, index1)"
@@ -139,97 +140,116 @@
               </el-tooltip>
             </div>
             <div :style={height:picHeight}>
-              <table style="padding:10px;font-size: 14px;line-height: 25px;width: 100%;position:relative;"
-                     border="0" cellpadding="0" cellspacing="0"
-              >
-                <thead>
-                <tr>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 20%">key</th>
-                  <th style="border-bottom:1px solid #d0d0d0;width: 80%">value</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-show="statusShow[0]">
-                  <td class="my-table">url</td>
-                  <td class="content" style=" overflow:auto;">
-                    {{ this.meta_datas.data[0].request.url }}
-                  </td>
-                </tr>
-                <tr v-show="statusShow[1]">
-                  <td class="my-table">请求方法</td>
-                  <td class="content">
-                    {{ this.meta_datas.data[0].request.method }}
-                  </td>
-                </tr>
-                <tr v-show="statusShow[2]">
-                  <td class="my-table">响应状态码</td>
-                  <td class="content">
-                    {{ this.meta_datas.data[0].response.status_code }}
-                  </td>
-                </tr>
-                <tr v-show="statusShow[3]">
-                  <td class="my-table">请求头部信息</td>
-                  <td class="content">
-                    <pre style="overflow: auto">{{ optimizeShow(this.meta_datas.data[0].request.headers) }}</pre>
-                  </td>
-                </tr>
-                <tr v-show="statusShow[4]">
-                  <td class="my-table">json参数</td>
-                  <td class="content">
-                  <pre
-                    style="white-space: pre-wrap;word-wrap: break-word;"
-                  >{{
-                      this.meta_datas.data[0].request.json
-                    }}</pre>
-                  </td>
-                </tr>
-                <tr v-show="statusShow[5]">
-                  <td class="my-table">data参数</td>
-                  <td class="content">
-                    <pre style="overflow: auto">{{ optimizeShow(this.meta_datas.data[0].request.data) }}</pre>
 
-                  </td>
-                </tr>
-                <tr v-show="statusShow[6]">
-                  <td class="my-table">查询字符串参数</td>
-                  <td class="content">
-                    <pre>{{ optimizeShow(this.meta_datas.data[0].request.params) }}</pre>
-                  </td>
-                </tr>
-                <tr v-show="statusShow[7]">
-                  <td class="my-table">响应头部信息</td>
-                  <td class="content">
-                    <pre style="overflow: auto">{{ optimizeShow(this.meta_datas.data[0].response.headers) }}</pre>
-                  </td>
-                </tr>
+              <div style="padding:10px;font-size: 14px;line-height: 25px;width: 100%;position:relative;"
+                   border="0" cellpadding="0" cellspacing="0">
 
-                <tr v-show="statusShow[8]">
-                  <td class="my-table">响应体数据</td>
-                  <td class="content">
-                    <pre
-                      style="white-space: pre-wrap;word-wrap: break-word;">{{
-                        this.meta_datas.data[0].response.json
-                      }}</pre>
-                  </td>
-                </tr>
 
-                <tr v-show="statusShow[8]">
-                  <td class="my-table">响应文本</td>
-                  <td class="content">
-                    <pre
-                      style="white-space: pre-wrap;word-wrap: break-word;">{{ this.meta_datas.data[0].response.text }}</pre>
-                  </td>
-                </tr>
+                <el-collapse v-model="defaultShowResponseInFo">
 
-                <tr v-show="attachment !== ''">
-                  <td class="my-table">attachment</td>
-                  <td class="content">
-                    <pre style="overflow: auto;color:red">{{ this.attachment }}</pre>
-                  </td>
-                </tr>
+                  <el-collapse-item name="1">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "请求方法：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ this.meta_datas.data[0].request.method }}</div>
+                  </el-collapse-item>
 
-                </tbody>
-              </table>
+                  <el-collapse-item name="2">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "请求地址：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ this.meta_datas.data[0].request.url }}</div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="3">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "查询字符串参数：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ parseResultDeal(this.meta_datas.data[0].request.params) }}
+                    </div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="4">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "头部参数：" }}</div>
+                    </template>
+                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
+                      {{ parseResultDeal(this.meta_datas.data[0].request.headers) }}
+                    </pre>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="5">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "json参数：" }}</div>
+                    </template>
+                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
+                      {{ parseResultDeal(this.meta_datas.data[0].request.json) }}
+                    </pre>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="6">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "data参数：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content" v-html="this.meta_datas.data[0].request.data"></div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="7">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "响应状态码：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ this.meta_datas.data[0].response.status_code }}</div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="8">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "响应编码：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ this.meta_datas.data[0].response.encoding }}</div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="9">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "响应头部信息：" }}</div>
+                    </template>
+                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
+                      {{ parseResultDeal(this.meta_datas.data[0].response.headers) }}
+                    </pre>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="10">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "响应json：" }}</div>
+                    </template>
+                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
+                      {{ parseResultDeal(this.meta_datas.data[0].response.json) }}
+                    </pre>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="11">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "响应文本：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content" v-html="this.meta_datas.data[0].response.text"></div>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="12">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "提取数据：" }}</div>
+                    </template>
+                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
+                      {{ parseResultDeal(this.meta_datas.data[0].response.extract_msgs) }}
+                    </pre>
+                  </el-collapse-item>
+
+                  <el-collapse-item name="13">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "错误信息：" }}</div>
+                    </template>
+                    <div class="el-collapse-item-content">{{ this.attachment }}</div>
+                  </el-collapse-item>
+                </el-collapse>
+              </div>
             </div>
           </el-scrollbar>
         </el-col>
@@ -246,6 +266,7 @@ import {getReport} from '@/apis/report'
 export default {
   name: 'reportShow',
   data() {
+
     this.caseChartSettings = {
       radius: 80,
       avoidLabelOverlap: false,
@@ -294,7 +315,8 @@ export default {
       }
     }
     return {
-
+      // 响应信息，默认展开全部
+      defaultShowResponseInFo: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
       caseChartSettings: {
         radius: 80,
         avoidLabelOverlap: false,
@@ -394,6 +416,15 @@ export default {
   },
 
   methods: {
+    parseResultDeal(data) {
+      try {
+        data = JSON.parse(data)
+        data = JSON.stringify(data, null, 4)
+      } catch (err) {
+        null
+      }
+      return data
+    },
     handleNodeClick(i1, i2) {
       this.showColor = [i1, i2]
       this.meta_datas = this.reportData['details'][i1]['records'][i2]['meta_datas']
@@ -470,6 +501,17 @@ export default {
 </script>
 
 <style scoped>
+.el-collapse-item-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-left: 10px;
+  color: #409eff
+}
+
+.el-collapse-item-content {
+  text-align: center;
+}
+
 .el-main {
   line-height: 36px;
 }

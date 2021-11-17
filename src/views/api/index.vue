@@ -90,6 +90,7 @@ import runApiResult from '@/views/api/runApiResult'
 
 import {userList} from '@/apis/user'
 import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/api'
+import {reportIsDone} from "@/apis/report";
 
 export default {
   name: 'index',
@@ -227,10 +228,47 @@ export default {
       runApi({
         'projectId': row.project_id,
         'apis': [row.id]
-      }).then(response => {
-        this.$set(row, 'isLoading', false)
-        this.runApiResultData = response.data.data
+      }).then(runResponse => {
+        if (this.showMessage(this, runResponse)) {
+
+          // 触发运行成功，每三秒查询一次，
+          // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
+          // 已出结果，则停止查询，展示测试报告
+          var that = this
+          var queryCount = 0
+          var timer = setInterval(function () {
+            if (queryCount <= 10) {
+              reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
+                if (queryResponse.data === 1) {
+                  that.$set(row, 'isLoading', false)
+                  that.openReportById(runResponse.data.report_id)
+                  clearInterval(timer)  // 关闭定时器
+                }
+              })
+              queryCount += 1
+            } else {
+              that.$set(row, 'isLoading', false)
+              that.$notify({
+                title: '测试长时间未运行结束',
+                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
+                type: 'warning',
+                duration: 0
+              });
+              clearInterval(timer)  // 关闭定时器
+            }
+          }, 3000)
+        }
+
+        // this.$set(row, 'isLoading', false)
+        // this.runApiResultData = response.data.data
       })
+    },
+
+    // 打开测试报告
+    openReportById(reportId) {
+      // console.log(`task.index.openReportById.reportId: ${JSON.stringify(reportId)}`)
+      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+      window.open(href, '_blank')
     },
 
     // 拖拽排序

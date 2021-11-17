@@ -19,9 +19,10 @@
         <el-tab-pane label="测试报告列表" :name="reportTab">
 
           <!-- 根据当前窗口宽度，实时计算用例列表能展示的宽度 -->
-          <el-row :style="{'min-width': reportListTableWidth}">
+<!--          <el-row :style="{'min-width': reportListTableWidth}">-->
+          <el-row>
 
-            <el-col :span="21" style="padding-left: 5px;">
+            <el-col style="padding-left: 5px;">
               <el-table
                 ref="reportTable"
                 :data="reportDataList"
@@ -45,7 +46,7 @@
                 <el-table-column
                   prop="performer"
                   label="创建者"
-                  min-width="15%">
+                  min-width="8%">
                 </el-table-column>
 
                 <el-table-column label="是否通过" min-width="10%">
@@ -56,7 +57,15 @@
                   </template>
                 </el-table-column>
 
-                <el-table-column label="状态" min-width="8%">
+                <el-table-column label="生成状态" min-width="8%">
+                  <template slot-scope="scope">
+                    <el-tag size="small" :type="scope.row.is_done === 1 ? 'success' : 'warning'">
+                      {{ scope.row.is_done === 1 ? '已生成' : '未生成' }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+
+                <el-table-column label="状态" min-width="7%">
                   <template slot-scope="scope">
                     <el-tag size="small" :type="scope.row.status === '已读' ? 'success' : 'warning'">
                       {{ scope.row.status }}
@@ -66,14 +75,23 @@
 
                 <el-table-column label="操作" min-width="25%">
                   <template slot-scope="scope">
-                    <el-button type="primary" size="mini" @click.native="downReport(scope.row.id)">下载</el-button>
-                    <el-button type="primary"
-                               size="mini"
-                               @click.native="openReportById(scope.row.id)">查看
+                    <el-button
+                      v-show="scope.row.is_done === 1"
+                      type="primary"
+                      size="mini"
+                      @click.native="downReport(scope.row.id)">下载
                     </el-button>
-                    <el-button type="danger"
-                               size="mini"
-                               @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
+                    <el-button
+                      v-show="scope.row.is_done === 1"
+                      type="primary"
+                      size="mini"
+                      @click.native="openReportById(scope.row.id)">查看
+                    </el-button>
+                    <el-button
+                      v-show="scope.row.is_done === 1"
+                      type="danger"
+                      size="mini"
+                      @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
                     </el-button>
                   </template>
                 </el-table-column>
