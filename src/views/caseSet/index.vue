@@ -69,6 +69,7 @@
 
               <el-tooltip class="item" content="运行当前用例集下的用例" effect="dark" placement="top-start">
                 <el-button v-if="node.level !== 1"
+                           v-show="!data.runButtonIsNotShow"
                            size="mini"
                            type="text"
                            icon="el-icon-video-play"
@@ -131,6 +132,7 @@ import caseManage from '@/views/case'  // 用例管理组件
 import waves from "@/directive/waves";
 import {projectList} from "@/apis/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/caseSet";
+import {reportIsDone} from "@/apis/report";
 
 
 export default {
@@ -331,8 +333,37 @@ export default {
 
     // 运行用例集的用例
     runCaseSet(node, data) {
-      caseSetRun({'id': data.id}).then(response => {
-        this.openReportById(response.data.report_id)
+      this.$set(data, 'runButtonIsNotShow', true)
+      caseSetRun({'id': data.id}).then(runResponse => {
+        if (this.showMessage(this, runResponse)) {
+
+          // 触发运行成功，每三秒查询一次，
+          // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
+          // 已出结果，则停止查询，展示测试报告
+          var that = this
+          var queryCount = 0
+          var timer = setInterval(function () {
+            if (queryCount <= 10) {
+              reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
+                if (queryResponse.data === 1) {
+                  that.$set(data, 'runButtonIsNotShow', false)
+                  that.openReportById(runResponse.data.report_id)
+                  clearInterval(timer)  // 关闭定时器
+                }
+              })
+              queryCount += 1
+            } else {
+              that.$set(data, 'runButtonIsNotShow', false)
+              that.$notify({
+                title: '测试长时间未运行结束',
+                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
+                type: 'warning',
+                duration: 0
+              });
+              clearInterval(timer)  // 关闭定时器
+            }
+          }, 3000)
+        }
       })
     },
 
