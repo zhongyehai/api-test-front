@@ -35,7 +35,11 @@
         <el-input v-model="scope.row.value"
                   size="mini"
                   :type="['契约校验', 'json相等'].indexOf(scope.row.validate_type) !== -1 ? 'textarea' : 'text'"
-                  placeholder="预期结果，严格区分字符类型，字符串请加引号：'123'">
+                  :placeholder="
+                  scope.row.validate_type === '契约校验' ?
+                  '详见：https://pypi.org/project/pactverify/，注：契约校验标识符改用@':
+                  '预期结果，严格区分字符类型，字符串请加英文的引号：‘123’'
+                ">
         </el-input>
       </template>
     </el-table-column>

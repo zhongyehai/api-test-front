@@ -238,7 +238,7 @@
                       <div class="el-collapse-item-title"> {{ "提取数据：" }}</div>
                     </template>
                     <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].response.extract_msgs) }}
+                      {{ parseResultDeal(this.meta_datas.data[0].extract_msgs) }}
                     </pre>
                   </el-collapse-item>
 

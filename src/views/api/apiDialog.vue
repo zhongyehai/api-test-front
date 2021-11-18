@@ -13,16 +13,15 @@
       <el-form :inline="true" style="padding: 20px 20px -10px 10px;" label-width="100px">
 
         <el-row>
-          <!-- 选择项目 -->
-          <el-col :span="6">
-            <el-form-item label="选择项目" class="is-required" style="margin-bottom: 5px">
-              <projectSelectorView
-                ref="projectSelector"
-                :projectId="tempApi.project_id"
-                :busEmitEventName="$busEvents.projectSelectorChoiceProject"
-              ></projectSelectorView>
+
+          <!-- 接口名称 -->
+          <el-col :span="12">
+            <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="small" style="width: 250%">
+              </el-input>
             </el-form-item>
           </el-col>
+
           <!-- 选择环境 -->
           <el-col :span="6">
             <el-form-item label="选择环境" class="is-required" style="margin-bottom: 5px">
@@ -32,6 +31,7 @@
               ></environmentSelectorView>
             </el-form-item>
           </el-col>
+
           <!-- 选择模块 -->
           <el-col :span="6">
             <el-form-item label="选择模块" class="is-required" style="margin-bottom: 5px">
@@ -46,36 +46,22 @@
               ></moduleSelectorView>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-          </el-col>
         </el-row>
 
         <el-row>
-          <!-- 接口名称 -->
-          <el-col :span="6">
-            <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.name" placeholder="接口名称" size="small">
-              </el-input>
-            </el-form-item>
-          </el-col>
+
           <!-- 前置条件 -->
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="small"></el-input>
+              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="small" style="width: 250%"></el-input>
             </el-form-item>
           </el-col>
           <!-- 后置条件 -->
-          <el-col :span="6">
+          <el-col :span="12">
             <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="small"></el-input>
+              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="small" style="width: 250%"></el-input>
             </el-form-item>
           </el-col>
-          <!-- 接口编号 -->
-<!--          <el-col :span="6">-->
-<!--            <el-form-item label="接口编号" v-if="tempApi.id" style="margin-bottom: 5px">-->
-<!--              <el-input v-model.number="tempApi.num" placeholder="接口编号" size="small"></el-input>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
         </el-row>
 
       </el-form>
@@ -173,7 +159,7 @@
     </el-dialog>
 
     <!-- 接口运行结果 -->
-<!--    <runApiResult :runApiResultData="runApiResultData"></runApiResult>-->
+    <!--    <runApiResult :runApiResultData="runApiResultData"></runApiResult>-->
 
   </div>
 
@@ -413,7 +399,7 @@ export default {
         data_xml: this.$refs.bodyView.tempDataXml,
 
         module_id: this.$refs.moduleSelector.tempModuleId,
-        project_id: this.$refs.projectSelector.tempProjectId
+        project_id: this.tempApi.project_id
       }
     }
 

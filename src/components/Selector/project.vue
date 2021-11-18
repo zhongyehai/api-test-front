@@ -58,7 +58,7 @@ export default {
   },
 
   created() {
-    this.tempProjectId = this.projectId
+    // this.tempProjectId = this.projectId
 
     // 把初始的父组件传进来的 projectId 传给bus
     // this.$bus.$emit(this.$busEvents.projectSelectorChoiceProject, this.projectId)
@@ -69,13 +69,6 @@ export default {
     this.getProjectList()
   },
 
-  watch: {
-    'projectId': {
-      handler(newVal, oldVal) {
-        this.tempProjectId = newVal
-      }
-    }
-  }
 }
 </script>
 

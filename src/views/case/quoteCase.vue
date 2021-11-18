@@ -1,6 +1,7 @@
 <template>
   <el-row>
 
+    <!-- 前置用例列表 -->
     <el-col :span="8">
       <el-tabs v-model="beforeCaseActiveName">
         <el-tab-pane label="前置引用用例" name="beforeCaseActiveName">
@@ -33,6 +34,7 @@
       </el-tabs>
     </el-col>
 
+    <!-- 选则框 -->
     <el-col :span="8">
       <el-tabs v-model="caseTreeActiveName">
         <el-tab-pane label="用例列表" name="caseTreeActiveName">
@@ -63,19 +65,14 @@
               <!-- 选则用例集 -->
               <el-col :span="12">
                 <el-form-item label="用例集">
-                  <el-select
-                    v-model="currentCaseSetId"
+                  <el-cascader
                     placeholder="选择用例集"
                     size="small"
-                    style="min-width: 20%;padding-right:10px"
+                    :options="currentCaseSetList"
+                    :props="{ checkStrictly: true }"
+                    v-model="selectedOptions"
                     @change="getCaseList"
-                    filterable
-                  >
-                    <el-option v-for="(item) in currentCaseSetList"
-                               :key="item.id"
-                               :label="item.name"
-                               :value="item.id"></el-option>
-                  </el-select>
+                    clearable></el-cascader>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -131,6 +128,7 @@
       </el-tabs>
     </el-col>
 
+    <!-- 后置用例列表 -->
     <el-col :span="8">
       <el-tabs v-model="afterCaseActiveName">
         <el-tab-pane label="后置引用用例" name="afterCaseActiveName">
@@ -193,6 +191,8 @@ export default {
       caseTreeActiveName: 'caseTreeActiveName',
       afterCaseActiveName: 'afterCaseActiveName',
 
+      selectedOptions: [],
+
       projectSelectedId: '',
       currentCaseSetId: '',
       currentProjectList: [],
@@ -226,6 +226,25 @@ export default {
   },
   methods: {
 
+    // 递归把列表转为树行结构
+    arrayToTree(arr, parentId) {
+      //  arr 是返回的数据  parendId 父id
+      let temp = [];
+      let treeArr = arr;
+      treeArr.forEach((item, index) => {
+        if (item.parent == parentId) {
+          if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
+            // 递归调用此函数
+            treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
+          }
+          treeArr[index].value = treeArr[index].id
+          treeArr[index].label = treeArr[index].name
+          temp.push(treeArr[index]);
+        }
+      });
+      return temp;
+    },
+
     // 获取项目列表
     getProjectList() {
       projectList().then(response => {
@@ -237,20 +256,22 @@ export default {
     selectedProject(projectId) {
       caseSetTree({'project_id': projectId}).then(response => {
         this.currentCaseSetId = ''
-        this.currentCaseSetList = response.data
+        this.currentCaseSetList = this.arrayToTree(response.data, null)
       })
     },
 
     // 选中用例集，获取对应的用例列表
-    getCaseList(caseSetId) {
-      caseList({
-        pageNum: this.pageNum,
-        pageSize: this.pageSize,
-        setId: this.currentCaseSetId
-      }).then(response => {
-        this.caseList = response.data.data
-        this.caseTotal = response.data.total
-      })
+    getCaseList(caseSetList) {
+      if (caseSetList.length > 0) {
+        caseList({
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          setId: caseSetList.slice(-1)[0]  // 取列表中的最后一个
+        }).then(response => {
+          this.caseList = response.data.data
+          this.caseTotal = response.data.total
+        })
+      }
     },
 
     // 更新引用关系

@@ -92,7 +92,7 @@ export default {
 
   created() {
     // 初始时获取定时任务的详情
-    this.handleSetLineChartData('task')
+    this.handleSetLineChartData('report')
   }
 }
 </script>

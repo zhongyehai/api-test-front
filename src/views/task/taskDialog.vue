@@ -4,7 +4,7 @@
     :title="dialogStatus === 'update' ? '修改任务' : '新增任务'"
     :visible.sync="taskDialogIsShow"
     :close-on-click-modal="false"
-    width="50%">
+    width="70%">
 
     <el-tabs>
       <el-tab-pane>
@@ -51,18 +51,13 @@
             <!-- 选则用例集 -->
             <el-col :span="12">
               <el-form-item label="选则用例集">
-                <el-select
-                  v-model="tempTask.set_id"
-                  placeholder="请选择用例集"
-                  multiple
+                <el-cascader
                   size="small"
-                  style="min-width: 20%;padding-right:10px"
+                  v-model="tempTaskSet"
+                  :options="tempCaseSetList"
+                  :props="{ multiple: true, checkStrictly: true }"
                   @change="selectedCaseSet"
-                  filterable
-                >
-                  <el-option v-for="(item) in tempCaseSetList" :key="item.id" :label="item.name"
-                             :value="item.id"></el-option>
-                </el-select>
+                  clearable></el-cascader>
               </el-form-item>
             </el-col>
 
@@ -78,7 +73,7 @@
                   style="min-width: 20%;padding-right:10px"
                   size="small"
                 >
-                  <el-option v-for="item in caseList" :key="item.id" :label="item.name" :value="item.id">
+                  <el-option v-for="item in currentCaseList" :key="item.id" :label="item.name" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -179,34 +174,97 @@ export default {
       projectLists: '',  // 项目列表
       projectSelectedId: '',  // 项目选择框选择的项目id
 
-      tempCaseSetList: '',  // 当前选中项目下的用例集列表
+      currentSelectedCaseSet: [],
+
+      tempCaseSetList: [],  // 当前选中项目下的用例集列表
+      tempTaskSet: [],  // 解析后带目录的已选中用例集列表[[1,3,5], [4,5]]
 
       caseSelectorIsDisabled: false,  // 用例选择框是否只读
-      caseList: [],  // 当前选中模块下的用例列表
+      currentCaseList: [],  // 当前选中模块下的用例列表
 
     }
   },
   methods: {
 
     // 用例集下拉框选中事件
-    selectedCaseSet(set_id) {
-      this.tempTask.case_id = []  // 选中用例集，则清空已选中的用例
-      if (this.tempTask.set_id.length === 1) {
-        this.getCaseList()
+    selectedCaseSet(selectedCaseSetList) {
+      this.currentSelectedCaseSet = selectedCaseSetList
+
+      if (selectedCaseSetList.length === 1) {
+        this.getCaseList(selectedCaseSetList.slice(-1)[0].slice(-1)[0])
+      } else {
+        // 选中多个用例集，或者没有选中用例集
+        this.tempTask.case_id = []  // 清空选中用例列表
+        this.currentCaseList = []  // 清空用例列表
       }
+    },
+
+    // 递归把列表转为树行结构
+    arrayToTree(arr, parentId) {
+      //  arr 是返回的数据  parendId 父id
+      let temp = [];
+      let treeArr = arr;
+      treeArr.forEach((item, index) => {
+        if (item.parent == parentId) {
+          if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
+            // 递归调用此函数
+            treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
+          }
+          treeArr[index].value = treeArr[index].id
+          treeArr[index].label = treeArr[index].name
+          temp.push(treeArr[index]);
+        }
+      });
+      return temp;
     },
 
     // 获取项目id对应的用例集列表
     getCaseSetByProjectId(project_id) {
+      var that = this
       caseSetList({'projectId': project_id}).then(response => {
-        this.tempCaseSetList = response.data.data
+        // 赋值给级联选中框
+        this.tempCaseSetList = this.arrayToTree(response.data.data, null)
+
+        // 遍历取当前用例集的父用例集
+        // 遍历已选中的用例集
+        for (let index in this.tempTask.set_id) {
+          var currentDataList = []
+          currentDataList.unshift(this.tempTask.set_id[index])
+
+          let currentData = {}
+          // 第一次循环，获取当前用例集id本身的数据（主要是获取parentId）
+          for (let setIndex in response.data.data) {
+            // 获取当前用例集id本身的数据（主要是获取parentId）
+            if (this.tempTask.set_id[index] === response.data.data[setIndex].id) {
+              currentData = response.data.data[setIndex]
+              break
+            }
+          }
+
+          // 循环所有用例集，组建关系
+          while (true) {
+            // 如果没有parent_id，就不再循环
+            if (currentData.parent === null) {
+              break
+            }
+            for (let setIndex in response.data.data) {
+              // 获取当前用例集id本身的数据（主要是获取parentId）
+              if (currentData.parent === response.data.data[setIndex].id) {
+                currentData = response.data.data[setIndex]
+                currentDataList.unshift(response.data.data[setIndex].id)
+                break
+              }
+            }
+          }
+          that.tempTaskSet.push(currentDataList)
+        }
       })
     },
 
     // 获取当前模块下的用例列表
-    getCaseList() {
-      caseList({setId: this.tempTask.set_id[0]}).then(response => {
-        this.caseList = response.data.data
+    getCaseList(setId) {
+      caseList({setId: setId}).then(response => {
+        this.currentCaseList = response.data.data
       })
     },
 
@@ -235,6 +293,10 @@ export default {
 
     // 获取当前数据，用于提交
     getTaskToCommit() {
+      let caseSetList = []
+      for (let index in this.currentSelectedCaseSet) {
+        caseSetList.push(this.currentSelectedCaseSet[index].slice(-1)[0])
+      }
       return {
         id: this.tempTask.id,
         num: this.tempTask.num,
@@ -251,7 +313,8 @@ export default {
         email_from: this.tempTask.email_from,
         email_pwd: this.tempTask.email_pwd,
         project_id: this.tempTask.project_id,
-        set_id: this.tempTask.set_id,
+        // set_id: this.tempTask.set_id,
+        set_id: caseSetList,
         case_id: this.tempTask.case_id,
       }
     },
@@ -295,16 +358,23 @@ export default {
     // 监听项目树菜单点击事件
     this.$bus.$on(this.$busEvents.taskDialogIsShow, (status, taskOrProject) => {
       this.dialogStatus = status
-      this.taskDialogIsShow = true
-
       if (status === 'update') {  // 修改
         this.tempTask = taskOrProject
       } else {  // 新增
         this.initNewTask()
         this.tempTask.project_id = taskOrProject.id
       }
+      this.taskDialogIsShow = true
+
       // 获取当前项目对应的用例集列表
+      this.tempTaskSet = []
       this.getCaseSetByProjectId(this.projectSelectedId)
+
+      // 初始化时获取当前选择用例集的用例列表
+      // console.log('this.tempTask:', JSON.stringify(this.tempTask))
+      if (this.tempTask.set_id.length === 1){
+        this.getCaseList(this.tempTask.set_id[0])
+      }
     })
   },
 
@@ -312,26 +382,6 @@ export default {
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.projectTreeChoiceProject)
     this.$bus.$off(this.$busEvents.taskDialogIsShow)
-  },
-
-  watch: {
-    // 监听模块id，当用例集id变了过后，清空已选中用例，并重新获取用例id
-    'tempTask.set_id': {
-      handler(newVal, oldVal) {
-        // 用例集有改变，则清除用例
-        this.caseList = []
-
-        // 如果本来就没有已选中用例集，则说明是修改，则不需要清空已选用例
-        if (oldVal) {
-          this.tempTask.case_id = []
-        }
-
-        // 没有oldVal，有newVal，则说明是初始化修改框
-        if (!oldVal && newVal) {
-          this.getCaseList()
-        }
-      }
-    },
   }
 }
 </script>

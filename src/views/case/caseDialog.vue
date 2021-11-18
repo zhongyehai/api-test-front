@@ -14,9 +14,16 @@
         <el-form :inline="true" size="small" label-width="100px">
 
           <el-row>
-            <!-- 模块选择 -->
-            <el-col :span="6">
 
+            <!-- 用例名称 -->
+            <el-col :span="12">
+              <el-form-item label="用例名称" class="is-required">
+                <el-input v-model="tempCase.name" style="width: 250%"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <!-- 用例集选择 -->
+            <el-col :span="6">
               <el-form-item label="用例集" class="is-required" style="margin-bottom: 5px">
                 <caseSetSelectorView
                   ref="caseSetSelector"
@@ -45,21 +52,20 @@
                 </el-form-item>
               </el-tooltip>
             </el-col>
+
+          </el-row>
+
+          <el-row>
+
             <!-- 函数文件 -->
-            <el-col :span="6">
+            <el-col :span="12">
               <el-form-item label="函数文件">
                 <funcFilesView :funcFiles="tempCase.func_files" ref="funcFilesView"></funcFilesView>
               </el-form-item>
             </el-col>
-          </el-row>
 
-          <el-row>
-            <el-col :span="6">
-              <el-form-item label="用例名称" class="is-required">
-                <el-input v-model="tempCase.name"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
+            <!-- 执行次数 -->
+            <el-col :span="12">
               <el-form-item label="执行次数" class="is-required">
                 <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"
                 ></el-input-number>

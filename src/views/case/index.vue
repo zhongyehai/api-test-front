@@ -16,7 +16,7 @@
         >
           <el-table-column prop="num" label="序号" min-width="10%">
             <template slot-scope="scope">
-              <span> {{ scope.row.num }} </span>
+              <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
             </template>
           </el-table-column>
 

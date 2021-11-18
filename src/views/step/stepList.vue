@@ -11,13 +11,19 @@
       style="width: 100%"
       :height="tableListHeight"
     >
+      <el-table-column prop="num" label="序号" min-width="10%">
+        <template slot-scope="scope">
+          <span>{{ scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="执行" min-width="10%">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.is_run" @change="changeStepIsRun(scope.$index)"></el-switch>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="步骤名称" min-width="40%">
+      <el-table-column align="center" label="步骤名称" min-width="30%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
