@@ -10,7 +10,9 @@
 
         <el-table
           ref="apiListTable"
-          v-loading="listLoading"
+          v-loading="tableLoadingIsShow"
+          element-loading-text="正在排序中"
+          element-loading-spinner="el-icon-loading"
           :data="api_list"
           row-key="id"
           stripe
@@ -110,7 +112,7 @@ export default {
     return {
 
       // 请求列表等待响应的状态
-      listLoading: false,
+      tableLoadingIsShow: false,
 
       // 运行接口按钮的loading状态
       isLoading: false,
@@ -208,7 +210,7 @@ export default {
 
     // 根据模块内容获取接口列表
     getApiList(params) {
-      this.listLoading = true
+      this.tableLoadingIsShow = true
       apiList({
         'moduleId': this.currentModuleId,
         'pageNum': this.pageNum,
@@ -220,7 +222,7 @@ export default {
         this.oldList = this.api_list.map(v => v.id)
         this.newList = this.oldList.slice()
       })
-      this.listLoading = false
+      this.tableLoadingIsShow = false
     },
 
     // 运行接口
@@ -287,12 +289,14 @@ export default {
           this.newList.splice(evt.newIndex, 0, tempIndex)
 
           // 发送请求，改变排序
+          this.tableLoadingIsShow = true
           apiMsgSort({
             List: this.newList,
             pageNum: this.pageNum,
             pageSize: this.pageSize,
           }).then(response => {
             this.showMessage(this, response)
+            this.tableLoadingIsShow = false
           })
         }
       })

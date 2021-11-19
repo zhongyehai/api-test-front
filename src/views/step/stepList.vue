@@ -4,6 +4,9 @@
     <!-- 步骤列表 -->
     <el-table
       ref="stepListTable"
+      v-loading="tableLoadingIsShow"
+      element-loading-text="正在排序中"
+      element-loading-spinner="el-icon-loading"
       :data="stepList"
       fit
       row-key="id"
@@ -56,6 +59,9 @@ export default {
   props: ['caseId', 'caseStepList'],
   data() {
     return {
+
+      // 加载状态
+      tableLoadingIsShow: false,
 
       // 步骤列表
       stepList: [],
@@ -154,10 +160,12 @@ export default {
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
 
+          this.tableLoadingIsShow = true
           stepSort({
             List: this.newList
           }).then(response => {
             this.showMessage(this, response)
+            this.tableLoadingIsShow = false
           })
         }
       })
