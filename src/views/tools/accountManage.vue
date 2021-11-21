@@ -81,7 +81,8 @@
 
           <el-button type="danger"
                      size="mini"
-                     @click.native="confirmBox(delAccount, scope.row.id, scope.row.name)">删除
+                     :loading="scope.row.deleteButtonIsLoading"
+                     @click.native="confirmBox(delAccount, scope.row, scope.row.name)">删除
           </el-button>
 
         </template>
@@ -119,7 +120,11 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogIsShow = false"> {{ '取消' }}</el-button>
-        <el-button size="mini" type="primary" @click=" currentAccount.id ? changeAccount() : addAccount() ">
+        <el-button
+          size="mini"
+          type="primary"
+          :loading="submitButtonIsLoading"
+          @click=" currentAccount.id ? changeAccount() : addAccount() ">
           {{ '确定' }}
         </el-button>
       </div>
@@ -148,6 +153,9 @@ export default {
     return {
       // 加载状态
       listLoading: false,
+
+      submitButtonIsLoading: false,
+      deleteButtonIsLoading: false,
 
       // Dialog状态
       dialogIsShow: false,
@@ -243,6 +251,7 @@ export default {
 
     // 添加账号
     addAccount() {
+      this.submitButtonIsLoading = true
       postAccount({
         project: this.currentAccount.project,
         name: this.currentAccount.name,
@@ -251,6 +260,7 @@ export default {
         desc: this.currentAccount.desc,
         event: this.currentEvent
       }).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogIsShow = false
           this.getAccountList()
@@ -260,6 +270,7 @@ export default {
 
     // 修改账号
     changeAccount() {
+      this.submitButtonIsLoading = true
       putAccount({
         id: this.currentAccount.id,
         project: this.currentAccount.project,
@@ -269,6 +280,7 @@ export default {
         desc: this.currentAccount.desc,
         event: this.currentEvent
       }).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogIsShow = false
           this.getAccountList()
@@ -277,8 +289,10 @@ export default {
     },
 
     // 删除账号
-    delAccount(accountId) {
-      deleteAccount({'id': accountId}).then(response => {
+    delAccount(row) {
+      this.$set(row, 'deleteButtonIsLoading', true)
+      deleteAccount({'id': row.id}).then(response => {
+        this.$set(row, 'deleteButtonIsLoading', false)
         if (this.showMessage(this, response)) {
           this.getAccountList()
         }

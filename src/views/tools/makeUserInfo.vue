@@ -8,19 +8,19 @@
 
       <el-button
         v-show="makedUserValueList.length > 0"
-        :loading="downloadLoading"
-        type="primary"
-        @click.native="download()"
         size="small"
+        type="primary"
         style="display:inline-block;float: right;margin: 10px;padding-left: 10px"
+        @click.native="download()"
       >导出为EXCEL
       </el-button>
 
       <el-button
         type="primary"
-        @click.native="sendRequest()"
         size="small"
         style="display:inline-block;float: right;margin: 10px;padding-left: 10px"
+        :loading="makeLoadingIsShow"
+        @click.native="sendRequest()"
       >确定生成
       </el-button>
 
@@ -67,6 +67,7 @@ export default {
   name: "makeUserInfo",
   data() {
     return {
+      makeLoadingIsShow: false,
       isIndeterminate: true,
       // 全选状态
       checkAll: false,
@@ -84,8 +85,6 @@ export default {
       makedUserValueList: [],
       // 获取表格能渲染的高度, 屏幕的70%
       autoHeight: window.innerHeight * 0.7,
-      // 下载状态
-      downloadLoading: false
     };
   },
   methods: {
@@ -139,7 +138,9 @@ export default {
         checkedOptionList.push(this.allOptionsMapping[this.checkedData[i]])
       }
       // 发送请求
+      this.makeLoadingIsShow = true
       makeUser({'count': this.count, 'options': JSON.stringify(checkedOptionList)}).then(response => {
+        this.makeLoadingIsShow = false
         this.makedUserDictList = response.data
         this.parseObject(this.makedUserDictList)
       })
@@ -147,14 +148,12 @@ export default {
 
     // 导出为excel
     download() {
-      this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         excel.export_json_to_excel({
           header: this.checkedData,  // 表头 [key1, key2]
           data: this.makedUserValueList,  // 数据 [[value1, value2], [value1, value2]]
           filename: '用户信息'
         })
-        this.downloadLoading = false
       })
     }
   },

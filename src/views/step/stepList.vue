@@ -133,7 +133,9 @@ export default {
 
     // 删除步骤
     deleteStepOnList(stepInfo) {
+      this.tableLoadingIsShow = true
       deleteStep({"id": stepInfo.id}).then(response => {
+        this.tableLoadingIsShow = false
         if (this.showMessage(this, response)) {
           this.stepList.splice(stepInfo.index, 1)  // 从步骤列表中删除步骤
         }

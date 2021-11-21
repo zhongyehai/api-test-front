@@ -57,24 +57,41 @@
                 <el-table-column label="操作" min-width="39%">
                   <template slot-scope="scope">
 
-                    <el-button type="primary" size="mini" v-if="scope.row.status === '启用中'"
-                               @click.native="disable(scope.row.id)">禁用
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      v-if="scope.row.status === '启用中'"
+                      :loading="scope.row.disableLoadingIsShow"
+                      @click.native="disable(scope.row)">禁用
                     </el-button>
 
-                    <el-button type="primary" size="mini" v-if="scope.row.status === '禁用中'"
-                               @click.native="enable(scope.row.id)">启用
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      v-if="scope.row.status === '禁用中'"
+                      :loading="scope.row.enableLoadingIsShow"
+                      @click.native="enable(scope.row)">启用
                     </el-button>
 
-                    <el-button type="primary" size="mini" :disabled="scope.row.status === '启用中'"
-                               @click.native="editTask(scope.row)">修改
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      :disabled="scope.row.status === '启用中'"
+                      @click.native="editTask(scope.row)">修改
                     </el-button>
 
-                    <el-button type="success" size="mini" :loading="scope.row.isLoading"
-                               @click.native="run(scope.row)">运行
+                    <el-button
+                      type="success"
+                      size="mini"
+                      :loading="scope.row.isLoading"
+                      @click.native="run(scope.row)">运行
                     </el-button>
 
-                    <el-button type="danger" size="mini"
-                               @click.native="confirmBox(delTask, scope.row.id, scope.row.name)">删除
+                    <el-button type="danger"
+                               size="mini"
+                               :disabled="scope.row.status === '启用中'"
+                               :loading="scope.row.deleteLoadingIsShow"
+                               @click.native="confirmBox(delTask, scope.row, scope.row.name)">删除
                     </el-button>
 
                   </template>
@@ -115,6 +132,9 @@ export default {
   components: {Pagination, projectTreeView, taskDialogView},
   data() {
     return {
+      enableLoadingIsShow: false,
+      disableLoadingIsShow: false,
+      deleteLoadingIsShow: false,
       taskTab: 'taskTab',
       taskList: [],
       projectId: '',
@@ -178,8 +198,10 @@ export default {
     },
 
     // 删除任务
-    delTask(taskId) {
-      deleteTask({id: taskId}).then(response => {
+    delTask(row) {
+      this.$set(row, 'deleteLoadingIsShow', true)
+      deleteTask({id: row.id}).then(response => {
+        this.$set(row, 'deleteLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }
@@ -187,8 +209,10 @@ export default {
     },
 
     // 启用任务
-    enable(taskId) {
-      enableTask({id: taskId}).then(response => {
+    enable(row) {
+      this.$set(row, 'enableLoadingIsShow', true)
+      enableTask({id: row.id}).then(response => {
+        this.$set(row, 'enableLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }
@@ -196,8 +220,10 @@ export default {
     },
 
     // 禁用任务
-    disable(taskId) {
-      disableTask({id: taskId}).then(response => {
+    disable(row) {
+      this.$set(row, 'disableLoadingIsShow', true)
+      disableTask({id: row.id}).then(response => {
+        this.$set(row, 'disableLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }

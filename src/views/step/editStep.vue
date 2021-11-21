@@ -96,7 +96,11 @@
     <hr>
 
     <el-button size="mini" @click="initStep()"> {{ '还原' }}</el-button>
-    <el-button size="mini" type="primary" @click="currentStep.id ? editStep() : addStep()">{{ '保存步骤' }}</el-button>
+    <el-button
+      size="mini"
+      type="primary"
+      :loading="submitButtonIsLoading"
+      @click="currentStep.id ? editStep() : addStep()">{{ '保存步骤' }}</el-button>
 
   </el-tabs>
 </template>
@@ -123,6 +127,7 @@ export default {
   },
   data() {
     return {
+      submitButtonIsLoading:false,
       activeName: 'editStepInfo',
       currentStepCopy: '',
       currentStep: {
@@ -176,8 +181,9 @@ export default {
 
     // 新增步骤信息
     addStep() {
-      let step = this.getStepForCommit()
-      postStep(step).then(response => {
+      this.submitButtonIsLoading = true
+      postStep(this.getStepForCommit()).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
           this.$bus.$emit(this.$busEvents.addStepIsCommit, response.data)
@@ -187,8 +193,9 @@ export default {
 
     // 修改步骤信息
     editStep() {
-      let step = this.getStepForCommit()
-      putStep(step).then(response => {
+      this.submitButtonIsLoading = true
+      putStep(this.getStepForCommit()).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
           this.$bus.$emit(this.$busEvents.editStepIsCommit, response.data)

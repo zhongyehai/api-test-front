@@ -8,6 +8,9 @@
           <el-table
             ref="beforeCaseTable"
             :data="tempBeforeCaseList"
+            v-loading="beforeTableLoadingIsShow"
+            element-loading-text="正在解除引用中"
+            element-loading-spinner="el-icon-loading"
             stripe
           >
             <el-table-column prop="id" label="序号" min-width="15%">
@@ -99,6 +102,7 @@
                       <el-button type="primary"
                                  size="mini"
                                  icon="el-icon-back"
+                                 :loading="scope.row.addToBeforeLoadingIsShow"
                                  @click.native="updateQuote('before_case', 'add', scope.row)">
                       </el-button>
                     </el-tooltip>
@@ -107,6 +111,7 @@
                       <el-button type="primary"
                                  size="mini"
                                  icon="el-icon-right"
+                                 :loading="scope.row.addToAfterLoadingIsShow"
                                  @click.native="updateQuote('after_case', 'add', scope.row)">
                       </el-button>
                     </el-tooltip>
@@ -117,8 +122,8 @@
               <pagination
                 v-show="caseTotal>0"
                 :total="caseTotal"
-                :page.sync="pageNum"
-                :limit.sync="pageSize"
+                :page.sync="quotePageNum"
+                :limit.sync="quotePageSize"
                 @pagination="getCaseList"
               />
             </el-row>
@@ -135,6 +140,9 @@
           <el-table
             ref="afterCaseTable"
             :data="tempAfterCaseList"
+            v-loading="afterTableLoadingIsShow"
+            element-loading-text="正在解除引用中"
+            element-loading-spinner="el-icon-loading"
             stripe
           >
             <el-table-column prop="id" label="序号" min-width="15%">
@@ -197,10 +205,13 @@ export default {
       currentCaseSetId: '',
       currentProjectList: [],
       currentCaseSetList: [],
-      pageNum: 1,
-      pageSize: 10,
+      quotePageNum: 1,
+      quotePageSize: 10,
       caseList: [],
       caseTotal: 0,
+      currentSetId: '',
+      beforeTableLoadingIsShow: false,
+      afterTableLoadingIsShow: false
     }
   },
   mounted() {
@@ -263,15 +274,16 @@ export default {
     // 选中用例集，获取对应的用例列表
     getCaseList(caseSetList) {
       if (caseSetList.length > 0) {
-        caseList({
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          setId: caseSetList.slice(-1)[0]  // 取列表中的最后一个
-        }).then(response => {
-          this.caseList = response.data.data
-          this.caseTotal = response.data.total
-        })
+        this.currentSetId = caseSetList.slice(-1)[0]  // 取列表中的最后一个
       }
+      caseList({
+        pageNum: this.quotePageNum,
+        pageSize: this.quotePageSize,
+        setId: this.currentSetId
+      }).then(response => {
+        this.caseList = response.data.data
+        this.caseTotal = response.data.total
+      })
     },
 
     // 更新引用关系
@@ -297,16 +309,46 @@ export default {
           tempCaseIdList = this.tempAfterCaseIdList
           tempCaseList = this.tempAfterCaseList
         }
-        if (type === 'add') {
+        if (type === 'add') {  // 添加到引用
+          if (row.id === this.tempCase.id){
+            this.$message.warning('不可引用用例本身');
+            return
+          }
           temp_data.push(row.id)
-        } else {
+        } else {  // 从引用中解除
           temp_data.splice(index, 1)
+        }
+        if (position === 'before_case') {  // 判断前置还是后置
+          if (type === 'add') {  // 判断添加还是删除
+            this.$set(row, 'addToBeforeLoadingIsShow', true)
+          } else {
+            this.beforeTableLoadingIsShow = true
+          }
+        } else {
+          if (type === 'add') {
+            this.$set(row, 'addToAfterLoadingIsShow', true)
+          } else {
+            this.afterTableLoadingIsShow = true
+          }
         }
         changeCaseQuote({
           id: this.tempCase.id,
           quoteType: position,
           quote: temp_data,
         }).then(response => {
+          if (position === 'before_case') {  // 判断前置还是后置
+            if (type === 'add') {  // 判断添加还是删除
+              this.$set(row, 'addToBeforeLoadingIsShow', false)
+            } else {
+              this.beforeTableLoadingIsShow = false
+            }
+          } else {
+            if (type === 'add') {
+              this.$set(row, 'addToAfterLoadingIsShow', false)
+            } else {
+              this.afterTableLoadingIsShow = false
+            }
+          }
           if (this.showMessage(this, response)) {
             if (type === 'add') {
               tempCaseIdList.push(row.id)

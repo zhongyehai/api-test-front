@@ -37,7 +37,10 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false"> {{ '取消' }} </el-button>
-        <el-button type="primary" @click="changePassword"> {{ '确定' }} </el-button>
+        <el-button
+          type="primary"
+          :loading="submitButtonIsLoading"
+          @click="changePassword"> {{ '确定' }} </el-button>
       </div>
 
     </el-dialog>
@@ -61,6 +64,8 @@ export default {
     return {
       // 用户名
       userName: this.$store.state.userName,
+
+      submitButtonIsLoading: false,
 
       // 密码修改框显示状态
       dialogFormVisible: false,
@@ -98,8 +103,9 @@ export default {
 
     // 提交修改密码
     changePassword() {
-      console.log(this.tempPassword)
+      this.submitButtonIsLoading = true
       userPassword(this.tempPassword).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
         }

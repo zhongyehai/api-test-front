@@ -44,7 +44,9 @@
             <template slot-scope="scope">
 
               <el-tooltip class="item" effect="dark" content="运行测试用例并生成报告" placement="top-end">
-                <el-button type="success" size="mini" :loading="scope.row.isLoading"
+                <el-button type="success"
+                           size="mini"
+                           :loading="scope.row.isShowRunLoading"
                            @click.native="runCase(scope.row)">运行
                 </el-button>
               </el-tooltip>
@@ -52,12 +54,16 @@
               <el-button type="primary" size="mini" @click.native="editCase(scope.row)">编辑</el-button>
 
               <el-tooltip class="item" effect="dark" content="复制用例及其步骤" placement="top-end">
-                <el-button type="primary" size="mini" @click.native="copyCase(scope.row)">复制</el-button>
+                <el-button type="primary"
+                           size="mini"
+                           @click.native="copyCase(scope.row)">复制</el-button>
               </el-tooltip>
 
               <el-tooltip class="item" effect="dark" content="将删除此用例及此用例下的步骤" placement="top-end">
-                <el-button type="danger" size="mini"
-                           @click.native="confirmBox(delCase, scope.row.id, `用例 ${scope.row.name}`)">删除
+                <el-button type="danger"
+                           size="mini"
+                           :loading="scope.row.isShowDeleteLoading"
+                           @click.native="confirmBox(delCase, scope.row, `用例 ${scope.row.name}`)">删除
                 </el-button>
               </el-tooltip>
             </template>
@@ -196,9 +202,10 @@ export default {
     },
 
     // 删除用例
-    delCase(api_id) {
-      // console.log('delCase: ', api_id)
-      deleteCase({'id': api_id}).then(response => {
+    delCase(row) {
+      this.$set(row, 'isShowDeleteLoading', true)
+      deleteCase({'id': row.id}).then(response => {
+        this.$set(row, 'isShowDeleteLoading', false)
         if (this.showMessage(this, response)) {
           this.getCaseList()
         }
@@ -215,7 +222,7 @@ export default {
 
     // 运行用例
     runCase(caseData) {
-      this.$set(caseData, 'isLoading', true)
+      this.$set(caseData, 'isShowRunLoading', true)
       caseRun({
         caseId: [caseData.id]
       }).then(runResponse => {
@@ -231,14 +238,14 @@ export default {
             if (queryCount <= 10) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
-                  that.$set(caseData, 'isLoading', false)
+                  that.$set(caseData, 'isShowRunLoading', false)
                   that.openReportById(runResponse.data.report_id)
                   clearInterval(timer)  // 关闭定时器
                 }
               })
               queryCount += 1
             } else {
-              that.$set(caseData, 'isLoading', false)
+              that.$set(caseData, 'isShowRunLoading', false)
               that.$notify({
                 title: '测试长时间未运行结束',
                 message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',

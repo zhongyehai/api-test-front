@@ -14,8 +14,12 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="currentDialogIsShow = false"> {{ '取消' }}</el-button>
-      <el-button type="primary" @click="creteFuncFile()">
+      <el-button size="mini" @click="currentDialogIsShow = false"> {{ '取消' }}</el-button>
+      <el-button
+        type="primary"
+        size="mini"
+        :loading="submitButtonIsLoading"
+        @click="creteFuncFile()">
         {{ '确定' }}
       </el-button>
     </div>
@@ -30,12 +34,13 @@ export default {
   name: "funcFileDialog",
   data() {
     return {
+      submitButtonIsLoading: false,
       currentDialogIsShow: false,
       name: ''
     }
   },
 
-  mounted(){
+  mounted() {
     this.$bus.$on(this.$busEvents.addFuncFileDialogIsShow, (status) => {
       this.name = ''
       this.currentDialogIsShow = true
@@ -49,7 +54,9 @@ export default {
 
   methods: {
     creteFuncFile() {
+      this.submitButtonIsLoading = true
       postFuncFile({'name': this.name}).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.$bus.$emit(this.$busEvents.addFuncFileIsCommit, 'addFuncFileIsCommit')
           this.currentDialogIsShow = false

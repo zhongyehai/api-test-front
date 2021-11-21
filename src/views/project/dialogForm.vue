@@ -68,7 +68,12 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
-        <el-button type="primary" size="mini" @click=" dialogStatus === 'add' ? addProject() : changProject() ">
+        <el-button
+          type="primary"
+          size="mini"
+          @click=" dialogStatus === 'add' ? addProject() : changProject() "
+          :loading="submitButtonIsLoading"
+        >
           {{ '确定' }}
         </el-button>
       </div>
@@ -125,6 +130,8 @@ export default {
       // dialog框状态，edit为编辑数据, create为新增数据
       dialogStatus: '',
 
+      submitButtonIsLoading: false,
+
       // 校验规则
       rules: {
         name: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
@@ -141,7 +148,7 @@ export default {
           //   trigger: 'change',
           // }
         ],
-        test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }]
+        test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }],
       }
     }
   },
@@ -197,7 +204,9 @@ export default {
     addProject() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.submitButtonIsLoading = true
           postProject(this.getProjectForCommit()).then(response => {
+            this.submitButtonIsLoading = false
             if (this.showMessage(this, response)) {
               this.dialogFormVisible = false
               this.sendIsCommitStatus()
@@ -213,7 +222,9 @@ export default {
     changProject() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.submitButtonIsLoading = true
           putProject(this.getProjectForCommit()).then(response => {
+            this.submitButtonIsLoading = false
             if (this.showMessage(this, response)) {
               this.dialogFormVisible = false
               this.sendIsCommitStatus()

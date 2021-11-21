@@ -12,7 +12,12 @@
         </el-input>
       </el-form-item>
 
-      <el-button type="primary" style="margin-left: 5px" size="mini" @click="debugFunc">调试
+      <el-button
+        type="primary"
+        style="margin-left: 5px"
+        size="mini"
+        :loading="deBugButtonIsLoading"
+        @click="debugFunc">调试
       </el-button>
 
       <el-button class="filter-item" type="primary" size="mini" @click="openFuncFileDialog()">新建
@@ -34,7 +39,11 @@
         :options="{enableSnippets:true, enableBasicAutocompletion: true, enableLiveAutocompletion: true}"
       >
       </editor>
-      <el-button type="primary" size="mini" @click.native="editFuncFile(funcData)">
+      <el-button
+        type="primary"
+        size="mini"
+        :loading="saveButtonIsLoading"
+        @click.native="editFuncFile(funcData)">
         保存
       </el-button>
     </el-container>
@@ -54,6 +63,8 @@ export default {
   },
   data() {
     return {
+      deBugButtonIsLoading: false,
+      saveButtonIsLoading: false,
       funcData: '',
       name: '',
       id: '',
@@ -68,7 +79,9 @@ export default {
 
     // 提交修改函数文件
     editFuncFile() {
+      this.saveButtonIsLoading = true
       putFuncFile({'id': this.id, 'func_data': this.funcData, 'name': this.name}).then(response => {
+        this.saveButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.$bus.$emit(this.$busEvents.editFuncFileIsCommit, 'success')
         }
@@ -77,7 +90,9 @@ export default {
 
     // 调试函数文件
     debugFunc() {
+      this.deBugButtonIsLoading = true
       debugFuncFile({'id': this.id, 'debug_data': this.debugFuncData}).then(response => {
+        this.deBugButtonIsLoading = false
         this.$alert(response.result, response.message, {confirmButtonText: '确定'});
       })
     },

@@ -66,12 +66,14 @@
 
           <el-button type="primary"
                      size="mini"
-                     @click.native="downloadFile(scope.row.name)">下载
+                     :loading="scope.row.downloadLoadingIsShow"
+                     @click.native="downloadFile(scope.row)">下载
           </el-button>
 
           <el-button type="danger"
                      size="mini"
-                     @click.native="confirmBox(delFile, scope.row.name, scope.row.name)">删除
+                     :loading="scope.row.deleteLoadingIsShow"
+                     @click.native="confirmBox(delFile, scope.row, scope.row.name)">删除
           </el-button>
 
         </template>
@@ -143,23 +145,26 @@ export default {
     },
 
     // 下载文件
-    downloadFile(fileName) {
-      console.log('fileName: ', fileName)
-      fileDownload({'name': fileName, 'fileType': this.fileType}).then(response => {
+    downloadFile(row) {
+      this.$set(row, 'downloadLoadingIsShow', true)
+      fileDownload({'name': row.name, 'fileType': this.fileType}).then(response => {
+        this.$set(row, 'downloadLoadingIsShow', false)
         let blob = new Blob([response], {
           type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
         });
         // 保存文件到本地
         let a = document.createElement('a')
         a.href = URL.createObjectURL(blob);  //生成一个url
-        a.download = fileName
+        a.download = row.name
         a.click()
       })
     },
 
     // 删除文件
-    delFile(fileName) {
-      fileDelete({'name': fileName, 'fileType': this.fileType}).then(response => {
+    delFile(row) {
+      this.$set(row, 'deleteLoadingIsShow', true)
+      fileDelete({'name': row.name, 'fileType': this.fileType}).then(response => {
+        this.$set(row, 'deleteLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getFileList()
         }
@@ -168,7 +173,6 @@ export default {
 
     // 打开文件上传窗口
     openFileUploadDialog() {
-      console.log('this.fileType: ', this.fileType)
       this.$bus.$emit(this.$busEvents.uploadFileDialogIsShow, this.fileType)
     }
   },

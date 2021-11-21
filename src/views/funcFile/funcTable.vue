@@ -17,21 +17,24 @@
         :show-overflow-tooltip=true
         prop="name"
         label="文件名称"
-        min-width="31%"></el-table-column>
+        min-width="30%"></el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="20%">
+      <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="18%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="35%">
+      <el-table-column label="操作" min-width="40%">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click.native="editFuncFile(scope.row)">
             编辑
           </el-button>
-          <el-button type="danger" size="mini"
-                     @click.native="confirmBox(delFuncFile, scope.row, scope.row.name)">
+          <el-button
+            type="danger"
+            size="mini"
+            :loading="scope.row.deleteLoadingIsShow"
+            @click.native="confirmBox(delFuncFile, scope.row, scope.row.name)">
             删除
           </el-button>
         </template>
@@ -103,8 +106,10 @@ export default {
       this.$bus.$emit(this.$busEvents.editFuncFile, funcFile)
     },
 
-    delFuncFile(funcFile) {
-      deleteFuncFile({'name': funcFile.name}).then(response => {
+    delFuncFile(row) {
+      this.$set(row, 'deleteLoadingIsShow', true)
+      deleteFuncFile({'name': row.name}).then(response => {
+        this.$set(row, 'deleteLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getFuncFileList()
         }

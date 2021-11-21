@@ -86,7 +86,7 @@
 
           <!-- 调试按钮 -->
           <el-tooltip class="item" effect="dark" content="会先自动保存，再触发调试" placement="right-end">
-            <el-button type="primary" size="small" :loading="isLoading" @click.native="debugApi()">调试
+            <el-button type="primary" size="small" :loading="isShowDebugLoading" @click.native="debugApi()">调试
             </el-button>
           </el-tooltip>
 
@@ -152,7 +152,11 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click=" dialogFormVisible = false"> {{ '取消' }}</el-button>
-        <el-button type="primary" size="mini" @click=" dialogStatus === 'update' ? changApi() : addApi() ">
+        <el-button
+          type="primary"
+          size="mini"
+          :loading="isShowSubmitLoading"
+          @click=" dialogStatus === 'update' ? changApi() : addApi() ">
           {{ '确定' }}
         </el-button>
       </div>
@@ -215,7 +219,9 @@ export default {
       // currentChoiceProjectHosts: [],
 
       // 是否展示请求接口时的等待状态
-      isLoading: false,
+      isShowDebugLoading: false,
+
+      isShowSubmitLoading: false,
 
       // 默认展示的tab页
       bodyShow: 'headers',
@@ -259,24 +265,22 @@ export default {
 
     // 调试api，先保存，走数据校验，再发送请求
     debugApi() {
-      this.isLoading = true
+      this.isShowDebugLoading = true
       if (this.tempApi.id) {
         putApi(this.getTempApi()).then(response => {
+          this.isShowDebugLoading = false
           if (this.showMessage(this, response)) {
             this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
             this.runApis()
-          } else {
-            this.isLoading = false
           }
         })
       } else {
         postApi(this.getTempApi()).then(response => {
+          this.isShowDebugLoading = false
           if (this.showMessage(this, response)) {
             this.tempApi = response.data
             this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
             this.runApis()
-          } else {
-            this.isLoading = false
           }
         })
       }
@@ -284,6 +288,7 @@ export default {
     },
 
     runApis() {
+      this.isShowDebugLoading = true
       runApi({
         'projectId': this.tempApi.project_id,
         'apis': [this.tempApi.id]
@@ -299,14 +304,14 @@ export default {
             if (queryCount <= 10) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
-                  that.isLoading = false
+                  that.isShowDebugLoading = false
                   that.openReportById(runResponse.data.report_id)
                   clearInterval(timer)  // 关闭定时器
                 }
               })
               queryCount += 1
             } else {
-              that.isLoading = false
+              that.isShowDebugLoading = false
               that.$notify({
                 title: '测试长时间未运行结束',
                 message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
@@ -317,16 +322,14 @@ export default {
             }
           }, 3000)
         }
-
-
-        // this.isLoading = false
-        // this.runApiResultData = response.data.data
       })
     },
 
     // 提交添加接口
     addApi() {
+      this.isShowSubmitLoading = true
       postApi(this.getTempApi()).then(response => {
+        this.isShowSubmitLoading = false
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
@@ -336,7 +339,9 @@ export default {
 
     // 提交修改接口
     changApi() {
+      this.isShowSubmitLoading = true
       putApi(this.getTempApi()).then(response => {
+        this.isShowSubmitLoading = false
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')

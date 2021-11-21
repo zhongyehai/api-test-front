@@ -24,7 +24,7 @@
       </el-form-item>
 
       <el-form-item :label="'配置名'" prop="name" class="is-required" size="mini">
-        <el-input v-model="tempConfig.name" :disabled="dialogStatus === 'edit'" />
+        <el-input v-model="tempConfig.name" :disabled="dialogStatus === 'edit'"/>
       </el-form-item>
 
       <el-form-item :label="'配置值'" prop="value" class="is-required" size="mini">
@@ -38,7 +38,11 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button size="mini" @click="dialogIsShow = false"> {{ '取消' }}</el-button>
-      <el-button type="primary" size="mini" @click=" dialogStatus === 'add' ? addConfig() : changConfig() ">
+      <el-button
+        type="primary"
+        size="mini"
+        :loading="submitButtonIsLoading"
+        @click=" dialogStatus === 'add' ? addConfig() : changConfig() ">
         {{ '确定' }}
       </el-button>
     </div>
@@ -53,11 +57,13 @@ import waves from '@/directive/waves'
 
 export default {
   name: "configDialog",
-  components:{configTypeSelector},
+  components: {configTypeSelector},
   directives: {waves},
   props: ['configTypeList'],
   data() {
     return {
+
+      submitButtonIsLoading: false,
 
       // 配置新增/编辑临时数据
       tempConfig: {
@@ -135,20 +141,10 @@ export default {
 
     // 新增配置
     addConfig() {
-      // this.$refs['dataForm'].validate((valid) => {
-      //   if (valid) {
-      //     console.log('111111: ')
-      //     postConfig(this.getConfigToCommit()).then(response => {
-      //       if (this.showMessage(this, response)) {
-      //         this.sendIsCommitStatus()
-      //       }
-      //     })
-      //   } else {
-      //     this.$message.error('请确认规则')
-      //   }
-      // });
       this.$refs['dataForm'].validate((valid) => {
+        this.submitButtonIsLoading = true
         postConfig(this.getConfigToCommit()).then(response => {
+          this.submitButtonIsLoading = false
           if (this.showMessage(this, response)) {
             this.sendIsCommitStatus()
           }
@@ -158,18 +154,9 @@ export default {
 
     // 修改配置
     changConfig() {
-      // this.$refs['dataForm'].validate((valid) => {
-      //   if (valid) {
-      //     putConfig(this.getConfigToCommit()).then(response => {
-      //       if (this.showMessage(this, response)) {
-      //         this.sendIsCommitStatus()
-      //       }
-      //     })
-      //   } else {
-      //     this.$message.error('请确认规则')
-      //   }
-      // });
+      this.submitButtonIsLoading = true
       putConfig(this.getConfigToCommit()).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.sendIsCommitStatus()
         }

@@ -142,7 +142,12 @@
 
     <div slot="footer" class="dialog-footer">
       <el-button @click="taskDialogIsShow = false" size="small">取 消</el-button>
-      <el-button type="primary" @click.native="dialogStatus === 'update' ? updateTask() : createTask()" size="small"
+      <el-button
+        type="primary"
+        size="small"
+        :loading="submitButtonIsLoading"
+        @click.native="dialogStatus === 'update' ? updateTask() : createTask()"
+
       >确定
       </el-button>
     </div>
@@ -167,6 +172,7 @@ export default {
   },
   data() {
     return {
+      submitButtonIsLoading: false,
       taskDialogIsShow: false,
       dialogStatus: '',
       tempTask: {},
@@ -327,7 +333,9 @@ export default {
 
     // 创建定时任务
     createTask() {
+      this.submitButtonIsLoading = true
       postTask(this.getTaskToCommit()).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.busEmit()
         }
@@ -336,7 +344,9 @@ export default {
 
     // 修改定时任务
     updateTask() {
+      this.submitButtonIsLoading = true
       putTask(this.getTaskToCommit()).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.busEmit()
         }
@@ -372,7 +382,7 @@ export default {
 
       // 初始化时获取当前选择用例集的用例列表
       // console.log('this.tempTask:', JSON.stringify(this.tempTask))
-      if (this.tempTask.set_id.length === 1){
+      if (this.tempTask.set_id.length === 1) {
         this.getCaseList(this.tempTask.set_id[0])
       }
     })

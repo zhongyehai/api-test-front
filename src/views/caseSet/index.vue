@@ -116,7 +116,11 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
-        <el-button size="mini" type="primary" @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
+        <el-button
+          size="mini"
+          type="primary"
+          :loading="submitButtonIsShow"
+          @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
           {{ '确定' }}
         </el-button>
       </div>
@@ -145,6 +149,8 @@ export default {
     return {
       // 查询关键字
       filterText: '',
+
+      submitButtonIsShow: false,
 
       projectTab: '项目和用例集',
 
@@ -202,6 +208,7 @@ export default {
     addCaseSet() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.submitButtonIsShow = true
           postCaseSet({
             name: this.tempDataForm.name,
             id: '',
@@ -211,6 +218,7 @@ export default {
             // node为第一级，则说明是项目级，直接取id，非第一级，则取当前node的project_id
             project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
           }).then(response => {
+            this.submitButtonIsShow = false
             if (this.showMessage(this, response)) {
               this.dialogFormVisible = false
               this.currentProject = this.getCurrentProject(this.dialog_temp_node.level === 1 ? this.dialog_temp_data.id : this.dialog_temp_data.project_id)
@@ -232,6 +240,7 @@ export default {
     changCaseSet() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.submitButtonIsShow = true
           putCaseSet({
             name: this.tempDataForm.name,
             id: this.dialog_temp_data.id,
@@ -240,6 +249,7 @@ export default {
             parent: this.dialog_temp_data.parent,
             project_id: this.dialog_temp_data.project_id,
           }).then(response => {
+            this.submitButtonIsShow = false
             if (this.showMessage(this, response)) {
               this.dialogFormVisible = false
               this.dialog_temp_data.name = response.data.name

@@ -55,7 +55,11 @@
               <el-tooltip class="item" effect="dark" content="复制接口" placement="top-end">
                 <el-button type="primary" size="mini" @click.native="copyApi(scope.row)">复制</el-button>
               </el-tooltip>
-              <el-button type="danger" size="mini" @click.native="confirmBox(delApi, scope.row.id, scope.row.name)">
+              <el-button
+                type="danger"
+                size="mini"
+                :loading="scope.row.isShowDeleteLoading"
+                @click.native="confirmBox(delApi, scope.row, scope.row.name)">
                 删除
               </el-button>
             </template>
@@ -79,9 +83,6 @@
       :currentModuleId="currentModuleId"
     ></apiDialog>
 
-    <!-- 接口运行结果 -->
-    <runApiResult :runApiResultData="runApiResultData"></runApiResult>
-
   </div>
 </template>
 
@@ -89,7 +90,6 @@
 import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
 import apiDialog from '@/views/api/apiDialog'
-import runApiResult from '@/views/api/runApiResult'
 
 import {userList} from '@/apis/user'
 import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/api'
@@ -99,8 +99,7 @@ export default {
   name: 'index',
   components: {
     Pagination,
-    apiDialog,
-    runApiResult
+    apiDialog
   },
 
   // 接收父组件传参的key
@@ -131,9 +130,6 @@ export default {
       pageSize: 20,
       api_total: 0,
       api_list: [],
-
-      // 调试接口的运行结果
-      runApiResultData: null,
 
       // 拖拽排序参数
       sortable: null,
@@ -193,8 +189,10 @@ export default {
     },
 
     // 删除接口
-    delApi(api_id) {
-      deleteApi({'id': api_id}).then(response => {
+    delApi(row) {
+      this.$set(row, 'isShowDeleteLoading', true)
+      deleteApi({'id': row.id}).then(response => {
+        this.$set(row, 'isShowDeleteLoading', false)
         if (this.showMessage(this, response)) {
           this.getApiList()
         }
@@ -261,9 +259,6 @@ export default {
             }
           }, 3000)
         }
-
-        // this.$set(row, 'isLoading', false)
-        // this.runApiResultData = response.data.data
       })
     },
 

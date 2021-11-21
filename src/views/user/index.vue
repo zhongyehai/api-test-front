@@ -71,11 +71,20 @@
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <!--          <el-button type="primary" size="mini" @click="handleUpdate(row)">-->
-          <el-button :type="row.status === 1 ? 'info' : 'success'" size="mini" @click="changStatus(row.id)">
-            {{ row.status === 1 ? '冻结' : '启用' }}
+
+          <el-button
+            size="mini"
+            :type="row.status === 1 ? 'info' : 'success'"
+            :loading="row.changStatusLoadingIsShow"
+            @click="changStatus(row)">
+            {{ row.status === 1 ? '禁用' : '启用' }}
           </el-button>
-          <el-button size="mini" type="danger" @click="confirmBox(delUser, row.id, row.name)">
+
+          <el-button
+            size="mini"
+            type="danger"
+            :loading="row.deleteLoadingIsShow"
+            @click="confirmBox(delUser, row, row.name)">
             删除
           </el-button>
         </template>
@@ -120,8 +129,12 @@
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?addUser():changUser()">
+        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
+        <el-button
+          size="mini"
+          type="primary"
+          :loading="submitButtonIsLoading"
+          @click="dialogStatus==='create'?addUser():changUser()">
           {{ '确定' }}
         </el-button>
       </div>
@@ -160,6 +173,9 @@ export default {
         role_id: undefined,
         password: undefined,
       },
+
+      submitButtonIsLoading: false,
+      changStatusLoadingIsShow: false,
 
       // 用户列表
       user_list: [],
@@ -268,7 +284,9 @@ export default {
 
     // 新增用户
     addUser() {
+      this.submitButtonIsLoading = true
       postUser(this.tempUser).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.initTempUser(); // 初始化临时数据模板
@@ -279,7 +297,9 @@ export default {
 
     // 修改用户
     changUser() {
+      this.submitButtonIsLoading = true
       putUser(this.tempUser).then(response => {
+        this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.initTempUser(); // 初始化临时数据模板
@@ -289,10 +309,10 @@ export default {
     },
 
     // 删除用户
-    delUser(userId) {
-      deleteUser({
-        "id": userId
-      }).then(response => {
+    delUser(row) {
+      this.$set(row, 'deleteLoadingIsShow', true)
+      deleteUser({"id": row.id}).then(response => {
+        this.$set(row, 'deleteLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getUserList(); // 重新从后台获取用户列表
         }
@@ -300,10 +320,10 @@ export default {
     },
 
     // 启用禁用用户
-    changStatus(userId) {
-      userStatus({
-        'id': userId
-      }).then(response => {
+    changStatus(row) {
+      this.$set(row, 'changStatusLoadingIsShow', true)
+      userStatus({'id': row.id}).then(response => {
+        this.$set(row, 'changStatusLoadingIsShow', false)
         this.showMessage(this, response)
         this.getUserList()
       })

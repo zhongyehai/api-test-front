@@ -128,7 +128,11 @@
 
     <div slot="footer" class="dialog-footer">
       <el-button size="mini" @click=" dialogIsShow = false"> {{ '取消' }}</el-button>
-      <el-button size="mini" type="primary" @click=" dialogStatus === 'add' ? addCase() : changCase() ">
+      <el-button
+        size="mini"
+        type="primary"
+        :loading="submitLoadingIsShow"
+        @click=" dialogStatus === 'add' ? addCase() : changCase() ">
         {{ '保存用例' }}
       </el-button>
     </div>
@@ -172,6 +176,7 @@ export default {
     return {
       dialogStatus: '',
       dialogIsShow: false,
+      submitLoadingIsShow: false,
       activeName: 'caseInFo',
       tempCase: {
         id: '',
@@ -249,7 +254,9 @@ export default {
     // 新增用例
     addCase() {
       // console.log(JSON.stringify(this.tempCase))
+      this.submitLoadingIsShow = true
       postCase(this.getCaseDataToCommit()).then(response => {
+        this.submitLoadingIsShow = false
         if (this.showMessage(this, response)) {
           // console.log('caseDialog.addCase.response: ', JSON.stringify(response.data))
           this.dialogIsShow = false
@@ -264,7 +271,9 @@ export default {
     changCase() {
       // console.log(JSON.stringify(this.tempCase))
       // console.log(JSON.stringify(this.getCaseDataToCommit()))
+      this.submitLoadingIsShow = true
       putCase(this.getCaseDataToCommit()).then(response => {
+        this.submitLoadingIsShow = false
         if (this.showMessage(this, response)) {
           this.dialogIsShow = false
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')

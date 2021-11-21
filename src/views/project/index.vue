@@ -13,22 +13,19 @@
                  class="filter-item">
         <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" icon="el-icon-search" size="mini"
+      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" size="mini"
                  @click="handleFilter">
         {{ '搜索' }}
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" size="mini"
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini"
                  @click="addProject">
         {{ '添加' }}
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-refresh" size="mini"
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini"
                  @click="handleInitListQuery">
         {{ '重置' }}
       </el-button>
-      <!--      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download"-->
-      <!--                 @click="handleDownload">-->
-      <!--        {{ '导出' }}-->
-      <!--      </el-button>-->
+
     </div>
     <br>
 
@@ -83,8 +80,12 @@
         <template slot-scope="{row, $index}">
 
           <el-tooltip v-show="row.yapi_id" class="item" effect="dark" content="从yapi拉取此项目下的模块、接口信息" placement="top-start">
-            <el-button size="mini" :loading="row.isLoading" type="success" @click="pullByYapi(row)">
-              {{ '同步' }}
+            <el-button
+              size="mini"
+              icon="el-icon-refresh"
+              :loading="row.isPullByYapi"
+              type="text"
+              @click="pullByYapi(row)">
             </el-button>
           </el-tooltip>
 
@@ -92,7 +93,7 @@
             {{ '修改' }}
           </el-button>
 
-          <el-button size="mini" type="danger" @click="confirmBox(delProject, row.id, row.name)">
+          <el-button size="mini" type="danger" :loading="row.submitButtonIsLoading" @click="confirmBox(delProject, row, row.name)">
             {{ '删除' }}
           </el-button>
         </template>
@@ -165,10 +166,7 @@ export default {
       downloadLoading: false,
 
       // 请求加载状态
-      listLoading: true,
-
-      // 按钮运行状态
-      isLoading: false,
+      listLoading: true
 
     }
   },
@@ -192,10 +190,10 @@ export default {
 
     // 从yapi同步项目信息
     pullByYapi(row){
-      this.$set(row, 'isLoading', true)
+      this.$set(row, 'isPullByYapi', true)
       projectPull({id: row.id}).then(response => {
         this.showMessage(this, response)
-        this.$set(row, 'isLoading', false)
+        this.$set(row, 'isPullByYapi', false)
       })
     },
 
@@ -217,8 +215,10 @@ export default {
     },
 
     // 删除项目
-    delProject(projectId) {
-      deleteProject({"id": projectId}).then(response => {
+    delProject(row) {
+      this.$set(row, 'submitButtonIsLoading', true)
+      deleteProject({"id": row.id}).then(response => {
+        this.$set(row, 'submitButtonIsLoading', false)
         if (this.showMessage(this, response)) {
           this.getProjectList(); // 重新从后台获取项目列表
         }

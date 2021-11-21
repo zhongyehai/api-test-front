@@ -11,9 +11,6 @@
 
       <!-- 第二列, 函数文件编辑区 -->
       <el-col :span="15" style="float: right">
-        <!--        <div>-->
-        <!--          第二列, 函数文件编辑区-->
-        <!--        </div>-->
         <funcEditorView></funcEditorView>
       </el-col>
 
