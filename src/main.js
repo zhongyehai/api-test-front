@@ -2,6 +2,7 @@ import Vue from 'vue'
 import ElementUI from 'element-ui'
 import VCharts from 'v-charts';
 import AFTableColumn from 'af-table-column'  // el-table-column自适应宽度
+import VueClipboard from 'vue-clipboard2'  // 复制内容到粘贴板
 
 import 'normalize.css/normalize.css' // CSS重置的现代替代方案
 import 'element-ui/lib/theme-chalk/index.css'
@@ -20,6 +21,7 @@ Vue.use(VCharts);
 Vue.use(base);
 Vue.use(ElementUI)
 Vue.use(AFTableColumn)
+Vue.use(VueClipboard)
 
 // 事件总线，用 this.$bus 使用
 Vue.prototype.$bus = new Vue()
