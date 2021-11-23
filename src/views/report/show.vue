@@ -126,19 +126,19 @@
 
 
           <el-scrollbar :wrapStyle={height:picHeight}>
-            <div style="float:right;padding-right:15px;position:absolute;z-index:100;right: 1px;top:-2px">
-              <el-tooltip content="查看主要信息" placement="top-start" @click.native="showInfo()">
-                <el-button size="mini" type="info" icon="el-icon-info" circle></el-button>
-              </el-tooltip>
-              <el-tooltip content="查看所有信息" placement="top-start">
-                <el-button size="mini" type="primary" circle @click.native="showAll()">all</el-button>
-              </el-tooltip>
-              <el-tooltip content="查看报错信息" placement="top-start">
-                <el-button size="mini" type="danger" icon="el-icon-error" circle
-                           @click.native="showError()"
-                ></el-button>
-              </el-tooltip>
-            </div>
+<!--            <div style="float:right;padding-right:15px;position:absolute;z-index:100;right: 1px;top:-2px">-->
+<!--              <el-tooltip content="查看主要信息" placement="top-start" @click.native="showInfo()">-->
+<!--                <el-button size="mini" type="info" icon="el-icon-info" circle></el-button>-->
+<!--              </el-tooltip>-->
+<!--              <el-tooltip content="查看所有信息" placement="top-start">-->
+<!--                <el-button size="mini" type="primary" circle @click.native="showAll()">all</el-button>-->
+<!--              </el-tooltip>-->
+<!--              <el-tooltip content="查看报错信息" placement="top-start">-->
+<!--                <el-button size="mini" type="danger" icon="el-icon-error" circle-->
+<!--                           @click.native="showError()"-->
+<!--                ></el-button>-->
+<!--              </el-tooltip>-->
+<!--            </div>-->
             <div :style={height:picHeight}>
 
               <div style="padding:10px;font-size: 14px;line-height: 25px;width: 100%;position:relative;"
@@ -165,26 +165,81 @@
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "查询字符串参数：" }}</div>
                     </template>
-                    <div class="el-collapse-item-content">{{ parseResultDeal(this.meta_datas.data[0].request.params) }}
-                    </div>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].request.params">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].request.params)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].request.params"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].request.params)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="4">
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "头部参数：" }}</div>
                     </template>
-                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].request.headers) }}
-                    </pre>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].request.headers">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].request.headers)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].request.headers"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].request.headers)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="5">
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "json参数：" }}</div>
                     </template>
-                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].request.json) }}
-                    </pre>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].request.json">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].request.json)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].request.json"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].request.json)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="6">
@@ -212,18 +267,54 @@
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "响应头部信息：" }}</div>
                     </template>
-                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].response.headers) }}
-                    </pre>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].response.headers">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].response.headers)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].response.headers"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].response.headers)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="10">
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "响应json：" }}</div>
                     </template>
-                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].response.json) }}
-                    </pre>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].response.json">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].response.json)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].response.json"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].response.json)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="11">
@@ -237,9 +328,27 @@
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "提取数据：" }}</div>
                     </template>
-                    <pre class="el-collapse-item-content" style="overflow: auto;color: #000000">
-                      {{ parseResultDeal(this.meta_datas.data[0].extract_msgs) }}
-                    </pre>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].extract_msgs">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].extract_msgs)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].extract_msgs"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].extract_msgs)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="13">
@@ -262,9 +371,13 @@
 <script>
 
 import {getReport} from '@/apis/report'
+import JsonViewer from "vue-json-viewer";
 
 export default {
   name: 'reportShow',
+  components: {
+    JsonViewer,
+  },
   data() {
 
     this.caseChartSettings = {
@@ -315,6 +428,7 @@ export default {
       }
     }
     return {
+      msg: {copyText: 'copy', copiedText: 'copied'},
       // 响应信息，默认展开全部
       defaultShowResponseInFo: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'],
       caseChartSettings: {
@@ -416,20 +530,49 @@ export default {
   },
 
   methods: {
-    parseResultDeal(data) {
-      try {
-        data = JSON.parse(data)
-        data = JSON.stringify(data, null, 4)
-      } catch (err) {
-        null
+
+    // 获取复制的内容，如果是字符串，则直接返回，否则转为字符串后返回
+    getCopyData(data){
+      if (typeof data === 'string'){
+        return data
       }
-      return data
+      return this.jsonToStr(data)
     },
+
+    // 复制成功
+    onCopy(e) {
+      this.$message.success('内容已复制到剪贴板')
+    },
+
+    // 复制失败
+    onError(e) {
+      this.$message.error('内容已复制失败')
+    },
+
+    // 解析字符串为json
+    strToJson(str) {
+      try {
+        return JSON.parse(str)
+      } catch (err) {
+        return str
+      }
+    },
+
+    // json转换为字符串
+    jsonToStr(jsonObj) {
+      try {
+        return JSON.stringify(jsonObj, null, 4)
+      } catch (err) {
+        return jsonObj
+      }
+    },
+
     handleNodeClick(i1, i2) {
       this.showColor = [i1, i2]
       this.meta_datas = this.reportData['details'][i1]['records'][i2]['meta_datas']
       this.attachment = this.reportData['details'][i1]['records'][i2]['attachment']
     },
+
     handleCommand(command) {
       // this.getReportDataById(command);
       if (command === 'error') {
