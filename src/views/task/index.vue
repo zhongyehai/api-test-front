@@ -1,120 +1,115 @@
 <template>
   <div class="app-container">
-    <div class="tabs" style="width: 100%">
+    <el-row>
 
-      <!-- 项目列表树组件 -->
-      <projectTreeView
-        ref="projectTree"
-        class="projectTree"
-        :busEventClickTree="$busEvents.projectTreeChoiceProject"
-        :busEventClickMenu="$busEvents.taskDialogIsShow"
-        :menuName="'添加任务'"
-      ></projectTreeView>
+      <!-- 项目树 -->
+      <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
+        <!-- 项目列表树组件 -->
+        <projectTreeView
+          ref="projectTree"
+          :busEventClickTree="$busEvents.projectTreeChoiceProject"
+          :busEventClickMenu="$busEvents.taskDialogIsShow"
+          :menuName="'添加任务'"
+          :labelWidth="15"
+        ></projectTreeView>
+      </el-col>
 
-      <!-- 定时任务列表 -->
-      <el-tabs v-model="taskTab" class="table_padding taskTab">
+      <!-- 定时任务 -->
+      <el-col style="width: 80%">
+        <!-- 定时任务列表 -->
+        <el-tabs v-model="taskTab" class="table_padding" style="margin-left: 5px">
+          <el-tab-pane label="定时任务列表" :name="taskTab">
+            <el-table
+              ref="taskTable"
+              :data="taskList"
+              stripe
+            >
+              <el-table-column prop="num" label="序号" min-width="7%">
+                <template slot-scope="scope">
+                  <span> {{ scope.$index + 1 }} </span>
+                </template>
+              </el-table-column>
 
-        <!-- 用例管理 -->
-        <el-tab-pane label="定时任务列表" :name="taskTab">
+              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="11%">
+                <template slot-scope="scope">
+                  <span> {{ scope.row.name }} </span>
+                </template>
+              </el-table-column>
 
-          <!-- 根据当前窗口宽度，实时计算用例列表能展示的宽度 -->
-          <el-row :style="{'min-width': caseSetListTableWidth}">
+              <el-table-column prop="cron" label="cron表达式" min-width="25%"></el-table-column>
 
-            <el-col :span="21" style="padding-left: 5px;">
-              <el-table
-                ref="taskTable"
-                :data="taskList"
-                stripe
-              >
-                <el-table-column prop="num" label="序号" min-width="7%">
-                  <template slot-scope="scope">
-                    <span> {{ scope.$index + 1 }} </span>
-                  </template>
-                </el-table-column>
+              <el-table-column prop="status" label="状态" min-width="9%">
+                <template slot-scope="scope">
+                  <el-tag size="small" :type="scope.row.status === '启用中' ? 'success' : 'warning'">
+                    {{ scope.row.status }}
+                  </el-tag>
+                </template>
+              </el-table-column>
 
-                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="11%">
-                  <template slot-scope="scope">
-                    <span> {{ scope.row.name }} </span>
-                  </template>
-                </el-table-column>
+              <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="9%">
+                <template slot-scope="scope">
+                  <span>{{ parsUser(scope.row.create_user) }}</span>
+                </template>
+              </el-table-column>
 
-                <el-table-column prop="cron" label="cron表达式" min-width="25%"></el-table-column>
+              <el-table-column label="操作" min-width="39%">
+                <template slot-scope="scope">
 
-                <el-table-column prop="status" label="状态" min-width="9%">
-                  <template slot-scope="scope">
-                    <el-tag size="small" :type="scope.row.status === '启用中' ? 'success' : 'warning'">
-                      {{ scope.row.status }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    v-if="scope.row.status === '启用中'"
+                    :loading="scope.row.disableLoadingIsShow"
+                    @click.native="disable(scope.row)">禁用
+                  </el-button>
 
-                <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="9%">
-                  <template slot-scope="scope">
-                    <span>{{ parsUser(scope.row.create_user) }}</span>
-                  </template>
-                </el-table-column>
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    v-if="scope.row.status === '禁用中'"
+                    :loading="scope.row.enableLoadingIsShow"
+                    @click.native="enable(scope.row)">启用
+                  </el-button>
 
-                <el-table-column label="操作" min-width="39%">
-                  <template slot-scope="scope">
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    :disabled="scope.row.status === '启用中'"
+                    @click.native="editTask(scope.row)">修改
+                  </el-button>
 
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      v-if="scope.row.status === '启用中'"
-                      :loading="scope.row.disableLoadingIsShow"
-                      @click.native="disable(scope.row)">禁用
-                    </el-button>
+                  <el-button
+                    type="success"
+                    size="mini"
+                    :loading="scope.row.isLoading"
+                    @click.native="run(scope.row)">运行
+                  </el-button>
 
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      v-if="scope.row.status === '禁用中'"
-                      :loading="scope.row.enableLoadingIsShow"
-                      @click.native="enable(scope.row)">启用
-                    </el-button>
+                  <el-button type="danger"
+                             size="mini"
+                             :disabled="scope.row.status === '启用中'"
+                             :loading="scope.row.deleteLoadingIsShow"
+                             @click.native="confirmBox(delTask, scope.row, scope.row.name)">删除
+                  </el-button>
 
-                    <el-button
-                      type="primary"
-                      size="mini"
-                      :disabled="scope.row.status === '启用中'"
-                      @click.native="editTask(scope.row)">修改
-                    </el-button>
-
-                    <el-button
-                      type="success"
-                      size="mini"
-                      :loading="scope.row.isLoading"
-                      @click.native="run(scope.row)">运行
-                    </el-button>
-
-                    <el-button type="danger"
-                               size="mini"
-                               :disabled="scope.row.status === '启用中'"
-                               :loading="scope.row.deleteLoadingIsShow"
-                               @click.native="confirmBox(delTask, scope.row, scope.row.name)">删除
-                    </el-button>
-
-                  </template>
-                </el-table-column>
+                </template>
+              </el-table-column>
 
 
-              </el-table>
+            </el-table>
 
-              <pagination
-                v-show="taskTotal>0"
-                :total="taskTotal"
-                :page.sync="PageNum"
-                :limit.sync="PageSize"
-                @pagination="getTaskList"
-              />
-            </el-col>
-          </el-row>
-        </el-tab-pane>
-
-      </el-tabs>
-
-      <taskDialogView></taskDialogView>
-    </div>
+            <pagination
+              v-show="taskTotal>0"
+              :total="taskTotal"
+              :page.sync="PageNum"
+              :limit.sync="PageSize"
+              @pagination="getTaskList"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
+    <taskDialogView></taskDialogView>
   </div>
 </template>
 
@@ -276,21 +271,10 @@ export default {
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.taskDialogIsCommit)
     this.$bus.$off(this.$busEvents.projectTreeChoiceProject)
-  },
-
-  computed: {
-    // 用例列表能用的宽度
-    caseSetListTableWidth() {
-      return `${window.innerWidth - 300}px`
-    }
-  },
+  }
 }
 </script>
 
 <style scoped>
-.projectTree {
-  float: left;
-  width: 200px;
-}
 
 </style>

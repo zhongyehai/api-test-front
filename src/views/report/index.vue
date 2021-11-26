@@ -2,117 +2,111 @@
 
   <div class="app-container">
 
-    <div class="tabs" style="width: 100%">
+    <el-row>
+      <!-- 项目树 -->
+      <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
+        <!-- 项目列表树组件 -->
+        <projectTreeView
+          ref="projectTree"
+          :busEventClickTree="$busEvents.projectTreeChoiceProject"
+          :busEventClickMenu="''"
+          :menuName="''"
+        ></projectTreeView>
+      </el-col>
 
-      <!-- 项目列表树组件 -->
-      <projectTreeView
-        ref="projectTree"
-        class="projectTree"
-        :busEventClickTree="$busEvents.projectTreeChoiceProject"
-        :busEventClickMenu="''"
-        :menuName="''"
-      ></projectTreeView>
-      <!-- 测试报告列表 -->
-      <el-tabs v-model="reportTab" class="table_padding reportTab">
+      <!-- 测试报告 -->
+      <el-col style="width: 80%">
+        <!-- 测试报告列表 -->
+        <el-tabs v-model="reportTab" class="table_padding" style="margin-left: 5px">
+          <el-tab-pane label="测试报告列表" :name="reportTab">
+            <el-table
+              ref="reportTable"
+              :data="reportDataList"
+              stripe
+            >
+              <el-table-column prop="id" label="序号" min-width="5%">
+                <template slot-scope="scope">
+                  <span> {{ scope.$index + 1 }} </span>
+                </template>
+              </el-table-column>
 
-        <!-- 用例管理 -->
-        <el-tab-pane label="测试报告列表" :name="reportTab">
+              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="20%">
+              </el-table-column>
 
-          <!-- 根据当前窗口宽度，实时计算用例列表能展示的宽度 -->
-<!--          <el-row :style="{'min-width': reportListTableWidth}">-->
-          <el-row>
+              <el-table-column label="生成时间" min-width="17%">
+                <template slot-scope="scope">
+                  <span> {{ scope.row.created_time }} </span>
+                </template>
+              </el-table-column>
 
-            <el-col style="padding-left: 5px;">
-              <el-table
-                ref="reportTable"
-                :data="reportDataList"
-                stripe
-              >
-                <el-table-column prop="id" label="序号" min-width="5%">
-                  <template slot-scope="scope">
-                    <span> {{ scope.$index + 1 }} </span>
-                  </template>
-                </el-table-column>
+              <el-table-column
+                prop="performer"
+                label="创建者"
+                min-width="8%">
+              </el-table-column>
 
-                <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="20%">
-                </el-table-column>
+              <el-table-column label="是否通过" min-width="10%">
+                <template slot-scope="scope">
+                  <el-tag size="small" :type="scope.row.is_passed === 1 ? 'success' : 'danger'">
+                    {{ scope.row.is_passed === 1 ? '全部通过' : '有报错' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
 
-                <el-table-column label="生成时间" min-width="17%">
-                  <template slot-scope="scope">
-                    <span> {{ scope.row.created_time }} </span>
-                  </template>
-                </el-table-column>
+              <el-table-column label="生成状态" min-width="8%">
+                <template slot-scope="scope">
+                  <el-tag size="small" :type="scope.row.is_done === 1 ? 'success' : 'warning'">
+                    {{ scope.row.is_done === 1 ? '已生成' : '未生成' }}
+                  </el-tag>
+                </template>
+              </el-table-column>
 
-                <el-table-column
-                  prop="performer"
-                  label="创建者"
-                  min-width="8%">
-                </el-table-column>
+              <el-table-column label="状态" min-width="7%">
+                <template slot-scope="scope">
+                  <el-tag size="small" :type="scope.row.status === '已读' ? 'success' : 'warning'">
+                    {{ scope.row.status }}
+                  </el-tag>
+                </template>
+              </el-table-column>
 
-                <el-table-column label="是否通过" min-width="10%">
-                  <template slot-scope="scope">
-                    <el-tag size="small" :type="scope.row.is_passed === 1 ? 'success' : 'danger'">
-                      {{ scope.row.is_passed === 1 ? '全部通过' : '有报错' }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="生成状态" min-width="8%">
-                  <template slot-scope="scope">
-                    <el-tag size="small" :type="scope.row.is_done === 1 ? 'success' : 'warning'">
-                      {{ scope.row.is_done === 1 ? '已生成' : '未生成' }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="状态" min-width="7%">
-                  <template slot-scope="scope">
-                    <el-tag size="small" :type="scope.row.status === '已读' ? 'success' : 'warning'">
-                      {{ scope.row.status }}
-                    </el-tag>
-                  </template>
-                </el-table-column>
-
-                <el-table-column label="操作" min-width="25%">
-                  <template slot-scope="scope">
-                    <el-button
-                      v-show="scope.row.is_done === 1"
-                      type="primary"
-                      size="mini"
-                      @click.native="downReport(scope.row.id)">下载
-                    </el-button>
-                    <el-button
-                      v-show="scope.row.is_done === 1"
-                      type="primary"
-                      size="mini"
-                      @click.native="openReportById(scope.row.id)">查看
-                    </el-button>
-                    <el-button
-                      v-show="scope.row.is_done === 1"
-                      type="danger"
-                      size="mini"
-                      @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
-                    </el-button>
-                  </template>
-                </el-table-column>
+              <el-table-column label="操作" min-width="25%">
+                <template slot-scope="scope">
+                  <el-button
+                    v-show="scope.row.is_done === 1"
+                    type="primary"
+                    size="mini"
+                    @click.native="downReport(scope.row.id)">下载
+                  </el-button>
+                  <el-button
+                    v-show="scope.row.is_done === 1"
+                    type="primary"
+                    size="mini"
+                    @click.native="openReportById(scope.row.id)">查看
+                  </el-button>
+                  <el-button
+                    v-show="scope.row.is_done === 1"
+                    type="danger"
+                    size="mini"
+                    @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
+                  </el-button>
+                </template>
+              </el-table-column>
 
 
-              </el-table>
+            </el-table>
 
-              <pagination
-                v-show="reportTotal>0"
-                :total="reportTotal"
-                :page.sync="PageNum"
-                :limit.sync="PageSize"
-                @pagination="getReportList"
-              />
-            </el-col>
-          </el-row>
-        </el-tab-pane>
+            <pagination
+              v-show="reportTotal>0"
+              :total="reportTotal"
+              :page.sync="PageNum"
+              :limit.sync="PageSize"
+              @pagination="getReportList"
+            />
+          </el-tab-pane>
 
-      </el-tabs>
-
-    </div>
+        </el-tabs>
+      </el-col>
+    </el-row>
 
   </div>
 </template>

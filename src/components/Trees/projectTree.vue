@@ -1,55 +1,48 @@
 <template>
   <!-- 结构树/项目列表 -->
   <div class="tabs">
-    <el-tabs v-model="projectTab" class="table_padding table_project">
-      <el-tab-pane label="项目列表" name="project" style="width: 200px">
-        <el-row>
-          <!-- 第一列，项目管理 -->
-          <el-col :span="3" style="border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
-            <el-row style="width: 200px">
-              <!-- 项目列表和操作 -->
-              <el-scrollbar>
-                <el-tree
-                  ref="projectTree"
-                  class="filter-tree"
-                  highlight-current
-                  default-expand-all
-                  node-key="id"
-                  :data="projects.project_list"
-                  :props="defaultProps"
-                  @node-click="projectClick"
-                >
-                  <span class="custom-tree-node"
-                        slot-scope="{ node, data }"
-                        style="width:100%;"
-                        @mouseenter="mouseenter(data)"
-                        @mouseleave="mouseleave(data)">
-                   <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start">
-                    <span > {{ ellipsis(node.label, 10) }} </span>
-                  </el-tooltip>
-                  <span v-show="data.showMenu" style="margin-left: 10px">
-                    <el-button size="mini"
-                               type="text"
-                               @click="clickMenu(node, data)"
-                    >{{ menuName }}</el-button>
-                  </span>
-                </span>
+    <el-tabs v-model="projectTab">
+      <el-tab-pane label="项目列表" name="project">
+        <!-- 项目列表和操作 -->
+        <el-scrollbar>
+          <el-tree
+            ref="projectTree"
+            class="filter-tree"
+            highlight-current
+            default-expand-all
+            node-key="id"
+            :data="projects.project_list"
+            :props="defaultProps"
+            @node-click="projectClick"
+          >
+            <span class="custom-tree-node"
+                  slot-scope="{ node, data }"
+                  @mouseenter="mouseenter(data)"
+                  @mouseleave="mouseleave(data)">
+             <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start">
+              <span> {{ labelWidth ? ellipsis(node.label, labelWidth) : node.label }} </span>
+            </el-tooltip>
+            <span v-show="data.showMenu" style="margin-left: 10px">
+              <el-button size="mini"
+                         type="text"
+                         @click="clickMenu(node, data)"
+              >{{ menuName }}</el-button>
+              </span>
+            </span>
 
-                </el-tree>
-              </el-scrollbar>
-              <!-- 项目列表分页 -->
-              <el-pagination
-                small
-                @current-change="getCurrentPageProjectList"
-                :current-page="projects.currentPage"
-                :page-size="defaultPage.projectPageSize"
-                layout="prev, pager, next"
-                :total="projects.project_total"
-              >
-              </el-pagination>
-            </el-row>
-          </el-col>
-        </el-row>
+          </el-tree>
+        </el-scrollbar>
+        <!-- 项目列表分页 -->
+        <el-pagination
+          small
+          @current-change="getCurrentPageProjectList"
+          :current-page="projects.currentPage"
+          :page-size="defaultPage.projectPageSize"
+          layout="prev, pager, next"
+          :total="projects.project_total"
+        >
+        </el-pagination>
+
       </el-tab-pane>
     </el-tabs>
 
@@ -70,7 +63,8 @@ export default {
   props: [
     'busEventClickTree',
     'busEventClickMenu',
-    'menuName'  // 菜单名
+    'menuName',  // 菜单名
+    'labelWidth' // 树名字显示长度
   ],
 
   data() {
