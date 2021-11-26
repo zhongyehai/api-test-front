@@ -24,60 +24,59 @@
                   node-key="id"
                   @node-click="getCaseSetList"
                   @node-drag-end="nodeDragEnd">
-          <span slot-scope="{ node, data }"
-                class="custom-tree-node"
-                @mouseenter="mouseenter(data)"
-                @mouseleave="mouseleave(data)">
-            <span>{{ data.name }}</span>
-            <span v-show="data.showMenu">
-              <el-tooltip :content="node.level !== 1 ? '为当前用例集添加子用例集' : '为当前项目添加用例集'"
-                          class="item"
-                          effect="dark"
-                          placement="top-start">
-                <el-button icon="el-icon-plus"
-                           size="mini"
-                           type="text"
-                           @click.stop="showCaseSetDialog('add', node, data)"></el-button>
-              </el-tooltip>
+                    <span slot-scope="{ node, data }"
+                          class="custom-tree-node"
+                          @mouseenter="mouseenter(data)"
+                          @mouseleave="mouseleave(data)">
+                          <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
+                            <span> {{ ellipsis(data.name, 10) }} </span>
+                          </el-tooltip>
 
-              <el-tooltip class="item" content="修改当前用例集名" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-edit"
-                           size="mini"
-                           type="text"
-                           @click.stop="showCaseSetDialog('edit', node, data)"
-                ></el-button>
-              </el-tooltip>
+                      <span v-show="data.showMenu">
 
-              <el-tooltip class="item" content="删除当前用例集" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-delete"
-                           size="mini"
-                           type="text"
-                           @click.stop="clickDeleteChild(node, data)"
-                ></el-button>
-              </el-tooltip>
+                        <el-dropdown size="mini" type="primary" placement="top-start">
+                          <i
+                            class="el-icon-more"
+                            style="float: right;
+                            padding-left: 5px;
+                            color: #409EFF;
+                            transform: rotate(90deg)"
+                          ></i>
 
-              <el-tooltip class="item" content="为当前用例集添加用例" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-share"
-                           size="mini"
-                           type="text"
-                           @click.stop="addCase(node, data)"
-                ></el-button>
-              </el-tooltip>
+                          <el-dropdown-menu slot="dropdown">
 
-              <el-tooltip class="item" content="运行当前用例集下的用例" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           v-show="!data.runButtonIsNotShow"
-                           size="mini"
-                           type="text"
-                           icon="el-icon-video-play"
-                           @click.stop="runCaseSet(node, data)"
-                ></el-button>
-              </el-tooltip>
-            </span>
-          </span>
+                            <el-dropdown-item @click.native.stop="showCaseSetDialog('add', node, data)"
+                            >{{ '添加子用例集' }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              v-if="node.level !== 1"
+                              @click.native.stop="showCaseSetDialog('edit', node, data)"
+                            >{{ '修改当前用例集名' }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              v-if="node.level !== 1"
+                              @click.native.stop="clickDeleteChild(node, data)"
+                            >{{ "删除当前用例集" }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              v-if="node.level !== 1"
+                              @click.native.stop="addCase(node, data)"
+                            >{{ "添加用例" }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              v-if="node.level !== 1"
+                              @click.native.stop="runCaseSet(node, data)"
+                            >{{ "运行当前用例集下的用例" }}
+                            </el-dropdown-item>
+
+                          </el-dropdown-menu>
+                        </el-dropdown>
+                      </span>
+                    </span>
                 </el-tree>
               </div>
 
@@ -193,6 +192,14 @@ export default {
     // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
       this.$set(data, 'showMenu', false);
+    },
+
+    ellipsis(value, len) {
+      if (!value) return ''
+      if (value.length > len) {
+        return value.slice(0, len) + '...'
+      }
+      return value
     },
 
     // 打开用例集编辑框
@@ -410,5 +417,13 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+}
+
+.showName {
+  /*width: 150px;*/
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
 }
 </style>

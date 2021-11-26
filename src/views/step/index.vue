@@ -77,12 +77,18 @@ export default {
     this.$bus.$on(this.$busEvents.editStep, (api) => {
       this.activeName = 'editStepInfo'
     })
+
+    // 打开用例caseDialog的时候，定位到接口列表栏
+    this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
+      this.activeName = 'apiList'
+    })
   },
 
   // 组件销毁前，关闭bus监听事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.addApiToStep)
     this.$bus.$off(this.$busEvents.editStep)
+    this.$bus.$off(this.$busEvents.caseDialogStatus)
   },
 
   created() {

@@ -5,7 +5,7 @@
 
     <!-- 步骤信息 -->
     <el-tab-pane label="步骤信息" name="editStepInfo">
-      <el-form label-width="120px" >
+      <el-form label-width="120px">
 
         <el-form-item label="步骤名称" prop="name" size="small" class="is-required">
           <el-input v-model="currentStep.name" placeholder="步骤名称"></el-input>
@@ -95,12 +95,13 @@
 
     <hr>
 
-    <el-button size="mini" @click="initStep()"> {{ '还原' }}</el-button>
+    <el-button size="mini" @click="rowBackStep()"> {{ '还原' }}</el-button>
     <el-button
       size="mini"
       type="primary"
       :loading="submitButtonIsLoading"
-      @click="currentStep.id ? editStep() : addStep()">{{ '保存步骤' }}</el-button>
+      @click="currentStep.id ? editStep() : addStep()">{{ '保存步骤' }}
+    </el-button>
 
   </el-tabs>
 </template>
@@ -114,10 +115,13 @@ import extractsView from "@/components/Inputs/changeRow"
 import validatesView from "@/components/Inputs/validates";
 
 import {postStep, putStep} from "@/apis/step"
+import {copyCase} from "@/apis/case";
 
 export default {
   name: "editStep",
-  props: ['caseId'],
+  props: [
+    'caseId'
+  ],
   components: {
     headersView,
     paramsView,
@@ -127,12 +131,11 @@ export default {
   },
   data() {
     return {
-      submitButtonIsLoading:false,
+      submitButtonIsLoading: false,
       activeName: 'editStepInfo',
       currentStepCopy: '',
       currentStep: {
         'id': '',
-        // "num": '',
         "is_run": '',
         "name": '',
         "up_func": '',
@@ -155,10 +158,31 @@ export default {
   },
   methods: {
 
+    initStep() {
+      return {
+        'id': '',
+        "is_run": '',
+        "name": '',
+        "up_func": '',
+        "down_func": '',
+        "run_times": 0,
+        "headers": [],
+        "params": [],
+        "extracts": [],
+        "validates": [],
+        "data_form": [],
+        "data_json": '',
+        "data_xml": '',
+        "data_driver": '',
+        "case_id": this.caseId,
+        "api_id": '',
+        "project_id": ''
+      }
+    },
+
     getStepForCommit() {
       return {
         'id': this.currentStep.id,
-        // "num": this.currentStep.num,
         "is_run": this.currentStep.is_run,
         "name": this.currentStep.name,
         "up_func": this.currentStep.up_func,
@@ -169,7 +193,6 @@ export default {
         "extracts": this.$refs.extractsView.tempData,
         "validates": this.$refs.validatesView.tempValidates,
         "data_form": this.$refs.bodyView.$refs.dataFormView.tempDataForm,
-        // "data_json": JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson),
         "data_json": this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
         "data_xml": this.$refs.bodyView.tempDataXml,
         "data_driver": this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson) : {},
@@ -205,7 +228,7 @@ export default {
     },
 
     // 取消保存
-    initStep() {
+    rowBackStep() {
       this.currentStep = this.currentStepCopy
     }
   },
@@ -224,12 +247,19 @@ export default {
       this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
     })
 
+    // 打开用例caseDialog的时候，初始化步骤编辑栏，定位到步骤信息栏
+    this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
+      this.activeName = 'editStepInfo'
+      this.currentStep = this.initStep()
+    })
+
   },
 
   beforeDestroy() {
     // 页面销毁的时候，关闭bus监听选中事件
     this.$bus.$off(this.$busEvents.addApiToStep)
     this.$bus.$off(this.$busEvents.editStep)
+    this.$bus.$off(this.$busEvents.caseDialogStatus)
   },
 
   created() {
@@ -238,6 +268,18 @@ export default {
   },
 
   watch: {
+
+    // 'parentActiveName': {
+    //   handler(newVal, oldVal) {
+    //     console.log('parentActiveName.newVal: \n', JSON.stringify(newVal))
+    //     console.log('parentActiveName.oldVal: \n', JSON.stringify(oldVal))
+    //     if (newVal === 'editStepInfo'){
+    //
+    //     }
+    //     this.currentStep = newVal
+    //     this.currentStepCopy = JSON.parse(JSON.stringify(newVal))  // 深拷贝，用于还原
+    //   }
+    // }
 
     // 'step': {
     //   handler(newVal, oldVal) {

@@ -12,7 +12,6 @@
       row-key="id"
       highlight-current-row
       style="width: 100%"
-      :height="tableListHeight"
     >
       <el-table-column prop="num" label="序号" min-width="10%">
         <template slot-scope="scope">
@@ -73,13 +72,6 @@ export default {
       sortable: null,
       oldList: [],
       newList: [],
-    }
-  },
-
-  computed: {
-    // 当前屏幕的高度，用于控制表格，超过指定的高度时，用下拉处理
-    tableListHeight() {
-      return `${window.innerHeight * 0.8}px`
     }
   },
 

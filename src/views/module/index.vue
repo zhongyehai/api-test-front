@@ -24,58 +24,58 @@
                   node-key="id"
                   @node-click="getModuleList"
                   @node-drag-end="nodeDragEnd">
-          <span slot-scope="{ node, data }"
-                class="custom-tree-node"
-                @mouseenter="mouseenter(data)"
-                @mouseleave="mouseleave(data)">
-            <span>{{ data.name }}</span>
-            <span v-show="data.showMenu">
-              <el-tooltip :content="node.level !== 1 ? '为当前模块添加子模块' : '为当前项目添加模块'"
-                          class="item"
-                          effect="dark"
-                          placement="top-start">
-                <el-button icon="el-icon-plus" size="mini" type="text"
-                           @click.stop="showModuleDialog('add', node, data)"
-                ></el-button>
-              </el-tooltip>
+                  <div slot-scope="{ node, data }"
+                       class="custom-tree-node"
+                       @mouseenter="mouseenter(data)"
+                       @mouseleave="mouseleave(data)">
+                    <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
+                      <span> {{ ellipsis(data.name, 10) }} </span>
+                    </el-tooltip>
+                    <span v-show="data.showMenu">
+                      <el-dropdown size="mini" type="primary" placement="top-start">
+                        <i
+                          class="el-icon-more"
+                          style="float: right;
+                          padding-left: 5px;
+                          color: #409EFF;
+                          transform: rotate(90deg)"
+                        ></i>
 
-              <el-tooltip class="item" content="修改当前模块名" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-edit"
-                           size="mini"
-                           type="text"
-                           @click.stop="showModuleDialog('edit', node, data)"
-                ></el-button>
-              </el-tooltip>
+                        <el-dropdown-menu slot="dropdown">
 
-              <el-tooltip class="item" content="删除当前模块" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-delete"
-                           size="mini"
-                           type="text"
-                           @click.stop="clickDeleteChild(node, data)"
-                ></el-button>
-              </el-tooltip>
+                          <el-dropdown-item @click.native.stop="showModuleDialog('add', node, data)"
+                          >{{ '添加子模块' }}
+                          </el-dropdown-item>
 
-              <el-tooltip class="item" content="为当前模块添加单条接口" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-share"
-                           size="mini"
-                           type="text"
-                           @click.stop="addApi(node, data)"
-                ></el-button>
-              </el-tooltip>
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="showModuleDialog('edit', node, data)"
+                          >{{ '修改当前模块名' }}
+                          </el-dropdown-item>
 
-              <el-tooltip class="item" content="从表格中导入接口" effect="dark" placement="top-start">
-                <el-button v-if="node.level !== 1"
-                           icon="el-icon-upload2"
-                           size="mini"
-                           type="text"
-                           @click.stop="showUploadFileDialog(node, data)"
-                ></el-button>
-              </el-tooltip>
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="clickDeleteChild(node, data)"
+                          >{{ "删除当前模块" }}
+                          </el-dropdown-item>
+
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="addApi(node, data)"
+                          >{{ "添加接口" }}
+                          </el-dropdown-item>
+
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="showUploadFileDialog(node, data)"
+                          >{{ "导入接口" }}
+                          </el-dropdown-item>
+
+                        </el-dropdown-menu>
+                      </el-dropdown>
+
                     </span>
-                  </span>
+                  </div>
                 </el-tree>
               </div>
 
@@ -175,7 +175,7 @@ export default {
       // 查询关键字
       filterText: '',
 
-      isShowLoading:false,
+      isShowLoading: false,
 
       projectTab: '项目和模块',
 
@@ -225,6 +225,14 @@ export default {
     // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
       this.$set(data, 'showMenu', false);
+    },
+
+    ellipsis(value, len) {
+      if (!value) return ''
+      if (value.length > len) {
+        return value.slice(0, len) + '...'
+      }
+      return value
     },
 
     // 模块编辑框
@@ -377,7 +385,8 @@ export default {
      * position: 被拖拽节点的放置位置（before、after、inner）、event
      * event
      */
-    nodeDragEnd(start_node, end_node, position, event) {},
+    nodeDragEnd(start_node, end_node, position, event) {
+    },
 
     // 添加接口
     addApi(node, data) {
@@ -442,5 +451,12 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+}
+.showName {
+  /*width: 150px;*/
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
 }
 </style>

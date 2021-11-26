@@ -2,26 +2,31 @@
 
   <div>
     <el-form :inline="true" size="small">
+      <el-row>
+        <el-col :span="18">
+          <el-form-item label="函数文件名" :label-width="'85px'" size="mini">
+            <el-input v-model="name" style="width: 280%"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-button
+            type="primary"
+            style="margin-left: 5px"
+            size="mini"
+            :loading="deBugButtonIsLoading"
+            @click="debugFunc">调试
+          </el-button>
 
-      <el-form-item label="函数文件名" :label-width="'90px'" size="mini">
-        <el-input v-model="name" :minlength="215" style="width: 200px"></el-input>
-      </el-form-item>
+          <el-button class="filter-item" type="primary" size="mini" @click="openFuncFileDialog()">新建</el-button>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="调试函数" :label-width="'100px'" size="mini">
-        <el-input v-model="debugFuncData" placeholder="输入格式：${func(abc,123)}" :minlength="215" style="width: 200px">
-        </el-input>
-      </el-form-item>
-
-      <el-button
-        type="primary"
-        style="margin-left: 5px"
-        size="mini"
-        :loading="deBugButtonIsLoading"
-        @click="debugFunc">调试
-      </el-button>
-
-      <el-button class="filter-item" type="primary" size="mini" @click="openFuncFileDialog()">新建
-      </el-button>
+      <el-row>
+        <el-form-item label="调试函数" :label-width="'70px'" size="mini">
+          <el-input v-model="debugFuncData" placeholder="输入格式：${func(abc,123)}" style="width: 380%">
+          </el-input>
+        </el-form-item>
+      </el-row>
 
     </el-form>
 

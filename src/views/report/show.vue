@@ -355,7 +355,7 @@
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "错误信息：" }}</div>
                     </template>
-                    <div class="el-collapse-item-content">{{ this.attachment }}</div>
+                    <pre class="el-collapse-item-content" style="overflow: auto">{{ this.attachment }}</pre>
                   </el-collapse-item>
                 </el-collapse>
               </div>

@@ -24,7 +24,9 @@
                         style="width:100%;"
                         @mouseenter="mouseenter(data)"
                         @mouseleave="mouseleave(data)">
-                  <span>{{ node.label }}</span>
+                   <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start">
+                    <span > {{ ellipsis(node.label, 10) }} </span>
+                  </el-tooltip>
                   <span v-show="data.showMenu" style="margin-left: 10px">
                     <el-button size="mini"
                                type="text"
@@ -122,6 +124,14 @@ export default {
     // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
       this.$set(data, 'showMenu', false);
+    },
+
+    ellipsis(value, len) {
+      if (!value) return ''
+      if (value.length > len) {
+        return value.slice(0, len) + '...'
+      }
+      return value
     },
 
     // 获取该分页的项目列表
