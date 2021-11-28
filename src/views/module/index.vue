@@ -43,22 +43,6 @@
 
                         <el-dropdown-menu slot="dropdown">
 
-                          <el-dropdown-item @click.native.stop="showModuleDialog('add', node, data)"
-                          >{{ '添加子模块' }}
-                          </el-dropdown-item>
-
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="showModuleDialog('edit', node, data)"
-                          >{{ '修改当前模块名' }}
-                          </el-dropdown-item>
-
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="clickDeleteChild(node, data)"
-                          >{{ "删除当前模块" }}
-                          </el-dropdown-item>
-
                           <el-dropdown-item
                             v-if="node.level !== 1"
                             @click.native.stop="addApi(node, data)"
@@ -69,6 +53,22 @@
                             v-if="node.level !== 1"
                             @click.native.stop="showUploadFileDialog(node, data)"
                           >{{ "导入接口" }}
+                          </el-dropdown-item>
+
+                          <el-dropdown-item @click.native.stop="showModuleDialog('add', node, data)"
+                          >{{ '添加模块' }}
+                          </el-dropdown-item>
+
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="showModuleDialog('edit', node, data)"
+                          >{{ '修改当前模块' }}
+                          </el-dropdown-item>
+
+                          <el-dropdown-item
+                            v-if="node.level !== 1"
+                            @click.native.stop="clickDeleteChild(node, data)"
+                          >{{ "删除当前模块" }}
                           </el-dropdown-item>
 
                         </el-dropdown-menu>
@@ -452,6 +452,7 @@ export default {
   font-size: 14px;
   padding-right: 8px;
 }
+
 .showName {
   /*width: 150px;*/
   overflow: hidden;

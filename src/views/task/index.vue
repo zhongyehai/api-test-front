@@ -21,7 +21,11 @@
           <el-tab-pane label="定时任务列表" :name="taskTab">
             <el-table
               ref="taskTable"
+              v-loading="tableLoadingIsShow"
+              element-loading-text="正在排序中"
+              element-loading-spinner="el-icon-loading"
               :data="taskList"
+              row-key="id"
               stripe
             >
               <el-table-column prop="num" label="序号" min-width="7%">
@@ -79,9 +83,16 @@
                   </el-button>
 
                   <el-button
+                    type="primary"
+                    size="mini"
+                    :loading="scope.row.copyButtonIsLoading"
+                    @click.native="copy(scope.row)">复制
+                  </el-button>
+
+                  <el-button
                     type="success"
                     size="mini"
-                    :loading="scope.row.isLoading"
+                    :loading="scope.row.runButtonIsLoading"
                     @click.native="run(scope.row)">运行
                   </el-button>
 
@@ -101,8 +112,8 @@
             <pagination
               v-show="taskTotal>0"
               :total="taskTotal"
-              :page.sync="PageNum"
-              :limit.sync="PageSize"
+              :page.sync="pageNum"
+              :limit.sync="pageSize"
               @pagination="getTaskList"
             />
           </el-tab-pane>
@@ -114,11 +125,12 @@
 </template>
 
 <script>
+import Sortable from 'sortablejs'
 import projectTreeView from '@/components/Trees/projectTree'
 import Pagination from '@/components/Pagination'
 import taskDialogView from "@/views/task/taskDialog";
 
-import {taskList, disableTask, enableTask, runTask, deleteTask} from '@/apis/task'
+import {taskList, disableTask, enableTask, runTask, deleteTask, copyTask, taskSort} from '@/apis/task'
 import {userList} from "@/apis/user";
 import {reportIsDone} from "@/apis/report";
 
@@ -127,15 +139,21 @@ export default {
   components: {Pagination, projectTreeView, taskDialogView},
   data() {
     return {
-      enableLoadingIsShow: false,
-      disableLoadingIsShow: false,
-      deleteLoadingIsShow: false,
+      // enableLoadingIsShow: false,
+      // disableLoadingIsShow: false,
+      // deleteLoadingIsShow: false,
+      tableLoadingIsShow: false,
       taskTab: 'taskTab',
       taskList: [],
       projectId: '',
       taskTotal: 0,
-      PageNum: 0,
-      PageSize: 20
+      pageNum: 0,
+      pageSize: 20,
+
+      // 拖拽排序参数
+      sortable: null,
+      oldList: [],
+      newList: [],
     }
   },
 
@@ -149,9 +167,21 @@ export default {
       }
     },
 
+    // 复制任务
+    copy(task) {
+      this.$set(task, 'copyButtonIsLoading', true)
+      copyTask({'id': task.id}).then(response => {
+        this.$set(task, 'copyButtonIsLoading', false)
+        if (this.showMessage(this, response)) {
+          this.taskList.push(response.data)
+          this.editTask(response.data)
+        }
+      })
+    },
+
     // 运行任务
     run(task) {
-      this.$set(task, 'isLoading', true)
+      this.$set(task, 'runButtonIsLoading', true)
       runTask({id: task.id}).then(runResponse => {
         if (this.showMessage(this, runResponse)) {
 
@@ -164,14 +194,14 @@ export default {
             if (queryCount <= 10) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
-                  that.$set(task, 'isLoading', false)
+                  that.$set(task, 'runButtonIsLoading', false)
                   that.openReportById(runResponse.data.report_id)
                   clearInterval(timer)  // 关闭定时器
                 }
               })
               queryCount += 1
             } else {
-              that.$set(task, 'isLoading', false)
+              that.$set(task, 'runButtonIsLoading', false)
               that.$notify({
                 title: '测试长时间未运行结束',
                 message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
@@ -193,10 +223,10 @@ export default {
     },
 
     // 删除任务
-    delTask(row) {
-      this.$set(row, 'deleteLoadingIsShow', true)
-      deleteTask({id: row.id}).then(response => {
-        this.$set(row, 'deleteLoadingIsShow', false)
+    delTask(task) {
+      this.$set(task, 'deleteLoadingIsShow', true)
+      deleteTask({id: task.id}).then(response => {
+        this.$set(task, 'deleteLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }
@@ -204,10 +234,10 @@ export default {
     },
 
     // 启用任务
-    enable(row) {
-      this.$set(row, 'enableLoadingIsShow', true)
-      enableTask({id: row.id}).then(response => {
-        this.$set(row, 'enableLoadingIsShow', false)
+    enable(task) {
+      this.$set(task, 'enableLoadingIsShow', true)
+      enableTask({id: task.id}).then(response => {
+        this.$set(task, 'enableLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }
@@ -215,21 +245,28 @@ export default {
     },
 
     // 禁用任务
-    disable(row) {
-      this.$set(row, 'disableLoadingIsShow', true)
-      disableTask({id: row.id}).then(response => {
-        this.$set(row, 'disableLoadingIsShow', false)
+    disable(task) {
+      this.$set(task, 'disableLoadingIsShow', true)
+      disableTask({id: task.id}).then(response => {
+        this.$set(task, 'disableLoadingIsShow', false)
         if (this.showMessage(this, response)) {
           this.getTaskList()
         }
       })
     },
 
-
+    // 获取任务列表
     getTaskList() {
-      taskList({projectId: this.projectId, PageNum: this.PageNum, PageSize: this.PageSize,}).then(response => {
+      taskList({
+        projectId: this.projectId,
+        pageNum: this.pageNum,
+        pageSize: this.pageSize
+      }).then(response => {
         this.taskList = response.data.data
         this.taskTotal = response.data.total
+
+        this.oldList = this.taskList.map(v => v.id)
+        this.newList = this.oldList.slice()
       })
     },
 
@@ -250,6 +287,34 @@ export default {
       })
     },
 
+    // 拖拽排序
+    setSort() {
+      const el = this.$refs.taskTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.taskList.splice(evt.oldIndex, 1)[0]
+          this.taskList.splice(evt.newIndex, 0, targetRow)
+
+          const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
+          this.newList.splice(evt.newIndex, 0, tempIndex)
+
+          // 发送请求，改变排序
+          this.tableLoadingIsShow = true
+          taskSort({
+            List: this.newList,
+            pageNum: this.pageNum,
+            pageSize: this.pageSize,
+          }).then(response => {
+            this.showMessage(this, response)
+            this.tableLoadingIsShow = false
+          })
+        }
+      })
+    }
   },
 
   mounted() {
@@ -265,6 +330,14 @@ export default {
       this.getTaskList()
     })
 
+  },
+
+  created() {
+    this.oldList = this.taskList.map(v => v.id)
+    this.newList = this.oldList.slice()
+    this.$nextTick(() => {
+      this.setSort()
+    })
   },
 
   // 页面销毁前，关闭bus监听项目选中事件

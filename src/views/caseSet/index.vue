@@ -45,26 +45,26 @@
 
                           <el-dropdown-menu slot="dropdown">
 
+                            <el-dropdown-item
+                              v-if="node.level !== 1"
+                              @click.native.stop="addCase(node, data)"
+                            >{{ "添加用例" }}
+                            </el-dropdown-item>
+
                             <el-dropdown-item @click.native.stop="showCaseSetDialog('add', node, data)"
-                            >{{ '添加子用例集' }}
+                            >{{ '添加用例集' }}
                             </el-dropdown-item>
 
                             <el-dropdown-item
                               v-if="node.level !== 1"
                               @click.native.stop="showCaseSetDialog('edit', node, data)"
-                            >{{ '修改当前用例集名' }}
+                            >{{ '修改当前用例集' }}
                             </el-dropdown-item>
 
                             <el-dropdown-item
                               v-if="node.level !== 1"
                               @click.native.stop="clickDeleteChild(node, data)"
                             >{{ "删除当前用例集" }}
-                            </el-dropdown-item>
-
-                            <el-dropdown-item
-                              v-if="node.level !== 1"
-                              @click.native.stop="addCase(node, data)"
-                            >{{ "添加用例" }}
                             </el-dropdown-item>
 
                             <el-dropdown-item

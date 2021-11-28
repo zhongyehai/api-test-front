@@ -1,4 +1,4 @@
-import request from '@/utils/request';  //加载请求配置文件
+import request from '@/utils/request';
 
 function Func(method, data = null, params = null) {
   return request({url: '/api/task', method: method, data: data, params: params});
@@ -42,4 +42,14 @@ export function disableTask(data) {
 // 单次运行定时任务
 export function runTask(data) {
   return request({url: '/api/task/run', method: 'post', data: data});
+}
+
+// 复制定时任务
+export function copyTask(data) {
+  return request({url: '/api/task/copy', method: 'post', data: data});
+}
+
+// 修改定时任务排序
+export function taskSort(data) {
+  return request({url: '/api/task/sort', method: 'put', data: data});
 }

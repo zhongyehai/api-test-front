@@ -120,7 +120,7 @@
                   type="textarea"
                   :rows="2"
                   v-model="tempTask.email_to"
-                  placeholder="收件人邮箱，多个时用英文的 逗号 分隔"
+                  placeholder="收件人邮箱，多个时用英文的 分号 “ ; ” 分隔"
                 ></el-input>
               </el-form-item>
             </div>

@@ -180,13 +180,7 @@ export default {
     // 深拷贝接口，添加到步骤列表
     addApiToStep(api) {
 
-      // 如果没有用例id，则先保存用例
-      // console.log('apiList.methods.addApiToStep.this.caseId: ', this.caseId)
-      if (!this.caseId) {
-        this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
-      }
-
-      // 如果用例已存在，则添加步骤
+      // 如果有用例id，则添加步骤，否则先保存用例
       if (this.caseId) {
         this.activeName = 'editStepInfo'
 
@@ -198,6 +192,8 @@ export default {
         new_api['is_run'] = true
         new_api['run_times'] = 1
         this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
+      }else {
+        this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
       }
     }
   },
