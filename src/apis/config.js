@@ -28,3 +28,8 @@ export function deleteConfig(data) {
 export function configList(params) {
   return request({url: '/api/config/list', method: 'get', params: params});
 }
+
+// 根据配置名获取配置
+export function getConfigByName(params) {
+  return request({url: '/api/config/configByName', method: 'get', params: params});
+}

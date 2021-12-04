@@ -126,19 +126,19 @@
 
 
           <el-scrollbar :wrapStyle={height:picHeight}>
-<!--            <div style="float:right;padding-right:15px;position:absolute;z-index:100;right: 1px;top:-2px">-->
-<!--              <el-tooltip content="查看主要信息" placement="top-start" @click.native="showInfo()">-->
-<!--                <el-button size="mini" type="info" icon="el-icon-info" circle></el-button>-->
-<!--              </el-tooltip>-->
-<!--              <el-tooltip content="查看所有信息" placement="top-start">-->
-<!--                <el-button size="mini" type="primary" circle @click.native="showAll()">all</el-button>-->
-<!--              </el-tooltip>-->
-<!--              <el-tooltip content="查看报错信息" placement="top-start">-->
-<!--                <el-button size="mini" type="danger" icon="el-icon-error" circle-->
-<!--                           @click.native="showError()"-->
-<!--                ></el-button>-->
-<!--              </el-tooltip>-->
-<!--            </div>-->
+            <!--            <div style="float:right;padding-right:15px;position:absolute;z-index:100;right: 1px;top:-2px">-->
+            <!--              <el-tooltip content="查看主要信息" placement="top-start" @click.native="showInfo()">-->
+            <!--                <el-button size="mini" type="info" icon="el-icon-info" circle></el-button>-->
+            <!--              </el-tooltip>-->
+            <!--              <el-tooltip content="查看所有信息" placement="top-start">-->
+            <!--                <el-button size="mini" type="primary" circle @click.native="showAll()">all</el-button>-->
+            <!--              </el-tooltip>-->
+            <!--              <el-tooltip content="查看报错信息" placement="top-start">-->
+            <!--                <el-button size="mini" type="danger" icon="el-icon-error" circle-->
+            <!--                           @click.native="showError()"-->
+            <!--                ></el-button>-->
+            <!--              </el-tooltip>-->
+            <!--            </div>-->
             <div :style={height:picHeight}>
 
               <div style="padding:10px;font-size: 14px;line-height: 25px;width: 100%;position:relative;"
@@ -246,7 +246,44 @@
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "data参数：" }}</div>
                     </template>
-                    <div class="el-collapse-item-content" v-html="this.meta_datas.data[0].request.data"></div>
+                    <el-row v-if=" typeof this.meta_datas.data[0].request.data === 'object'">
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].request.data">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.data[0].request.data)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].request.data"
+                          v-clipboard:copy="getCopyData(this.meta_datas.data[0].request.data)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
+                    <el-row v-if=" typeof this.meta_datas.data[0].request.data === 'string'">
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.data[0].request.data">
+                          <xmp>{{ formatXml(meta_datas.data[0].request.data) }}</xmp>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.data[0].request.data"
+                          v-clipboard:copy="formatXml(this.meta_datas.data[0].request.data)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
                   </el-collapse-item>
 
                   <el-collapse-item name="7">
@@ -370,8 +407,11 @@
 
 <script>
 
-import {getReport} from '@/apis/report'
+
 import JsonViewer from "vue-json-viewer";
+import vkbeautify from "vkbeautify";
+
+import {getReport} from '@/apis/report'
 
 export default {
   name: 'reportShow',
@@ -531,9 +571,19 @@ export default {
 
   methods: {
 
+    formatXml(xml) {
+      var text = xml
+      if (xml && xml.length > 0) {
+        text = vkbeautify.xml(xml)
+        console.log('xml: ', xml)
+        console.log('text: ', text)
+      }
+      return text
+    },
+
     // 获取复制的内容，如果是字符串，则直接返回，否则转为字符串后返回
-    getCopyData(data){
-      if (typeof data === 'string'){
+    getCopyData(data) {
+      if (typeof data === 'string') {
         return data
       }
       return this.jsonToStr(data)

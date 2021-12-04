@@ -199,6 +199,12 @@ export const constantRoutes = [
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
       {
+        path: 'kym',
+        name: 'KYM',
+        component: () => import('@/views/tools/kymAnalysis'),
+        meta: {title: 'KYN分析', icon: 'el-icon-edit-outline'}
+      },
+      {
         path: 'account',
         name: 'Account',
         component: () => import('@/views/tools/accountManage'),

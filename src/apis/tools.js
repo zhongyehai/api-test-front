@@ -23,7 +23,7 @@ export function accountList(params) {
 
 // 获取测试账号
 export function getAccount(params) {
-  return request({url: '/api/account', method: 'get', data: params});
+  return request({url: '/api/account', method: 'get', params: params});
 }
 
 // 添加测试账号
@@ -41,4 +41,23 @@ export function deleteAccount(data) {
   return request({url: '/api/account', method: 'delete', data: data});
 }
 
+// 添加kym
+export function addKYM(data){
+  return request({url: '/api/kym/project', method: 'post', data: data})
+}
+
+// 获取kym项目列表
+export function KYMProjectList(){
+  return request({url: '/api/kym/project/list', method: 'get'})
+}
+
+// 获取项目的kym
+export function getProjectKYM(params){
+  return request({url: '/api/kym', method: 'get', params: params})
+}
+
+// 修改项目的kym
+export function putProjectKYM(data){
+  return request({url: '/api/kym', method: 'put', data: data})
+}
 
