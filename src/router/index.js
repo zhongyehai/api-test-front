@@ -202,7 +202,7 @@ export const constantRoutes = [
         path: 'kym',
         name: 'KYM',
         component: () => import('@/views/tools/kymAnalysis'),
-        meta: {title: 'KYN分析', icon: 'el-icon-edit-outline'}
+        meta: {title: 'KYM分析', icon: 'el-icon-edit-outline'}
       },
       {
         path: 'account',
