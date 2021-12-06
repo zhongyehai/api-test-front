@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="tempMethod"
-    size="small"
+    size="mini"
     style="width: 150px;margin-right: 10px"
     slot="prepend"
     placeholder="选择请求方式"

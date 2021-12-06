@@ -2,7 +2,7 @@
   <el-select
     v-model="tempProjectId"
     placeholder="请选择项目"
-    size="small"
+    size="mini"
     filterable
     :disabled="isDisabled"
     @change="choiceProject"

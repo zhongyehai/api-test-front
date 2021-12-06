@@ -18,7 +18,7 @@
                 <el-select
                   v-model="projectSelectedId"
                   placeholder="请选择项目"
-                  size="small"
+                  size="mini"
                   filterable
                   style="min-width: 20%;padding-right:10px"
                   :disabled="true"
@@ -52,7 +52,7 @@
             <el-col :span="12">
               <el-form-item label="选则用例集">
                 <el-cascader
-                  size="small"
+                  size="mini"
                   v-model="tempTaskSet"
                   :options="tempCaseSetList"
                   :props="{ multiple: true, checkStrictly: true }"
@@ -63,7 +63,7 @@
 
             <!-- 选则用例 -->
             <el-col :span="12">
-              <el-form-item label="选择用例" size="small">
+              <el-form-item label="选择用例" size="mini">
                 <el-select
                   v-model="tempTask.case_id"
                   multiple
@@ -71,7 +71,7 @@
                   value-key="id"
                   :disabled="caseSelectorIsDisabled"
                   style="min-width: 20%;padding-right:10px"
-                  size="small"
+                  size="mini"
                 >
                   <el-option v-for="item in currentCaseList" :key="item.id" :label="item.name" :value="item.id">
                   </el-option>
@@ -80,7 +80,7 @@
             </el-col>
           </el-row>
 
-          <el-form-item label="任务名称" size="small" class="is-required">
+          <el-form-item label="任务名称" size="mini" class="is-required">
             <el-input v-model="tempTask.name" auto-complete="off">
             </el-input>
           </el-form-item>
@@ -97,28 +97,46 @@
             <el-radio v-model="tempTask.send_type" label="ding_ding">仅钉钉群</el-radio>
             <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
             <div v-show="tempTask.send_type === 'we_chat'">
-              <el-input type="textarea" v-model="tempTask.we_chat" placeholder="企业微信机器人地址"></el-input>
+              <el-input
+                type="textarea"
+                size="mini"
+                autosize
+                v-model="tempTask.we_chat"
+                placeholder="企业微信机器人地址"></el-input>
             </div>
             <div v-show="tempTask.send_type === 'ding_ding'">
-              <el-input type="textarea" v-model="tempTask.ding_ding" placeholder="钉钉机器人地址"></el-input>
+              <el-input
+                type="textarea"
+                size="mini"
+                autosize
+                v-model="tempTask.ding_ding"
+                placeholder="钉钉机器人地址"></el-input>
             </div>
             <div v-show="tempTask.send_type === 'email'">
               <el-form-item label="邮箱服务器">
-                <emailServerSelector ref="emailServerSelector"
-                                     :oldEmailServer="tempTask.email_server"></emailServerSelector>
+                <emailServerSelector
+                  ref="emailServerSelector"
+                  :oldEmailServer="tempTask.email_server"></emailServerSelector>
               </el-form-item>
               <el-form-item label="发件人邮箱">
-                <el-input v-model="tempTask.email_from" placeholder="默认支持QQ邮箱，可到全局参数添加对应的服务器，配置类型选邮箱">
+                <el-input
+                  v-model="tempTask.email_from"
+                  size="mini"
+                  placeholder="默认支持QQ邮箱，可到全局参数添加对应的服务器，配置类型选邮箱">
                 </el-input>
               </el-form-item>
               <el-form-item label="邮箱密码" prop="desc">
-                <el-input v-model="tempTask.email_pwd" type="text">
+                <el-input
+                  v-model="tempTask.email_pwd"
+                  size="mini"
+                  type="text">
                 </el-input>
               </el-form-item>
               <el-form-item label="收件人邮箱">
                 <el-input
                   type="textarea"
-                  :rows="2"
+                  autosize
+                  size="mini"
                   v-model="tempTask.email_to"
                   placeholder="收件人邮箱，多个时用英文的 分号 “ ; ” 分隔"
                 ></el-input>
@@ -126,7 +144,7 @@
             </div>
           </el-form-item>
 
-          <el-form-item label="时间配置" size="small" class="is-required">
+          <el-form-item label="时间配置" size="mini" class="is-required">
             <el-input v-model="tempTask.cron" style="width: 70%"
                       placeholder="秒 分 时 日 月 周 年 (0 0 12 * * ? * 每天中午12点触发)">
             </el-input>
@@ -141,13 +159,12 @@
     </el-tabs>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="taskDialogIsShow = false" size="small">取 消</el-button>
+      <el-button @click="taskDialogIsShow = false" size="mini">取 消</el-button>
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         :loading="submitButtonIsLoading"
         @click.native="dialogStatus === 'update' ? updateTask() : createTask()"
-
       >确定
       </el-button>
     </div>

@@ -52,7 +52,7 @@
                   <el-select
                     v-model="projectSelectedId"
                     placeholder="选择项目"
-                    size="small"
+                    size="mini"
                     filterable
                     style="min-width: 20%;padding-right:10px"
                     @change="selectedProject"
@@ -70,7 +70,7 @@
                 <el-form-item label="用例集">
                   <el-cascader
                     placeholder="选择用例集"
-                    size="small"
+                    size="mini"
                     :options="currentCaseSetList"
                     :props="{ checkStrictly: true }"
                     v-model="selectedOptions"

@@ -11,7 +11,7 @@
       <!-- 用例信息组件 -->
       <el-tab-pane label="用例信息" name="caseInFo">
 
-        <el-form :inline="true" size="small" label-width="100px">
+        <el-form :inline="true" size="mini" label-width="100px">
 
           <el-row>
 
@@ -74,7 +74,7 @@
           </el-row>
         </el-form>
 
-        <el-form :inline="true" class="demo-form-inline" size="small">
+        <el-form :inline="true" class="demo-form-inline" size="mini">
 
           <el-tabs type="border-card">
 

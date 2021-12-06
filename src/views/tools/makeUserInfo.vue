@@ -2,13 +2,13 @@
 
   <div class="app-container">
 
-    <el-form size="small" :inline="true">
+    <el-form :inline="true">
 
       <h3 style="display:inline-block">选择要生成的项：</h3>
 
       <el-button
         v-show="makedUserValueList.length > 0"
-        size="small"
+        size="mini"
         type="primary"
         style="display:inline-block;float: right;margin: 10px;padding-left: 10px"
         @click.native="download()"
@@ -17,7 +17,7 @@
 
       <el-button
         type="primary"
-        size="small"
+        size="mini"
         style="display:inline-block;float: right;margin: 10px;padding-left: 10px"
         :loading="makeLoadingIsShow"
         @click.native="sendRequest()"

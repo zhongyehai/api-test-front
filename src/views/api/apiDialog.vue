@@ -17,7 +17,7 @@
           <!-- 接口名称 -->
           <el-col :span="12">
             <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.name" placeholder="接口名称" size="small" style="width: 250%">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 250%">
               </el-input>
             </el-form-item>
           </el-col>
@@ -53,13 +53,13 @@
           <!-- 前置条件 -->
           <el-col :span="12">
             <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="small" style="width: 250%"></el-input>
+              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="mini" style="width: 250%"></el-input>
             </el-form-item>
           </el-col>
           <!-- 后置条件 -->
           <el-col :span="12">
             <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="small" style="width: 250%"></el-input>
+              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="mini" style="width: 250%"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -81,12 +81,12 @@
 
           <!-- 接口地址 -->
           <el-input v-model="tempApi.addr" class="input-with-select" placeholder="请输入接口地址"
-                    size="small" style="width: 80%;margin-right: 5px">
+                    size="mini" style="width: 80%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->
           <el-tooltip class="item" effect="dark" content="会先自动保存，再触发调试" placement="right-end">
-            <el-button type="primary" size="small" :loading="isShowDebugLoading" @click.native="debugApi()">调试
+            <el-button type="primary" size="mini" :loading="isShowDebugLoading" @click.native="debugApi()">调试
             </el-button>
           </el-tooltip>
 

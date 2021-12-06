@@ -4,6 +4,7 @@
     v-model="tempFuncFiles"
     multiple
     filterable
+    size="mini"
     style="width:100%"
     placeholder="请选择函数文件"
     class="filter-item">

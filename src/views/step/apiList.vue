@@ -8,7 +8,7 @@
 
     <el-cascader
       placeholder="选择模块"
-      size="small"
+      size="mini"
       :options="tempModuleList"
       :props="{ checkStrictly: true }"
       v-model="selectedOptions"

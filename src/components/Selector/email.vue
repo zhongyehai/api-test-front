@@ -4,7 +4,7 @@
     placeholder="选择邮箱服务器"
     value-key="id"
     style="min-width: 100%;padding-right:10px"
-    size="small"
+    size="mini"
   >
     <el-option v-for="item in configEmailServerList" :key="item.id" :label="item.name" :value="item.value">
     </el-option>

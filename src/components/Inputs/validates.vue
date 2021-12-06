@@ -19,7 +19,7 @@
       <template slot-scope="scope">
         <el-select v-model="scope.row.validate_type"
                    placeholder="断言类型"
-                   size="small">
+                   size="mini">
           <el-option
             v-for="(item) in validateTypeList"
             :key="item.value"

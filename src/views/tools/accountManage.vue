@@ -6,7 +6,7 @@
         <el-select
           v-model="currentEvent"
           placeholder="请选择环境"
-          size="small"
+          size="mini"
           @change="selectType"
         >
           <el-option
@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
 
-        <el-button type="primary" @click.native="showDialog('')" size="small" style="margin-left: 20px">添加账号</el-button>
+        <el-button type="primary" @click.native="showDialog('')" size="mini" style="margin-left: 20px">添加账号</el-button>
 
       </el-form-item>
     </el-form>
@@ -114,8 +114,8 @@
         <el-form-item :label="'登录密码'" class="filter-item is-required" prop="password" size="mini">
           <el-input v-model="currentAccount.password" placeholder="登录密码"/>
         </el-form-item>
-        <el-form-item :label="'备注'" class="filter-item" prop="desc" size="mini">
-          <el-input type="textarea" v-model="currentAccount.desc" placeholder="备注"></el-input>
+        <el-form-item :label="'备注'" class="filter-item" prop="desc">
+          <el-input type="textarea" v-model="currentAccount.desc" autosize size="mini" placeholder="备注"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

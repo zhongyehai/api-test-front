@@ -106,7 +106,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/apiTest/project',
     name: 'ApiTest',
-    meta: {title: '接口测试', icon: 'el-icon-view'},
+    meta: {title: '接口测试', icon: 'el-icon-link'},
     children: [
       {
         path: 'project',
@@ -152,12 +152,6 @@ export const constantRoutes = [
         component: () => import('@/views/report/index')
       },
       {
-        path: 'config',
-        name: 'Config',
-        meta: {title: '参数管理', icon: 'el-icon-setting'},
-        component: () => import('@/views/configs/index')
-      },
-      {
         path: 'debug',
         name: 'debug',
         hidden: true,
@@ -173,7 +167,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/webTest/project',
     name: 'UITest',
-    meta: {title: 'UI测试', icon: 'el-icon-s-tools'},
+    meta: {title: 'UI测试', icon: 'el-icon-connection'},
     children: [
       {
         path: 'pages',
@@ -187,6 +181,29 @@ export const constantRoutes = [
         component: () => import('@/views/uiTest/pages/index'),
         meta: {title: '页面管理', icon: 'el-icon-s-operation'}
       },
+    ]
+  },
+
+  // 配置管理
+  {
+    path: '/config',
+    component: Layout,
+    redirect: '/config',
+    name: 'Config',
+    meta: {title: '配置管理', icon: 'el-icon-setting'},
+    children: [
+      {
+        path: 'type',
+        name: 'ConfigType',
+        meta: {title: '类型管理', icon: 'el-icon-star-off'},
+        component: () => import('@/views/configType/index')
+      },
+      {
+        path: 'args',
+        name: 'Args',
+        meta: {title: '参数管理', icon: 'el-icon-star-on'},
+        component: () => import('@/views/configs/index')
+      }
     ]
   },
 
@@ -226,7 +243,7 @@ export const constantRoutes = [
         path: 'makeUserInfo',
         name: 'MakeUserInfo',
         component: () => import('@/views/tools/makeUserInfo'),
-        meta: {title: '生成用户信息', icon: 'el-icon-s-custom'}
+        meta: {title: '生成用户信息', icon: 'el-icon-s-unfold'}
       }
 
     ]
@@ -238,7 +255,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/manage/user',
     name: 'Manage',
-    meta: {title: '系统管理', icon: 'el-icon-setting', roles: [2, '2']},
+    meta: {title: '系统管理', icon: 'el-icon-s-custom', roles: [2, '2']},
     children: [
       {
         path: 'user',

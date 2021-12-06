@@ -6,7 +6,7 @@
         <el-select
           v-model="fileType"
           placeholder="请选择文件类型"
-          size="small"
+          size="mini"
           @change="selectType"
         >
           <el-option
@@ -19,7 +19,7 @@
         </el-select>
 
         <el-tooltip class="item" effect="dark" content="可覆盖已存在的文件" placement="right-end" style="margin-left: 20px">
-          <el-button type="primary" @click.native="openFileUploadDialog" size="small">上传文件</el-button>
+          <el-button type="primary" @click.native="openFileUploadDialog" size="mini">上传文件</el-button>
         </el-tooltip>
 
       </el-form-item>

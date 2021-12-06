@@ -28,7 +28,7 @@
       </el-form-item>
 
       <el-form-item :label="'配置值'" prop="value" class="is-required" size="mini">
-        <el-input type="textarea" :rows="2" v-model="tempConfig.value"/>
+        <el-input type="textarea" autosize v-model="tempConfig.value"/>
       </el-form-item>
 
       <el-form-item :label="'描述'" prop="desc" size="mini">

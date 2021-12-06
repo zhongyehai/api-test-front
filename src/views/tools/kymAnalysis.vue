@@ -6,7 +6,7 @@
         <el-select
           v-model="currentProject"
           placeholder="请选择项目"
-          size="small"
+          size="mini"
           @change="getKYMByProject"
         >
           <el-option
@@ -18,14 +18,14 @@
           </el-option>
         </el-select>
 
-        <el-button type="primary" @click.native="showDialog()" size="small" style="margin-left: 20px">添加KYM分析
+        <el-button type="primary" @click.native="showDialog()" size="mini" style="margin-left: 20px">添加KYM分析
         </el-button>
 
       </el-form-item>
     </el-form>
 
 
-    <el-collapse>
+    <el-collapse v-model="activeNames">
       <el-collapse-item :name="index" v-for="(value, key, index) in currentKYM" :key="key">
         <template slot="title">
           <div class="el-collapse-item-title"> {{ key }}</div>
@@ -53,7 +53,7 @@
                 autosize
                 placeholder="请完善"
                 type="textarea"
-                size="small"/>
+                size="mini"/>
             </template>
           </el-table-column>
 
@@ -126,6 +126,9 @@ export default {
       // 项目列表
       projectList: [],
 
+      // 默认展开的项
+      activeNames: [],
+
       // 下拉框选中的项目
       currentProject: '',
 
@@ -176,6 +179,11 @@ export default {
       getProjectKYM({project: value}).then(response => {
         this.currentKYM = response.data.kym
         this.currentKYMCopy = JSON.parse(JSON.stringify(response.data.kym))
+
+        // 遍历项数，用于默认展开所有项
+        for (let i in Object.keys(this.currentKYM)){
+          this.activeNames.push(Number(i))
+        }
       })
     },
 

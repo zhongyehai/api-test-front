@@ -4,7 +4,7 @@
     clearable
     filterable
     placeholder="请选择运行环境"
-    size="small"
+    size="mini"
   >
     <el-option v-for="(item) in environments"
                :key="item.key"

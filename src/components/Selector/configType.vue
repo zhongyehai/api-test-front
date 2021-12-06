@@ -5,7 +5,7 @@
     value-key="id"
     :disabled="dialogType === 'edit'"
     style="min-width: 100%"
-    size="small"
+    size="mini"
   >
     <el-option v-for="item in configTypeList" :key="item.id" :label="item.name" :value="item.name">
     </el-option>

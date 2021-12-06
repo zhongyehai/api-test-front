@@ -4,7 +4,7 @@
     placeholder="请选择用例集"
     value-key="id"
     filterable
-    size="small"
+    size="mini"
     @change="choiceCaseSet">
     <el-option v-for="item in caseSetLists" :key="item.id" :label="item.name" :value="item.id">
     </el-option>
