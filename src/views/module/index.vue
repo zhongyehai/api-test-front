@@ -12,6 +12,7 @@
               <div class="block">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
                 <el-tree
+                  class="el-tree"
                   ref="tree"
                   :check-on-click-node="false"
                   :data="dataList"
@@ -29,13 +30,13 @@
                        @mouseenter="mouseenter(data)"
                        @mouseleave="mouseleave(data)">
                     <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
-                      <span> {{ ellipsis(data.name, 10) }} </span>
+                      <span> {{ ellipsis(data.name, 20) }} </span>
                     </el-tooltip>
                     <span v-show="data.showMenu">
                       <el-dropdown size="mini" type="primary" placement="top-start">
                         <i
                           class="el-icon-more"
-                          style="float: right;
+                          style="
                           padding-left: 5px;
                           color: #409EFF;
                           transform: rotate(90deg)"
@@ -77,6 +78,7 @@
                     </span>
                   </div>
                 </el-tree>
+                <!--                </div>-->
               </div>
 
             </div>
@@ -444,6 +446,17 @@ export default {
 </script>
 
 <style>
+.el-tree {
+  width: 100%;
+  height: 800px;
+  overflow: scroll;
+}
+
+.el-tree > .el-tree-node {
+  display: inline-block;
+  min-width: 100%;
+}
+
 .custom-tree-node {
   flex: 1;
   display: flex;

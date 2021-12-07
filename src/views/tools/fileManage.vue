@@ -43,7 +43,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="size" label="文件文件大小" min-width="10%">
+      <el-table-column :show-overflow-tooltip=true prop="size" label="文件大小" min-width="10%">
         <template slot-scope="scope">
           <span> {{ scope.row.size }} 字节</span>
         </template>
