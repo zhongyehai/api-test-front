@@ -6,7 +6,7 @@
         <!-- 项目列表和操作 -->
         <el-scrollbar>
           <el-tree
-            ref="projectTree"
+            ref="pTree"
             class="filter-tree"
             highlight-current
             default-expand-all

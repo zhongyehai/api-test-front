@@ -1,302 +1,274 @@
 <template>
+
   <div>
-    <div class="block">
-      <span class="demonstration">单选选择任意一级选项</span>
-      <el-cascader
-        ref="cascader"
-        :options="module_tree"
-        :props="{ checkStrictly: true }"
-        v-model="selectedOptions"
-        @change="selected"
-        clearable></el-cascader>
-    </div>
-    <div class="block">
-      <span class="demonstration">多选选择任意一级选项</span>
-      <el-cascader
-        :options="options"
-        :props="{ multiple: true, checkStrictly: true }"
-        v-model="option"
-        @change="selected2"
-        clearable></el-cascader>
-    </div>
-    <br>
-    <hr>
-    selectedOptions
-    {{ selectedOptions }}
-
-    <br>
-    <hr>
-    selected2Value
-    {{ selected2Value }}
-
+    <el-button @click="getData()">获取数据</el-button>
+    <el-button @click="createData()">替换数据</el-button>
+    <div id="map" style="width: 100%; height: 1000px"></div>
   </div>
 </template>
+
 <script>
-import {moduleTree} from "@/apis/module";
+// 使用方法详见：https://inspiring-golick-3c01b9.netlify.app/
+import kity from "kity";
+import kityminder from "kityminder-core";
 
 export default {
+  name: "debug",
   data() {
     return {
-      // option: [ [ "zhinan", "shejiyuanze" ], [ "zhinan", "shejiyuanze", "yizhi" ], [ "zhinan", "shejiyuanze", "fankui" ] ],
-      option: ["shejiyuanze", "yizhi", "fankui"],
-      selectedOptions: [],
-      selected2Value: [],
-      module_tree: [],
-      options: [
-        {
-          value: 'zhinan',
-          label: '指南',
-          children: [{
-            value: 'shejiyuanze',
-            label: '设计原则',
-            children: [{
-              value: 'yizhi',
-              label: '一致'
-            }, {
-              value: 'fankui',
-              label: '反馈'
-            }, {
-              value: 'xiaolv',
-              label: '效率'
-            }, {
-              value: 'kekong',
-              label: '可控'
-            }]
-          }, {
-            value: 'daohang',
-            label: '导航',
-            children: [{
-              value: 'cexiangdaohang',
-              label: '侧向导航'
-            }, {
-              value: 'dingbudaohang',
-              label: '顶部导航'
-            }]
-          }]
-        }, {
-          value: 'zujian',
-          label: '组件',
-          children: [{
-            value: 'basic',
-            label: 'Basic',
-            children: [{
-              value: 'layout',
-              label: 'Layout 布局'
-            }, {
-              value: 'color',
-              label: 'Color 色彩'
-            }, {
-              value: 'typography',
-              label: 'Typography 字体'
-            }, {
-              value: 'icon',
-              label: 'Icon 图标'
-            }, {
-              value: 'button',
-              label: 'Button 按钮'
-            }]
-          }, {
-            value: 'form',
-            label: 'Form',
-            children: [{
-              value: 'radio',
-              label: 'Radio 单选框'
-            }, {
-              value: 'checkbox',
-              label: 'Checkbox 多选框'
-            }, {
-              value: 'input',
-              label: 'Input 输入框'
-            }, {
-              value: 'input-number',
-              label: 'InputNumber 计数器'
-            }, {
-              value: 'select',
-              label: 'Select 选择器'
-            }, {
-              value: 'cascader',
-              label: 'Cascader 级联选择器'
-            }, {
-              value: 'switch',
-              label: 'Switch 开关'
-            }, {
-              value: 'slider',
-              label: 'Slider 滑块'
-            }, {
-              value: 'time-picker',
-              label: 'TimePicker 时间选择器'
-            }, {
-              value: 'date-picker',
-              label: 'DatePicker 日期选择器'
-            }, {
-              value: 'datetime-picker',
-              label: 'DateTimePicker 日期时间选择器'
-            }, {
-              value: 'upload',
-              label: 'Upload 上传'
-            }, {
-              value: 'rate',
-              label: 'Rate 评分'
-            }, {
-              value: 'form',
-              label: 'Form 表单'
-            }]
-          }, {
-            value: 'data',
-            label: 'Data',
-            children: [{
-              value: 'table',
-              label: 'Table 表格'
-            }, {
-              value: 'tag',
-              label: 'Tag 标签'
-            }, {
-              value: 'progress',
-              label: 'Progress 进度条'
-            }, {
-              value: 'tree',
-              label: 'Tree 树形控件'
-            }, {
-              value: 'pagination',
-              label: 'Pagination 分页'
-            }, {
-              value: 'badge',
-              label: 'Badge 标记'
-            }]
-          }, {
-            value: 'notice',
-            label: 'Notice',
-            children: [{
-              value: 'alert',
-              label: 'Alert 警告'
-            }, {
-              value: 'loading',
-              label: 'Loading 加载'
-            }, {
-              value: 'message',
-              label: 'Message 消息提示'
-            }, {
-              value: 'message-box',
-              label: 'MessageBox 弹框'
-            }, {
-              value: 'notification',
-              label: 'Notification 通知'
-            }]
-          }, {
-            value: 'navigation',
-            label: 'Navigation',
-            children: [{
-              value: 'menu',
-              label: 'NavMenu 导航菜单'
-            }, {
-              value: 'tabs',
-              label: 'Tabs 标签页'
-            }, {
-              value: 'breadcrumb',
-              label: 'Breadcrumb 面包屑'
-            }, {
-              value: 'dropdown',
-              label: 'Dropdown 下拉菜单'
-            }, {
-              value: 'steps',
-              label: 'Steps 步骤条'
-            }]
-          }, {
-            value: 'others',
-            label: 'Others',
-            children: [{
-              value: 'dialog',
-              label: 'Dialog 对话框'
-            }, {
-              value: 'tooltip',
-              label: 'Tooltip 文字提示'
-            }, {
-              value: 'popover',
-              label: 'Popover 弹出框'
-            }, {
-              value: 'card',
-              label: 'Card 卡片'
-            }, {
-              value: 'carousel',
-              label: 'Carousel 走马灯'
-            }, {
-              value: 'collapse',
-              label: 'Collapse 折叠面板'
-            }]
-          }]
-        }, {
-          value: 'ziyuan',
-          label: '资源',
-          children: [{
-            value: 'axure',
-            label: 'Axure Components'
-          }, {
-            value: 'sketch',
-            label: 'Sketch Templates'
-          }, {
-            value: 'jiaohu',
-            label: '组件交互文档'
-          }]
-        }]
+      ME: null,
+      old_data: {},
+      data: {
+        "nodeData": {
+          "topic": "多级-保理",
+          "root": true,
+          "children": [
+            {
+              "topic": "使用群体",
+              "children": [
+                {"topic": "产品使用群体是哪些？"},
+                {"topic": "用户与用户之间有什么关联？"},
+                {"topic": "用户为什么提这个需求？"},
+                {"topic": "用户为什么提这个需求？"},
+                {"topic": "用户最关心的是什么？"},
+                {"topic": "用户的实际使用环境是什么？"},
+                {"topic": "测试人员"},
+                {"topic": "测试人员"}
+              ]
+            },
+            {
+              "topic": "里程碑",
+              "children": [
+                {"topic": "需求评审时间？"},
+                {"topic": "开发提测时间？"},
+                {"topic": "测试周期测试时间多长？"},
+                {"topic": "轮次安排进行几轮测试？"},
+                {"topic": "UAT验收时间？"},
+                {"topic": "上线时间？"}
+              ]
+            },
+            {
+              "topic": "涉及人员",
+              "children": [
+                {"topic": "负责迭代的产品是谁？"},
+                {"topic": "后端开发是谁经验如何？"},
+                {"topic": "前端开发是谁经验如何？"},
+                {"topic": "测试人员是谁？"}
+              ]
+            },
+            {
+              "topic": "涉及模块",
+              "children": [
+                {"topic": "项目中涉及哪些模块，对应的开发责任人是谁？"}
+              ]
+            },
+            {
+              "topic": "项目信息",
+              "children": [
+                {"topic": "项目背景是什么？"},
+                {"topic": "这个项目由什么需要特别注意的地方？"},
+                {"topic": "可以向谁进一步了解项目信息？"},
+                {"topic": "有没有文档、手册、材料等可供参考？"},
+                {"topic": "这是全新的产品还是维护升级的？"},
+                {"topic": "有没有竞品分析结果或同类产品可供参考？"},
+                {"topic": "历史版本曾今发生过那些重大故障？"}
+              ]
+            },
+            {
+              "topic": "测试信息",
+              "children": [
+                {"topic": "会使用到的测试账号有哪些？"},
+                {"topic": "会用到的测试地址？"},
+                {"topic": "有没有不太熟悉、掌握的流程？"}
+              ]
+            },
+            {
+              "topic": "设备工具",
+              "children": [
+                {"topic": "测试过程中是否会用到其他测试设备资源是否够（Ukey、手机、平板）？"},
+                {"topic": "会用到什么测试工具会不会使用？"}
+              ]
+            },
+            {
+              "topic": "测试团队",
+              "children": [
+                {"topic": "有几个测试团队负责测试？"},
+                {"topic": "负责测试的人员组成情况？"},
+                {"topic": "测试人员的经验如何？"},
+                {"topic": "测试人员对被测对象的熟悉程度如何？"},
+                {"topic": "测试人员是专职的还是兼职的？"},
+                {"topic": "测试人手是否充足？"}
+              ]
+            },
+            {
+              "topic": "测试项",
+              "children": [
+                {"topic": "主要的测试内容有哪些？"},
+                {"topic": "哪部分可以降低优先级或者先不测试？"},
+                {"topic": "哪些内容是新增或修改？"},
+                {"topic": "是否涉及历史数据迁移测试？"},
+                {"topic": "是否涉及与外系统联调测试？"},
+                {"topic": "是否需要进行性能、兼容性、安全测试？"}
+              ]
+            },
+          ],
+        },
+      }
     };
   },
   mounted() {
-    this.getModuleTree()
+    this.naotu()
   },
   methods: {
-
-    // 递归把列表转为树行结构
-    arrayToTree(arr, parentId) {
-      //  arr 是返回的数据  parendId 父id
-      let temp = [];
-      let treeArr = arr;
-      treeArr.forEach((item, index) => {
-        if (item.parent == parentId) {
-          if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
-            // 递归调用此函数
-            treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
-          }
-          treeArr[index].value = treeArr[index].id
-          treeArr[index].label = treeArr[index].name
-          temp.push(treeArr[index]);
-        }
-      });
-      return temp;
-    },
-
-
-    getModuleTree() {
-      moduleTree({'project_id': 1}).then(response => {
-        if (this.showMessage(this, response)) {
-          var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-          let parse_data = this.arrayToTree(response_data, null)
-          this.module_tree = parse_data
+    naotu(){
+      this.km = new kityminder.Minder({
+        renderTo: "#map"
+      })
+      this.km.importJson({
+        root: {
+          data: {
+            text: 'test111111'
+          },
+          children: [
+            {
+              data: {
+                text: '新闻'
+              }
+            }
+          ]
         }
       })
     },
-
-    // 选中事件
-    selected(valueList) {
-      if (valueList) {
-        let selectedValue = valueList.slice(-1)
-      }
-      console.log('value: ', valueList)
-      console.log('value: ', valueList.slice(-1))
+    getData() {
+      console.log('data: ', this.ME.getAllData())
     },
-
-    // 选中事件
-    selected2(valueList) {
-      this.selected2Value = valueList
-      if (valueList) {
-        let selected2Value = valueList
+    createData() {
+      this.data = {
+        "nodeData": {
+          "topic": "多级-保理",
+          "root": true,
+          "children": [
+            {
+              "topic": "使用群体",
+              "children": [
+                {"topic": "产品使用群体是哪些？"},
+                {"topic": "用户与用户之间有什么关联？"},
+                {"topic": "用户为什么提这个需求？"},
+                {"topic": "用户为什么提这个需求？"},
+                {"topic": "用户最关心的是什么？"},
+                {"topic": "用户的实际使用环境是什么？"},
+                {"topic": "测试人员"},
+                {"topic": "测试人员"}
+              ]
+            },
+            {
+              "topic": "里程碑",
+              "children": [
+                {"topic": "需求评审时间？"},
+                {"topic": "开发提测时间？"},
+                {"topic": "测试周期测试时间多长？"},
+                {"topic": "轮次安排进行几轮测试？"},
+                {"topic": "UAT验收时间？"},
+                {"topic": "上线时间？"}
+              ]
+            },
+            {
+              "topic": "涉及人员",
+              "children": [
+                {"topic": "负责迭代的产品是谁？"},
+                {"topic": "后端开发是谁经验如何？"},
+                {"topic": "前端开发是谁经验如何？"},
+                {"topic": "测试人员是谁？"}
+              ]
+            },
+            {
+              "topic": "涉及模块",
+              "children": [
+                {"topic": "项目中涉及哪些模块，对应的开发责任人是谁？"}
+              ]
+            },
+            {
+              "topic": "项目信息",
+              "children": [
+                {"topic": "项目背景是什么？"},
+                {"topic": "这个项目由什么需要特别注意的地方？"},
+                {"topic": "可以向谁进一步了解项目信息？"},
+                {"topic": "有没有文档、手册、材料等可供参考？"},
+                {"topic": "这是全新的产品还是维护升级的？"},
+                {"topic": "有没有竞品分析结果或同类产品可供参考？"},
+                {"topic": "历史版本曾今发生过那些重大故障？"}
+              ]
+            },
+            {
+              "topic": "测试信息",
+              "children": [
+                {"topic": "会使用到的测试账号有哪些？"},
+                {"topic": "会用到的测试地址？"},
+                {"topic": "有没有不太熟悉、掌握的流程？"}
+              ]
+            },
+            {
+              "topic": "设备工具",
+              "children": [
+                {"topic": "测试过程中是否会用到其他测试设备资源是否够（Ukey、手机、平板）？"},
+                {"topic": "会用到什么测试工具会不会使用？"}
+              ]
+            },
+            {
+              "topic": "测试团队",
+              "children": [
+                {"topic": "有几个测试团队负责测试？"},
+                {"topic": "负责测试的人员组成情况？"},
+                {"topic": "测试人员的经验如何？"},
+                {"topic": "测试人员对被测对象的熟悉程度如何？"},
+                {"topic": "测试人员是专职的还是兼职的？"},
+                {"topic": "测试人手是否充足？"}
+              ]
+            },
+            {
+              "topic": "测试项",
+              "children": [
+                {"topic": "主要的测试内容有哪些？"},
+                {"topic": "哪部分可以降低优先级或者先不测试？"},
+                {"topic": "哪些内容是新增或修改？"},
+                {"topic": "是否涉及历史数据迁移测试？"},
+                {"topic": "是否涉及与外系统联调测试？"},
+                {"topic": "是否需要进行性能、兼容性、安全测试？"}
+              ]
+            },
+          ],
+        },
       }
-      console.log('value: ', valueList)
-      console.log('value: ', valueList.slice(-1))
-    },
+      this.ME = new MindElixir({
+        el: "#map",
+        direction: MindElixir.LEFT,
+        data: this.data,
+        // data: this.old_data,
+        draggable: true, // 启用拖动 default true
+        contextMenu: true, // 启用右键菜单 default true
+        toolBar: true, // 启用工具栏 default true
+        nodeMenu: true, // 启用节点菜单 default true
+        keypress: true, // 启用快捷键 default true
+        locale: 'zh_CN', // 设置语言，支持[zh_CN,zh_TW,en,ja,pt]
+        overflowHidden: false, // default false
+        primaryLinkStyle: 2, // 线条形状，1为弧线，2为直线 default 1
+        // primaryNodeVerticalGap: 15, //节点之间的垂直距离 default 25
+        // primaryNodeHorizontalGap: 15, //节点之间的水平距离 default 65
+      });
+      this.ME.init();
+      console.log('this.data: ', this.data)
+    }
   }
 };
 </script>
 
-<style scoped>
-
+<style>
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 </style>

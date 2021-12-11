@@ -21,69 +21,15 @@
         <el-button type="primary" @click.native="showDialog()" size="mini" style="margin-left: 20px">添加KYM分析
         </el-button>
 
+        <el-button type="primary" :loading="saveLoading" @click.native="changeKYM()" size="mini"
+                   style="margin-left: 20px">保存修改
+        </el-button>
+
       </el-form-item>
     </el-form>
 
-
-    <el-collapse v-model="activeNames">
-      <el-collapse-item :name="index" v-for="(value, key, index) in currentKYM" :key="key">
-        <template slot="title">
-          <div class="el-collapse-item-title"> {{ key }}</div>
-        </template>
-
-        <el-table :data="value" border fit highlight-current-row style="width: 100%">
-          <el-table-column prop="id" label="序号" min-width="5%">
-            <template slot-scope="scope">
-              <span> {{ scope.$index + 1 }} </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column :show-overflow-tooltip=true label="分析项" min-width="30%">
-            <template slot-scope="scope">
-              <span> {{ scope.row.key }} </span>
-            </template>
-          </el-table-column>
-
-          <el-table-column :show-overflow-tooltip=true label="分析值" min-width="55%">
-            <template slot-scope="scope">
-              <el-input
-                v-model="scope.row.value"
-                class="edit-input"
-                :disabled="!scope.row.enabled"
-                autosize
-                placeholder="请完善"
-                type="textarea"
-                size="mini"/>
-            </template>
-          </el-table-column>
-
-          <el-table-column label="操作" min-width="10%">
-            <template slot-scope="scope">
-
-              <el-button
-                type="primary"
-                size="mini"
-                v-show="!scope.row.enabled"
-                @click.native="clickChangeButton(scope.row)"
-              >修改
-              </el-button>
-
-              <el-button
-                type="primary"
-                size="mini"
-                :loading="scope.row.isLoading"
-                v-show="scope.row.enabled"
-                @click.native="changeKYM(scope.row, key, scope.$index)"
-              >提交
-              </el-button>
-
-            </template>
-          </el-table-column>
-        </el-table>
-
-      </el-collapse-item>
-    </el-collapse>
-
+    <!-- 脑图 -->
+    <div id="map" style="width: 100%; height: 1000px"></div>
 
     <!-- 新增KYM分析 -->
     <el-dialog
@@ -116,6 +62,9 @@
 </template>
 
 <script>
+// 使用方法详见：https://inspiring-golick-3c01b9.netlify.app/
+import MindElixir, {E} from "mind-elixir";
+
 import {getProjectKYM, putProjectKYM, addKYM, KYMProjectList} from "@/apis/tools";
 
 export default {
@@ -135,20 +84,46 @@ export default {
       // form表单的项目名
       formProject: '',
 
-      // 当前项目的KYM，用于渲染页面
-      currentKYM: {},
-
-      // 当前项目的KYM的复制体，用于提交
-      currentKYMCopy: {},
-
       submitButtonIsLoading: false,
 
       // Dialog状态
-      dialogIsShow: false
+      dialogIsShow: false,
+
+      saveLoading: false,
+      getLoading: false,
+
+      ME: null,
+      data: {
+        "nodeData": {
+          "topic": "新建项目",
+          "root": true,
+          "children": []
+        }
+      },
     }
   },
 
   methods: {
+
+    initMindElixir() {
+      this.ME = new MindElixir({
+        el: "#map",
+        direction: MindElixir.LEFT,
+        data: this.data,
+        draggable: true, // 启用拖动 default true
+        contextMenu: true, // 启用右键菜单 default true
+        toolBar: true, // 启用工具栏 default true
+        nodeMenu: true, // 启用节点菜单 default true
+        keypress: true, // 启用快捷键 default true
+        locale: 'zh_CN', // 设置语言，支持[zh_CN,zh_TW,en,ja,pt]
+        overflowHidden: false, // default false
+        primaryLinkStyle: 2, // 线条形状，1为弧线，2为直线 default 1
+        // primaryNodeVerticalGap: 15, //节点之间的垂直距离 default 25
+        // primaryNodeHorizontalGap: 15, //节点之间的水平距离 default 65
+      });
+      this.ME.init();
+      E('node-id')
+    },
 
     // 点击修改按钮，启用编辑
     clickChangeButton(row) {
@@ -162,7 +137,13 @@ export default {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.dialogIsShow = false
-          this.getKYMProjectList()
+          this.projectList.push({'key': this.formProject, 'value': this.formProject})
+
+          this.currentProject = this.formProject
+          this.data = response.data.kym
+
+          // 挂载分析图
+          this.initMindElixir()
         }
       })
     },
@@ -176,27 +157,43 @@ export default {
 
     // 获取指定项目的KYM
     getKYMByProject(value) {
+      this.getLoading = true
       getProjectKYM({project: value}).then(response => {
-        this.currentKYM = response.data.kym
-        this.currentKYMCopy = JSON.parse(JSON.stringify(response.data.kym))
+        this.getLoading = false
+        this.data = response.data.kym
 
-        // 遍历项数，用于默认展开所有项
-        for (let i in Object.keys(this.currentKYM)){
-          this.activeNames.push(Number(i))
+        // 挂载分析图
+        this.initMindElixir()
+
+      })
+    },
+
+    // 递归去除parent
+    filter(data) {
+      data['parent'] = null
+      if (data['children'] && data['children'].length > 0) {
+        for (var index in data['children']) {
+          this.filter(data['children'][index])
+        }
+      }
+    },
+
+    // 提交修改KYM
+    changeKYM() {
+      this.saveLoading = true
+      this.filter(this.data['nodeData'])
+      putProjectKYM({project: this.currentProject, kym: this.data}).then(response => {
+        this.saveLoading = false
+        if (this.showMessage(this, response)) {
+          // 重新挂载分析图
+          this.initMindElixir()
         }
       })
     },
 
-    // 提交修改KYM
-    changeKYM(row, key, index) {
-      this.$set(row, 'isLoading', true)
-      this.currentKYMCopy[key][index].value = row.value
-      putProjectKYM({project: this.currentProject, kym: this.currentKYMCopy}).then(response => {
-        this.$set(row, 'isLoading', false)
-        if (this.showMessage(this, response)) {
-          this.$set(row, 'enabled', false)
-        }
-      })
+
+    getData() {
+      this.filter(this.data['nodeData'])
     },
 
     // 打开 dialog

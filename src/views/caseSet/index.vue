@@ -12,7 +12,7 @@
               <div class="block">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
                 <el-tree
-                  class="el-tree"
+                  class="project-tree"
                   ref="tree"
                   :check-on-click-node="false"
                   :data="dataList"
@@ -410,14 +410,14 @@ export default {
 };
 </script>
 
-<style>
-.el-tree {
+<style scoped>
+.project-tree {
   width: 100%;
   height: 800px;
   overflow: scroll;
 }
 
-.el-tree > .el-tree-node {
+.project-tree > .el-tree-node {
   display: inline-block;
   min-width: 100%;
 }

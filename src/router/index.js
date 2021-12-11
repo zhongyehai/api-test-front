@@ -207,6 +207,48 @@ export const constantRoutes = [
     ]
   },
 
+  // 测试管理
+  {
+    path: '/testManage',
+    component: Layout,
+    redirect: '/testManage/kym',
+    name: 'TestManage',
+    meta: {title: '测试管理', icon: 'el-icon-magic-stick'},
+    children: [
+      {
+        path: 'kym',
+        name: 'KYM',
+        component: () => import('@/views/tools/kymAnalysis'),
+        meta: {title: 'KYM分析', icon: 'el-icon-edit-outline'}
+      },
+      {
+        path: 'case',
+        name: 'Case',
+        component: () => import('@/views/tools/makeTestCase'),
+        meta: {title: '用例编写', icon: 'el-icon-s-opportunity'}
+      },
+      {
+        path: 'account',
+        name: 'Account',
+        component: () => import('@/views/tools/accountManage'),
+        meta: {title: '测试账号', icon: 'el-icon-s-check'}
+      },
+      {
+        path: 'diffRecord',
+        name: 'DiffRecord',
+        component: () => import('@/views/tools/diffDecord'),
+        meta: {title: 'swagger监控记录', icon: 'el-icon-s-opportunity'}
+      },
+      {
+        path: 'diffRecordShow',
+        name: 'DiffRecordShow',
+        hidden: true,
+        component: () => import('@/views/tools/showDiffDetail'),
+        meta: {title: 'swagger对比详情'}
+      }
+    ]
+  },
+
   // 小工具
   {
     path: '/tools',
@@ -216,16 +258,10 @@ export const constantRoutes = [
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
       {
-        path: 'kym',
-        name: 'KYM',
-        component: () => import('@/views/tools/kymAnalysis'),
-        meta: {title: 'KYM分析', icon: 'el-icon-edit-outline'}
-      },
-      {
-        path: 'account',
-        name: 'Account',
-        component: () => import('@/views/tools/accountManage'),
-        meta: {title: '测试账号', icon: 'el-icon-s-check'}
+        path: 'dataPool',
+        name: 'DataPool',
+        component: () => import('@/views/tools/dataPool'),
+        meta: {title: '数据池', icon: 'el-icon-files'}
       },
       {
         path: 'file',
