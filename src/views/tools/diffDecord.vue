@@ -18,6 +18,13 @@
           </el-option>
         </el-select>
 
+        <el-button type="primary"
+                   size="mini"
+                   style="margin-left: 50px"
+                   :loading="downloadXmidLoadingIsShow"
+                   @click.native="downloadXmidSetup()">下载xmind8安装包
+        </el-button>
+
       </el-form-item>
     </el-form>
 
@@ -51,7 +58,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="name" label="是否有改变" min-width="20%">
+      <el-table-column :show-overflow-tooltip=true prop="name" label="是否有改变" min-width="10%">
         <template slot-scope="scope">
           <el-tag size="small" :type="scope.row.is_changed === 1 ? 'danger' : 'success'">
             {{ scope.row.is_changed === 1 ? '有改变' : '没有改变' }}
@@ -59,13 +66,23 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="10%">
+      <el-table-column label="操作" min-width="20%">
         <template slot-scope="scope">
 
           <el-button type="primary"
                      size="mini"
+                     v-show="scope.row.is_changed === 1"
                      @click.native="showDetail(scope.row)">查看详情
           </el-button>
+
+          <el-tooltip class="item" effect="dark" content="下载后需用xmind8打开" placement="top-start">
+            <el-button type="primary"
+                       size="mini"
+                       :loading="scope.row.downloadLoadingIsShow"
+                       v-show="scope.row.is_changed === 1"
+                       @click.native="exportDiffRecordAsXmind(scope.row)">导出为xmind
+            </el-button>
+          </el-tooltip>
 
         </template>
       </el-table-column>
@@ -86,7 +103,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {getDiffRecordList, getDiffRecordProjectList, getDiffRecord, KYMProjectList} from "@/apis/tools";
+import {getDiffRecordList, getDiffRecordProjectList, getDiffRecordAsXmind, getXmidSetup} from "@/apis/tools";
 import {userList} from "@/apis/user";
 
 export default {
@@ -115,7 +132,9 @@ export default {
       listLoading: false,
 
       // 数据列表
-      currentDataList: []
+      currentDataList: [],
+
+      downloadXmidLoadingIsShow: false
     }
   },
 
@@ -159,8 +178,39 @@ export default {
 
     // 查看报告详情
     showDetail(row) {
-      let {href} = this.$router.resolve({path: 'diffRecordShow', query: {id: row.id}})
+      let {href} = this.$router.resolve({path: 'diffRecordShow', query: {id: row.id, name: row.name}})
       window.open(href, '_blank')
+    },
+
+    // 导出为xmind
+    exportDiffRecordAsXmind(row){
+      getDiffRecordAsXmind({id: row.id}).then(response => {
+        this.$set(row, 'downloadLoadingIsShow', false)
+        let blob = new Blob([response], {
+          type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
+        });
+        // 保存文件到本地
+        let a = document.createElement('a')
+        a.href = URL.createObjectURL(blob);  //生成一个url
+        a.download = row.name + '.xmind'
+        a.click()
+      })
+    },
+
+    // 下载xmind8安装包
+    downloadXmidSetup(){
+      this.downloadXmidLoadingIsShow = true
+      getXmidSetup().then(response => {
+        this.downloadXmidLoadingIsShow = false
+        let blob = new Blob([response], {
+          type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
+        });
+        // 保存文件到本地
+        let a = document.createElement('a')
+        a.href = URL.createObjectURL(blob);  //生成一个url
+        a.download = 'xmind8.exe'
+        a.click()
+      })
     }
   },
 

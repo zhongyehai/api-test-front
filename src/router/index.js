@@ -243,7 +243,7 @@ export const constantRoutes = [
         path: 'diffRecordShow',
         name: 'DiffRecordShow',
         hidden: true,
-        component: () => import('@/views/tools/showDiffDetail'),
+        component: () => import('@/views/tools/diffDetailShow'),
         meta: {title: 'swagger对比详情'}
       }
     ]

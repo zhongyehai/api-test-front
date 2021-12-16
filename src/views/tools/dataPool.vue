@@ -8,6 +8,11 @@
       stripe
       style="width: 100%"
     >
+      <el-table-column :show-overflow-tooltip=true label="数据id" width="100">
+        <template slot-scope="scope">
+          <span> {{ scope.row.id }} </span>
+        </template>
+      </el-table-column>
       <el-table-column :show-overflow-tooltip=true label="asset_code" width="100">
         <template slot-scope="scope">
           <span> {{ scope.row.asset_code }} </span>

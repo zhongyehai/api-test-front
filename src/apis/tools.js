@@ -80,3 +80,14 @@ export function getDiffRecordList(params) {
 export function getDiffRecord(params) {
   return request({url: '/api/diffRecord', method: 'get', params: params})
 }
+
+// 导出指定接口对比结果为xmind
+export function getDiffRecordAsXmind(params) {
+  return request({url: '/api/yapi/diff/download', method: 'get', params: params, responseType: 'blob'})
+}
+
+
+// 导出指定接口对比结果为xmind
+export function getXmidSetup() {
+  return request({url: '/api/xmind/download', method: 'get', responseType: 'blob'})
+}

@@ -31,5 +31,5 @@ export function projectList(params) {
 
 // 同步yapi的信息
 export function projectPull(data) {
-  return request({url: '/api/project/pull', method: 'post', data: data});
+  return request({url: '/api/yapi/pull/all', method: 'post', data: data});
 }
