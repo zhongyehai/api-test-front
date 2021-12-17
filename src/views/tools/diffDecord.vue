@@ -21,7 +21,6 @@
         <el-button type="primary"
                    size="mini"
                    style="margin-left: 50px"
-                   :loading="downloadXmidLoadingIsShow"
                    @click.native="downloadXmidSetup()">下载xmind8安装包
         </el-button>
 
@@ -132,9 +131,7 @@ export default {
       listLoading: false,
 
       // 数据列表
-      currentDataList: [],
-
-      downloadXmidLoadingIsShow: false
+      currentDataList: []
     }
   },
 
@@ -199,18 +196,7 @@ export default {
 
     // 下载xmind8安装包
     downloadXmidSetup(){
-      this.downloadXmidLoadingIsShow = true
-      getXmidSetup().then(response => {
-        this.downloadXmidLoadingIsShow = false
-        let blob = new Blob([response], {
-          type: 'application/vnd.ms-excel'      //将会被放入到blob中的数组内容的MIME类型
-        });
-        // 保存文件到本地
-        let a = document.createElement('a')
-        a.href = URL.createObjectURL(blob);  //生成一个url
-        a.download = 'xmind8.exe'
-        a.click()
-      })
+      window.open('https://dl2.xmind.cn/xmind-8-update9-windows.exe')
     }
   },
 
