@@ -43,6 +43,12 @@
             </template>
           </el-table-column>
 
+          <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="10%">
+            <template slot-scope="scope">
+              <span>{{ parsUser(scope.row.update_user) }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column label="接口操作" min-width="39%">
             <template slot-scope="scope">
 

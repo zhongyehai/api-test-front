@@ -46,12 +46,12 @@
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'用户名'" prop="id" align="center" min-width="25%">
+      <el-table-column :label="'用户名'" prop="id" align="center" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'账号'" prop="id" align="center" min-width="25%">
+      <el-table-column :label="'账号'" prop="id" align="center" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.account }}</span>
         </template>
@@ -66,6 +66,19 @@
           <span>{{ scope.row.role_id === 1 ? '测试人员' : '管理人员' }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column :label="'创建人'" prop="id" align="center" min-width="15%">
+        <template slot-scope="scope">
+          <span>{{ parsUser(scope.row.create_user) }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="15%">
+        <template slot-scope="scope">
+          <span>{{ parsUser(scope.row.update_user) }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column :label="'操作'" align="center" min-width="20%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -333,6 +346,16 @@ export default {
     handleFilter() {
       this.listQuery.pageNum = 1
       this.getUserList()
+    },
+
+    // 把用户id解析为用户名
+    parsUser(userId) {
+      for (let index in this.user_list) {
+        let user_data = this.user_list[index]
+        if (user_data.id === userId) {
+          return user_data.name
+        }
+      }
     },
 
   },

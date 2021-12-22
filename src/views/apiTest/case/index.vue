@@ -34,6 +34,12 @@
             </template>
           </el-table-column>
 
+          <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="10%">
+            <template slot-scope="scope">
+              <span>{{ parsUser(scope.row.update_user) }}</span>
+            </template>
+          </el-table-column>
+
           <el-table-column align="center" label="执行" min-width="10%">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.is_run" @change="changeCaseIsRun(scope.row)"></el-switch>

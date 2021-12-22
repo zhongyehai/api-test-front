@@ -61,6 +61,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="8%">
+        <template slot-scope="scope">
+          <span>{{ parsUser(scope.row.update_user) }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作" min-width="7%">
         <template slot-scope="scope">
           <el-tooltip class="item" effect="dark" content="若不清楚配置的规则，请勿修改" placement="right-end">

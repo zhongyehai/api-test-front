@@ -37,7 +37,7 @@
           small
           @current-change="getCurrentPageProjectList"
           :current-page="projects.currentPage"
-          :page-size="defaultPage.projectPageSize"
+          :page-size="pageSize"
           layout="prev, pager, next"
           :total="projects.project_total"
         >
@@ -76,12 +76,8 @@ export default {
       defaultProps: {children: 'children', label: 'name'},
 
       // 初始化数据默认的数据
-      defaultPage: {
-        pageNum: 1,
-        projectPageSize: 20,
-        modulePageSize: 20,  // 由于模块操作占了一行，所以只取19条
-        apiPageSize: 20
-      },
+      pageNum: 1,
+      pageSize: 25,
 
       // 项目列表数据
       projects: {
@@ -105,7 +101,7 @@ export default {
 
   created() {
     // 初始化项目列表, 取20条数据
-    this.getProjectList({'pageNum': this.defaultPage.pageNum, 'pageSize': this.defaultPage.projectPageSize})
+    this.getProjectList({'pageNum': this.pageNum, 'pageSize': this.pageSize})
   },
 
   methods: {
@@ -133,7 +129,7 @@ export default {
       this.projects.currentPage = pageNum
       this.getProjectList({
         'pageNum': pageNum,
-        'pageSize': this.defaultPage.projectPageSize
+        'pageSize': this.pageSize
       })
     },
 
