@@ -62,7 +62,7 @@ export const constantRoutes = [
   // 登录
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
+    component: () => import('@/views/users/login/index'),
     hidden: true
   },
 
@@ -111,31 +111,31 @@ export const constantRoutes = [
       {
         path: 'project',
         name: 'Project',
-        component: () => import('@/views/project/index'),
+        component: () => import('@/views/apiTest/project/index'),
         meta: {title: '项目管理', icon: 'el-icon-folder-opened'}
       },
       {
         path: 'api',
         name: 'Api',
-        component: () => import('@/views/module/index'),
+        component: () => import('@/views/apiTest/module/index'),
         meta: {title: '接口管理', icon: 'el-icon-s-order'}
       },
       {
         path: 'case',
         name: 'Case',
-        component: () => import('@/views/caseSet/index'),
+        component: () => import('@/views/apiTest/caseSet/index'),
         meta: {title: '用例管理', icon: 'el-icon-tickets'}
       },
       {
         path: 'funcFile',
         name: 'FuncFile',
-        component: () => import('@/views/funcFile/index'),
+        component: () => import('@/views/apiTest/funcFile/index'),
         meta: {title: '函数文件', icon: 'el-icon-help'}
       },
       {
         path: 'task',
         name: 'Task',
-        component: () => import('@/views/task/index'),
+        component: () => import('@/views/apiTest/task/index'),
         meta: {title: '定时任务', icon: 'el-icon-date'}
       },
       {
@@ -143,13 +143,13 @@ export const constantRoutes = [
         name: 'ReportShow',
         hidden: true,
         meta: {title: '查看测试报告', icon: 'form'},
-        component: () => import('@/views/report/show')
+        component: () => import('@/views/apiTest/report/show')
       },
       {
         path: 'report',
         name: 'Report',
         meta: {title: '测试报告', icon: 'el-icon-s-data'},
-        component: () => import('@/views/report/index')
+        component: () => import('@/views/apiTest/report/index')
       },
       {
         path: 'debug',
@@ -196,13 +196,13 @@ export const constantRoutes = [
         path: 'type',
         name: 'ConfigType',
         meta: {title: '类型管理', icon: 'el-icon-star-off'},
-        component: () => import('@/views/configType/index')
+        component: () => import('@/views/config/configType/index')
       },
       {
         path: 'args',
         name: 'Args',
         meta: {title: '参数管理', icon: 'el-icon-star-on'},
-        component: () => import('@/views/configs/index')
+        component: () => import('@/views/config/configs/index')
       }
     ]
   },
@@ -218,32 +218,32 @@ export const constantRoutes = [
       {
         path: 'kym',
         name: 'KYM',
-        component: () => import('@/views/tools/kymAnalysis'),
+        component: () => import('@/views/testWork/kym'),
         meta: {title: 'KYM分析', icon: 'el-icon-edit-outline'}
       },
       {
-        path: 'case',
-        name: 'Case',
-        component: () => import('@/views/tools/makeTestCase'),
+        path: 'makeTestCase',
+        name: 'MakeTestCase',
+        component: () => import('@/views/testWork/makeTestCase'),
         meta: {title: '用例编写', icon: 'el-icon-s-opportunity'}
       },
       {
         path: 'account',
         name: 'Account',
-        component: () => import('@/views/tools/accountManage'),
+        component: () => import('@/views/testWork/account'),
         meta: {title: '测试账号', icon: 'el-icon-s-check'}
       },
       {
         path: 'diffRecord',
         name: 'DiffRecord',
-        component: () => import('@/views/tools/diffDecord'),
+        component: () => import('@/views/testWork/yapi/diffDecord'),
         meta: {title: 'swagger监控记录', icon: 'el-icon-s-opportunity'}
       },
       {
         path: 'diffRecordShow',
         name: 'DiffRecordShow',
         hidden: true,
-        component: () => import('@/views/tools/diffDetailShow'),
+        component: () => import('@/views/testWork/yapi/diffDetailShow'),
         meta: {title: 'swagger对比详情'}
       }
     ]
@@ -296,13 +296,13 @@ export const constantRoutes = [
       {
         path: 'user',
         name: 'User',
-        component: () => import('@/views/user/index'),
+        component: () => import('@/views/users/user/index'),
         meta: {title: '用户管理', icon: 'el-icon-user-solid', roles: [2, '2']}
       },
       {
         path: 'role',
         name: 'Role',
-        component: () => import('@/views/role/index'),
+        component: () => import('@/views/users/role/index'),
         meta: {title: '权限管理', icon: 'el-icon-user', roles: [2, '2']}
       }
     ]

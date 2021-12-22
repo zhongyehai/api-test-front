@@ -61,6 +61,11 @@ export function putProjectKYM(data) {
   return request({url: '/api/kym', method: 'put', data: data})
 }
 
+// kym导出为xmind
+export function getKymAsXmind(params) {
+  return request({url: '/api/kym/download', method: 'get', params: params, responseType: 'blob'})
+}
+
 // 获取数据池数据
 export function getDataPool() {
   return request({url: '/api/dataPool', method: 'get'})
@@ -86,8 +91,3 @@ export function getDiffRecordAsXmind(params) {
   return request({url: '/api/yapi/diff/download', method: 'get', params: params, responseType: 'blob'})
 }
 
-
-// 导出指定接口对比结果为xmind
-export function getXmidSetup() {
-  return request({url: '/api/xmind/download', method: 'get', responseType: 'blob'})
-}
