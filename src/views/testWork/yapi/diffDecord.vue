@@ -18,10 +18,12 @@
           </el-option>
         </el-select>
 
-        <el-button type="primary"
-                   size="mini"
-                   style="margin-left: 50px"
-                   @click.native="downloadXmidSetup()">下载xmind8安装包
+        <el-button
+          v-show="currentProject"
+          type="primary"
+          size="mini"
+          style="margin-left: 50px"
+          @click.native="downloadXmidSetup()">下载xmind8安装包
         </el-button>
 
       </el-form-item>
@@ -180,7 +182,7 @@ export default {
     },
 
     // 导出为xmind
-    exportDiffRecordAsXmind(row){
+    exportDiffRecordAsXmind(row) {
       getDiffRecordAsXmind({id: row.id}).then(response => {
         this.$set(row, 'downloadLoadingIsShow', false)
         let blob = new Blob([response], {
@@ -195,7 +197,7 @@ export default {
     },
 
     // 下载xmind8安装包
-    downloadXmidSetup(){
+    downloadXmidSetup() {
       window.open('https://dl2.xmind.cn/xmind-8-update9-windows.exe')
     }
   },

@@ -30,9 +30,9 @@
                        class="custom-tree-node"
                        @mouseenter="mouseenter(data)"
                        @mouseleave="mouseleave(data)">
-                    <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start">
+                      <!-- <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start"> -->
                       <span> {{ data.name }} </span>
-                    </el-tooltip>
+                      <!-- </el-tooltip> -->
                     <span v-show="data.showMenu">
                       <el-dropdown size="mini" type="primary" placement="top-start">
                         <i
