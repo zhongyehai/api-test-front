@@ -37,7 +37,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="value" label="配置值" min-width="30%">
+      <el-table-column :show-overflow-tooltip=true prop="value" label="配置值" min-width="28%">
         <template slot-scope="scope">
           <span> {{ scope.row.value }} </span>
         </template>
@@ -61,7 +61,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="8%">
+      <el-table-column :show-overflow-tooltip=true prop="create_user" label="最后修改人" min-width="12%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.update_user) }}</span>
         </template>

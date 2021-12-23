@@ -67,7 +67,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'创建人'" prop="id" align="center" min-width="15%">
+      <el-table-column :label="'创建人'" prop="id" align="center" min-width="12%">
         <template slot-scope="scope">
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
@@ -79,7 +79,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'操作'" align="center" min-width="20%" class-name="small-padding fixed-width">
+      <el-table-column :label="'操作'" align="center" min-width="22%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
