@@ -7,7 +7,7 @@
         <el-scrollbar>
           <el-tree
             ref="pTree"
-            class="filter-tree"
+            class="filter-tree project-tree"
             highlight-current
             default-expand-all
             node-key="id"
@@ -19,9 +19,9 @@
                   slot-scope="{ node, data }"
                   @mouseenter="mouseenter(data)"
                   @mouseleave="mouseleave(data)">
-             <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start">
-              <span> {{ labelWidth ? ellipsis(node.label, labelWidth) : node.label }} </span>
-            </el-tooltip>
+            <!-- <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start"> -->
+              <span> {{ data.name }} </span>
+              <!-- </el-tooltip> -->
             <span v-show="data.showMenu" style="margin-left: 10px">
               <el-button size="mini"
                          type="text"
@@ -94,8 +94,10 @@ export default {
       treeClickCount: 0,
 
       // 当前选中的项目
-      currentProjectId: null
+      currentProjectId: null,
 
+      // 当前鼠标滑入的节点名
+      currentLabel: '',
     }
   },
 
@@ -108,11 +110,18 @@ export default {
 
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
+      if (this.labelWidth) {
+        this.currentLabel = JSON.parse(JSON.stringify(data.name))
+        data.name = this.ellipsis(data.name, this.labelWidth)
+      }
       this.$set(data, 'showMenu', true);
     },
 
     // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
+      if (this.labelWidth) {
+        data.name = this.currentLabel
+      }
       this.$set(data, 'showMenu', false);
     },
 
@@ -181,5 +190,31 @@ export default {
 </script>
 
 <style scoped>
+.project-tree {
+  width: 100%;
+  height: 800px;
+  overflow: scroll;
+}
 
+.project-tree > .el-tree-node {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
+.showName {
+  /*width: 150px;*/
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
 </style>
