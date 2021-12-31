@@ -12,12 +12,12 @@
 
           <el-row>
 
-            <!-- 项目选择 -->
+            <!-- 服务选择 -->
             <el-col :span="12">
-              <el-form-item label="选择项目" class="is-required">
+              <el-form-item label="选择服务" class="is-required">
                 <el-select
                   v-model="projectSelectedId"
-                  placeholder="请选择项目"
+                  placeholder="请选择服务"
                   size="mini"
                   filterable
                   style="min-width: 20%;padding-right:10px"
@@ -33,8 +33,8 @@
             <el-col :span="12">
               <el-tooltip class="item" effect="dark" placement="top-end">
                 <div slot="content">
-                  请确保此定时任务中选中的用例涉及到的所有项目都配置了当前选中环境的域名 <br/>
-                  如：选测试环境，则需确保此定时任务中选中的用例涉及到的所有项目都配置了测试环境的域名
+                  请确保此定时任务中选中的用例涉及到的所有服务都配置了当前选中环境的域名 <br/>
+                  如：选测试环境，则需确保此定时任务中选中的用例涉及到的所有服务都配置了测试环境的域名
                 </div>
                 <el-form-item label="选择环境" class="is-required">
                   <environmentSelectorView
@@ -194,12 +194,12 @@ export default {
       dialogStatus: '',
       tempTask: {},
 
-      projectLists: '',  // 项目列表
-      projectSelectedId: '',  // 项目选择框选择的项目id
+      projectLists: '',  // 服务列表
+      projectSelectedId: '',  // 服务选择框选择的服务id
 
       currentSelectedCaseSet: [],
 
-      tempCaseSetList: [],  // 当前选中项目下的用例集列表
+      tempCaseSetList: [],  // 当前选中服务下的用例集列表
       tempTaskSet: [],  // 解析后带目录的已选中用例集列表[[1,3,5], [4,5]]
 
       caseSelectorIsDisabled: false,  // 用例选择框是否只读
@@ -241,7 +241,7 @@ export default {
       return temp;
     },
 
-    // 获取项目id对应的用例集列表
+    // 获取服务id对应的用例集列表
     getCaseSetByProjectId(project_id) {
       var that = this
       caseSetList({'projectId': project_id}).then(response => {
@@ -373,28 +373,29 @@ export default {
 
   mounted() {
 
-    // 项目树选中项事件
+    // 服务树选中项事件
     this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project, project_list) => {
-      this.projectLists = project_list  // 当前项目所在的项目列表
-      if (project.id !== this.projectSelectedId) {  // 如果项目变了，则把已选中模块置为''
+      this.projectLists = project_list  // 当前服务所在的服务列表
+      if (project.id !== this.projectSelectedId) {  // 如果服务变了，则把已选中模块置为''
         this.tempTask.set_id = ''
       }
-      this.projectSelectedId = project.id  // 当前选中的项目
+      this.projectSelectedId = project.id  // 当前选中的服务
     })
 
-    // 监听项目树菜单点击事件
+    // 监听服务树菜单点击事件
     this.$bus.$on(this.$busEvents.taskDialogIsShow, (status, taskOrProject) => {
-      this.dialogStatus = status
+      // this.dialogStatus = status
       if (status === 'update') {  // 修改
         this.tempTask = taskOrProject
+        this.currentSelectedCaseSet = [taskOrProject.set_id]
       } else {  // 新增
         this.initNewTask()
         this.tempTask.project_id = taskOrProject.id
       }
       this.taskDialogIsShow = true
 
-      // 获取当前项目对应的用例集列表
-      this.tempTaskSet = []
+      // 获取当前服务对应的用例集列表
+      // this.tempTaskSet = []
       this.getCaseSetByProjectId(this.projectSelectedId)
 
       // 初始化时获取当前选择用例集的用例列表
@@ -402,6 +403,8 @@ export default {
       if (this.tempTask.set_id.length === 1) {
         this.getCaseList(this.tempTask.set_id[0])
       }
+
+      this.dialogStatus = status
     })
   },
 

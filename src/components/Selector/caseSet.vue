@@ -30,14 +30,14 @@ export default {
       tempCaseSetId: '',
       caseSetLists: [],
 
-      projectIdHistory: [],  // 用于存项目改变的历史
+      projectIdHistory: [],  // 用于存服务改变的历史
       caseSetIdHistory: []  // 用于存模块改变的历史
     }
   },
 
   mounted() {
 
-    // 监听项目选择框选中的项目id，获取对应的模块列表
+    // 监听服务选择框选中的服务id，获取对应的模块列表
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
         this.getCaseSetListByProjectId(project.id)
@@ -52,7 +52,7 @@ export default {
     }
   },
 
-  // 页面销毁前，关闭bus监听项目选中事件
+  // 页面销毁前，关闭bus监听服务选中事件
   beforeDestroy() {
     // this.$bus.$off(this.$busEvents.projectSelectorChoiceProject)
     if (this.busOnEventName) {
@@ -65,7 +65,7 @@ export default {
 
   methods: {
 
-    // 根据项目id获取用例集
+    // 根据服务id获取用例集
     getCaseSetListByProjectId(project_id) {
       caseSetList({'projectId': project_id}).then(response => {
         this.caseSetLists = response.data.data
@@ -87,7 +87,7 @@ export default {
   created() {
     this.tempCaseSetId = this.caseSetId
 
-    // 第一次加载的时候，如果传了项目id，则获取对应的用例集列表
+    // 第一次加载的时候，如果传了服务id，则获取对应的用例集列表
     if (this.projectId) {
       this.getCaseSetListByProjectId(this.projectId)
     }
@@ -95,7 +95,7 @@ export default {
 
   watch: {
 
-    // 监控 状态，为true时，判断项目id是否有改变，有改变则重新请求用例集列表，用于监控dialog是否为打开状态
+    // 监控 状态，为true时，判断服务id是否有改变，有改变则重新请求用例集列表，用于监控dialog是否为打开状态
     "isWatchStatus": {
       handler(newVal, oldVal) {
         if (newVal) {
@@ -108,7 +108,7 @@ export default {
       }
     },
 
-    // 监控项目id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求用例集列表
+    // 监控服务id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求用例集列表
     'projectId': {
       handler(newVal, oldVal) {
         if (this.isWatchStatus) {

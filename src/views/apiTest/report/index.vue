@@ -3,9 +3,9 @@
   <div class="app-container">
 
     <el-row>
-      <!-- 项目树 -->
-      <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
-        <!-- 项目列表树组件 -->
+      <!-- 服务树 -->
+      <el-col style="width: 15%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
+        <!-- 服务列表树组件 -->
         <projectTreeView
           ref="projectTree"
           :busEventClickTree="$busEvents.projectTreeChoiceProject"
@@ -15,7 +15,7 @@
       </el-col>
 
       <!-- 测试报告 -->
-      <el-col style="width: 80%">
+      <el-col style="width: 85%">
         <!-- 测试报告列表 -->
         <el-tabs v-model="reportTab" class="table_padding" style="margin-left: 5px">
           <el-tab-pane label="测试报告列表" :name="reportTab">
@@ -133,7 +133,7 @@ export default {
   },
   methods: {
 
-    // 获取项目对应的报告列表
+    // 获取服务对应的报告列表
     getReportList() {
       reportList({projectId: this.projectId, pageNum: this.PageNum, pageSize: this.PageSize}).then(response => {
         this.reportDataList = response.data.data
@@ -240,7 +240,7 @@ export default {
     })
   },
 
-  // 页面销毁前，关闭bus监听项目选中事件
+  // 页面销毁前，关闭bus监听服务选中事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.projectTreeChoiceProject)
   },

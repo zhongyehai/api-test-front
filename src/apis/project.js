@@ -4,27 +4,27 @@ function Func(method, data = null, params = null) {
   return request({url: '/api/project', method: method, data: data, params: params});
 }
 
-// 添加项目
+// 添加服务
 export function postProject(data) {
   return Func('post', data)
 }
 
-// 查找项目
+// 查找服务
 export function getProject(params) {
   return Func('get', null, params)
 }
 
-// 修改项目
+// 修改服务
 export function putProject(data) {
   return Func('put', data)
 }
 
-// 删除项目
+// 删除服务
 export function deleteProject(data) {
   return Func('delete', data)
 }
 
-// 获取项目列表
+// 获取服务列表
 export function projectList(params) {
   return request({url: '/api/project/list', method: 'get', params: params});
 }

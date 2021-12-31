@@ -133,7 +133,7 @@ export default {
       // 用例新增/编辑临时数据
       tempCase: {},
 
-      // 项目列表数据
+      // 服务列表数据
       project_list: [],
 
       // 模块列表数据

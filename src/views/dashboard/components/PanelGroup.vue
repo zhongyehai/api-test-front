@@ -7,7 +7,7 @@
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            项目数
+            服务数
           </div>
           <count-to :start-val="0" :end-val="title.project" :duration="1" class="card-panel-num"/>
         </div>

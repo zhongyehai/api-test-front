@@ -2,20 +2,20 @@
   <div class="app-container">
     <el-row>
 
-      <!-- 项目树 -->
-      <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
-        <!-- 项目列表树组件 -->
+      <!-- 服务树 -->
+      <el-col style="width: 15%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
+        <!-- 服务列表树组件 -->
         <projectTreeView
           ref="projectTree"
           :busEventClickTree="$busEvents.projectTreeChoiceProject"
           :busEventClickMenu="$busEvents.taskDialogIsShow"
           :menuName="'添加任务'"
-          :labelWidth="15"
+          :labelWidth="5"
         ></projectTreeView>
       </el-col>
 
       <!-- 定时任务 -->
-      <el-col style="width: 80%">
+      <el-col style="width: 85%">
         <!-- 定时任务列表 -->
         <el-tabs v-model="taskTab" class="table_padding" style="margin-left: 5px">
           <el-tab-pane label="定时任务列表" :name="taskTab">
@@ -330,7 +330,7 @@ export default {
       this.getTaskList()
     })
 
-    // 项目树选中项事件
+    // 服务树选中项事件
     this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project) => {
       this.projectId = project.id
       this.getTaskList()
@@ -346,7 +346,7 @@ export default {
     })
   },
 
-  // 页面销毁前，关闭bus监听项目选中事件
+  // 页面销毁前，关闭bus监听服务选中事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.taskDialogIsCommit)
     this.$bus.$off(this.$busEvents.projectTreeChoiceProject)

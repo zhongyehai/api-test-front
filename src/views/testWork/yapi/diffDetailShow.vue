@@ -39,7 +39,7 @@ export default {
       ME: null,
       diffData: {
         "nodeData": {
-          "topic": "新建项目",
+          "topic": "新建服务",
           "root": true,
           "children": []
         }

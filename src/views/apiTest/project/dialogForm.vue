@@ -3,7 +3,7 @@
 
     <!-- 新增/修改表单 -->
     <el-dialog
-      :title=" dialogStatus === 'add' ? '新增项目' : '修改项目'"
+      :title=" dialogStatus === 'add' ? '新增服务' : '修改服务'"
       :visible.sync="dialogFormVisible"
       :close-on-click-modal="false"
       width="60%"
@@ -15,10 +15,10 @@
                style="min-width: 200px;"
       >
 
-        <!-- 项目信息 -->
+        <!-- 服务信息 -->
         <el-tabs>
-          <el-tab-pane label="项目信息">
-            <el-form-item :label="'项目名'" prop="name" size="mini" class="is-required">
+          <el-tab-pane label="服务信息">
+            <el-form-item :label="'服务名'" prop="name" size="mini" class="is-required">
               <el-input v-model="tempProject.name"/>
             </el-form-item>
 
@@ -37,7 +37,7 @@
             </el-form-item>
 
             <!-- 测试环境 -->
-            <el-form-item :label="'测试环境'" prop="test" class="filter-item" size="mini">
+            <el-form-item :label="'测试环境'" prop="test" class="filter-item is-required" size="mini">
               <el-input v-model="tempProject.test"  placeholder="测试环境域名，必填，100位以内"/>
             </el-form-item>
 
@@ -134,7 +134,7 @@ export default {
 
       // 校验规则
       rules: {
-        name: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入服务名称', trigger: 'blur' }],
         manager: [
           // { required: true, message: '请选择负责人', trigger: 'blur' },
           // {
@@ -148,13 +148,13 @@ export default {
           //   trigger: 'change',
           // }
         ],
-        test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }],
+        // test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }],
       }
     }
   },
 
   methods: {
-    // 初始化临时项目数据 (新增)
+    // 初始化临时服务数据 (新增)
     initTempProject() {
       this.tempProject = {
         id: null,
@@ -170,7 +170,7 @@ export default {
       }
     },
 
-    // 初始化临时项目数据 (修改)
+    // 初始化临时服务数据 (修改)
     updateTempProject(row) {
       this.tempProject.id = row.id
       this.tempProject.name = row.name
@@ -200,7 +200,7 @@ export default {
       }
     },
 
-    // 新增项目
+    // 新增服务
     addProject() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -218,7 +218,7 @@ export default {
       });
     },
 
-    // 修改项目
+    // 修改服务
     changProject() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -236,7 +236,7 @@ export default {
       });
     },
 
-    // 数据提交成功后，向父组件发送提交成功的消息，父组件重新请求项目列表
+    // 数据提交成功后，向父组件发送提交成功的消息，父组件重新请求服务列表
     sendIsCommitStatus() {
       this.$bus.$emit(this.$busEvents.projectDialogCommitSuccess, 'success')
     }

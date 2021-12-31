@@ -1,7 +1,7 @@
 <template>
   <div>
 
-    <!-- 项目选择框 -->
+    <!-- 服务选择框 -->
     <projectSelectorView
       :busEmitEventName="$busEvents.projectSelectorChoiceProject"
     ></projectSelectorView>
@@ -96,7 +96,7 @@ export default {
 
   mounted() {
 
-    // 监听选中项目
+    // 监听选中服务
     this.$bus.$on(this.$busEvents.projectSelectorChoiceProject, (project) => {
       this.currentProjectId = project
       this.getModulesByProjectId(project.id)
@@ -139,7 +139,7 @@ export default {
       return temp;
     },
 
-    // 获取项目id对应的模块列表
+    // 获取服务id对应的模块列表
     getModulesByProjectId(project_id) {
       moduleList({'projectId': project_id}).then(response => {
         this.tempModuleList = this.arrayToTree(response.data.data, null)

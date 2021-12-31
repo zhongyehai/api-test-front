@@ -199,10 +199,10 @@ export default {
       // 状态列表
       status_list: [],
 
-      // 项目数据表格起始
+      // 服务数据表格起始
       tableKey: 0,
 
-      // 项目数据表格总条数
+      // 服务数据表格总条数
       total: 0,
 
       // 编辑框的显示状态
@@ -239,7 +239,7 @@ export default {
       this.status_list = [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}]
     },
 
-    // 初始化临时项目数据
+    // 初始化临时服务数据
     initTempUser() {
       this.tempUser = {
         id: undefined,
@@ -273,7 +273,7 @@ export default {
       this.listQuery = {
         pageNum: 1,
         pageSize: 20,
-        name: undefined,  // 项目名
+        name: undefined,  // 服务名
         manager: undefined,  // 负责人
         create_user: undefined, // 创建人
       }
@@ -303,7 +303,7 @@ export default {
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.initTempUser(); // 初始化临时数据模板
-          this.getUserList(); // 重新从后台获取项目列表
+          this.getUserList(); // 重新从后台获取服务列表
         }
       })
     },
@@ -316,7 +316,7 @@ export default {
         if (this.showMessage(this, response)) {
           this.dialogFormVisible = false
           this.initTempUser(); // 初始化临时数据模板
-          this.getUserList(); // 重新从后台获取项目列表
+          this.getUserList(); // 重新从后台获取服务列表
         }
       })
     },

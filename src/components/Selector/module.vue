@@ -28,14 +28,14 @@ export default {
       tempModuleId: '',
       tempModuleList: [],
 
-      projectIdHistory: [],  // 用于存项目改变的历史
+      projectIdHistory: [],  // 用于存服务改变的历史
       moduleListHistory: [],  // 用于存模块改变的历史
     }
   },
 
   mounted() {
 
-    // 监听项目选择框选中的项目id，获取对应的模块列表
+    // 监听服务选择框选中的服务id，获取对应的模块列表
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
         this.getModulesByProjectId(project.id)
@@ -50,7 +50,7 @@ export default {
     }
   },
 
-  // 组件销毁前，关闭bus监听项目选中事件
+  // 组件销毁前，关闭bus监听服务选中事件
   beforeDestroy() {
     if (this.busOnEventName) {
       this.$bus.$off(this.busOnEventName)
@@ -62,7 +62,7 @@ export default {
 
   methods: {
 
-    // 获取项目id对应的模块列表
+    // 获取服务id对应的模块列表
     getModulesByProjectId(project_id) {
       moduleList({'projectId': project_id}).then(response => {
         this.tempModuleList = response.data.data
@@ -93,11 +93,11 @@ export default {
 
   watch: {
 
-    // 监控 状态，为true时，判断项目id是否有改变，有改变则重新请求模块列表
+    // 监控 状态，为true时，判断服务id是否有改变，有改变则重新请求模块列表
     "status": {
       handler(newVal, oldVal) {
         if (newVal) {
-          // 判断项目id是否有改变，有改变则重新请求模块列表
+          // 判断服务id是否有改变，有改变则重新请求模块列表
           if (this.projectIdHistory && this.projectIdHistory[0] !== this.projectIdHistory[1]) {
             this.getModulesByProjectId(this.projectIdHistory[0])
           } else {
@@ -107,7 +107,7 @@ export default {
       }
     },
 
-    // 监控项目id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求模块列表
+    // 监控服务id，发生变化时存到临时变量 projectIdHistory，待 status 监听到为true时请求模块列表
     'projectId': {
       handler(newVal, oldVal) {
         if (this.status) {

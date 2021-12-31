@@ -12,7 +12,7 @@
             <el-col style="border:1px solid;border-color: #ffffff #ffffff rgb(234, 234, 234) #ffffff;padding:2px">
               <el-dropdown @command="caseSetCommand" style="float:right;">
                                       <span class="el-dropdown-link" style="color: #4ae2d5">
-                                        用例集操作{{ projectId ? '' : '（请先选择项目）' }}
+                                        用例集操作{{ projectId ? '' : '（请先选择服务）' }}
                                         <i class="el-icon-arrow-down el-icon--right"></i>
                                       </span>
                 <el-dropdown-menu slot="dropdown">
@@ -85,7 +85,7 @@ export default {
       // 树的显示规则详见element-ui
       defaultProps: {children: 'children', label: 'name'},
 
-      // 当前选中的项目id
+      // 当前选中的服务id
       projectId: '',
 
       // 初始化数据默认的数据
@@ -183,7 +183,7 @@ export default {
 
   mounted() {
 
-    // 监听选中的项目
+    // 监听选中的服务
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
         console.log('caseSetTree.mounted.bus.on.busOnEventName.project: ', JSON.stringify(project))

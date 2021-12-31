@@ -2,10 +2,10 @@
   <div class="app-container">
 
     <el-form label-width="120px">
-      <el-form-item :label="'选择项目：'" size="mini">
+      <el-form-item :label="'选择服务：'" size="mini">
         <el-select
           v-model="currentProject"
-          placeholder="请选择项目"
+          placeholder="请选择服务"
           size="mini"
           @change="getKYMByProject"
         >
@@ -61,8 +61,8 @@
         label-position="right"
         label-width="90px"
         style="min-width: 400px;">
-        <el-form-item :label="'项目名'" class="filter-item is-required" prop="name" size="mini">
-          <el-input v-model="formProject" placeholder="项目名称"/>
+        <el-form-item :label="'服务名'" class="filter-item is-required" prop="name" size="mini">
+          <el-input v-model="formProject" placeholder="服务名称"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -91,16 +91,16 @@ export default {
   data() {
     return {
 
-      // 项目列表
+      // 服务列表
       projectList: [],
 
       // 默认展开的项
       activeNames: [],
 
-      // 下拉框选中的项目
+      // 下拉框选中的服务
       currentProject: '',
 
-      // form表单的项目名
+      // form表单的服务名
       formProject: '',
 
       submitButtonIsLoading: false,
@@ -114,7 +114,7 @@ export default {
       ME: null,
       data: {
         "nodeData": {
-          "topic": "新建项目",
+          "topic": "新建服务",
           "root": true,
           "children": []
         }
@@ -149,7 +149,7 @@ export default {
       this.$set(row, 'enabled', true)
     },
 
-    // 新增项目
+    // 新增服务
     addKYMProject() {
       this.submitButtonIsLoading = true
       addKYM({project: this.formProject}).then(response => {
@@ -167,14 +167,14 @@ export default {
       })
     },
 
-    // 获取项目列表
+    // 获取服务列表
     getKYMProjectList() {
       KYMProjectList().then(response => {
         this.projectList = response.data
       })
     },
 
-    // 获取指定项目的KYM
+    // 获取指定服务的KYM
     getKYMByProject(value) {
       this.getLoading = true
       getProjectKYM({project: value}).then(response => {

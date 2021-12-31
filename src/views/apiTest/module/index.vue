@@ -4,7 +4,7 @@
 
     <el-row>
 
-      <!-- 第一列项目树 -->
+      <!-- 第一列服务树 -->
       <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
         <el-scrollbar>
         <el-tabs v-model="projectTab" class="table_padding table_project">
@@ -18,7 +18,7 @@
                   :check-on-click-node="false"
                   :data="dataList"
                   :default-expanded-keys="[defaultModule]"
-                  :empty-text="'请先创建项目'"
+                  :empty-text="'请先创建服务'"
                   :expand-on-click-node="false"
                   :filter-node-method="filterNode"
                   :highlight-current="true"
@@ -180,7 +180,7 @@ export default {
 
       isShowLoading: false,
 
-      projectTab: '项目和模块',
+      projectTab: '服务和模块',
 
       defaultModule: {},
       dataList: [],
@@ -263,7 +263,7 @@ export default {
             num: '',
             level: this.dialog_temp_node.level + 1,
             parent: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
-            // node为第一级，则说明是项目级，直接取id，非第一级，则取当前node的project_id
+            // node为第一级，则说明是服务级，直接取id，非第一级，则取当前node的project_id
             project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
           }).then(response => {
             this.isShowLoading = false
@@ -334,7 +334,7 @@ export default {
       }
       this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
 
-      // 点击的是项目，且项目下无节点，则获取项目下的节点
+      // 点击的是服务，且服务下无节点，则获取服务下的节点
       if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
         moduleTree({'project_id': data.id}).then(response => {
           if (this.showMessage(this, response)) {
@@ -348,7 +348,7 @@ export default {
       this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded
     },
 
-    // 获取项目列表
+    // 获取服务列表
     getProjectList() {
       projectList().then(response => {
         this.tempProjectList = response.data.data
@@ -356,7 +356,7 @@ export default {
       })
     },
 
-    // 获取项目
+    // 获取服务
     getCurrentProject(project_id) {
       for (let index in this.tempProjectList) {
         let currentProject = this.tempProjectList[index]

@@ -3,23 +3,23 @@
 export default {
 
   // 树组件 监听事件
-  projectTreeChoiceProject: 'projectTreeChoiceProject',  // 项目树选中项目事件
+  projectTreeChoiceProject: 'projectTreeChoiceProject',  // 服务树选中服务事件
   moduleTreeChoiceModule: 'moduleTreeChoiceModule',  // 模块树选中模块事件
   moduleTreeCommand: 'moduleTreeCommand',  // 模块树选中模块要执行的命令，添加、修改
   caseSetTreeChoiceCaseSet: 'caseSetTreeChoiceCaseSet',  // 用例集树选中用例集事件
   caseSetCommand: 'caseSetCommand',  // 用例集树选中要执行的命令，添加、修改
 
   // 下拉框 监听事件
-  projectSelectorChoiceProject: 'projectSelectorChoiceProject',  // 项目下拉框选中项目事件
-  projectSelectorGetProjectList: 'projectSelectorGetProjectList',  // 项目下拉框获取项目列表事件
+  projectSelectorChoiceProject: 'projectSelectorChoiceProject',  // 服务下拉框选中服务事件
+  projectSelectorGetProjectList: 'projectSelectorGetProjectList',  // 服务下拉框获取服务列表事件
 
   moduleSelectorChoiceModule: 'moduleSelectorChoiceModule',  // 模块下拉框选中模块事件
   methodSelectorChoiceMethod: 'methodSelectorChoiceMethod',  // 请求方法下拉框选中请求方法事件
-  caseSetSelectorChoiceCaseSet: 'caseSetSelectorChoiceCaseSet',  // 项目下拉框选中项目事件
+  caseSetSelectorChoiceCaseSet: 'caseSetSelectorChoiceCaseSet',  // 服务下拉框选中服务事件
 
   // dialog 监听事件
-  showProjectDialog: 'showProjectDialog',  // 项目 Dialog 框 的状态，新增/编辑
-  projectDialogCommitSuccess: 'projectDialogCommitSuccess',  // 项目 Dialog 框 的提交状态
+  showProjectDialog: 'showProjectDialog',  // 服务 Dialog 框 的状态，新增/编辑
+  projectDialogCommitSuccess: 'projectDialogCommitSuccess',  // 服务 Dialog 框 的提交状态
 
   moduleDialogCommit: 'moduleDialogCommit',  // 模块 Dialog 框提交事件
   moduleIndexAddApi: 'moduleIndexAddApi',  // 模块管理 首页点击添加接口事件

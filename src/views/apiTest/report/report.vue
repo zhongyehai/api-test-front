@@ -2,8 +2,8 @@
     <div class="reportManage">
 
         <el-form :inline="true" class="demo-form-inline search-style" size="small">
-            <el-form-item label="项目" labelWidth="110px">
-                <el-select v-model="form.projectId" placeholder="请选择项目">
+            <el-form-item label="服务" labelWidth="110px">
+                <el-select v-model="form.projectId" placeholder="请选择服务">
                     <el-option
                             v-for="(item) in proAndIdData"
                             :key="item.id"
@@ -34,7 +34,7 @@
                 <el-button type="primary" @click.native="handleCurrentChange(1)" size="small">搜索</el-button>
 
                 <!--<el-button type="primary" @click.native="reset()" size="small">重置</el-button>-->
-                <!--<el-button type="primary" size="small" @click.native="runProject()">跑项目</el-button>-->
+                <!--<el-button type="primary" size="small" @click.native="runProject()">跑服务</el-button>-->
                 <!--<el-button type="primary" size="small"@click.native="runModel()" >跑模块</el-button>-->
                 <!--<el-button type="primary" size="small" @click.native="runScene()" :loading="this.loading">跑业务-->
                 <!--</el-button>-->
@@ -52,7 +52,7 @@
 
                 <el-table-column
                         prop="project_name"
-                        label="所属项目"
+                        label="所属服务"
                         minWidth="50">
                 </el-table-column>
 

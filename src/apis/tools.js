@@ -46,17 +46,17 @@ export function addKYM(data) {
   return request({url: '/api/kym/project', method: 'post', data: data})
 }
 
-// 获取kym项目列表
+// 获取kym服务列表
 export function KYMProjectList() {
   return request({url: '/api/kym/project/list', method: 'get'})
 }
 
-// 获取项目的kym
+// 获取服务的kym
 export function getProjectKYM(params) {
   return request({url: '/api/kym', method: 'get', params: params})
 }
 
-// 修改项目的kym
+// 修改服务的kym
 export function putProjectKYM(data) {
   return request({url: '/api/kym', method: 'put', data: data})
 }
@@ -71,7 +71,7 @@ export function getDataPool() {
   return request({url: '/api/dataPool', method: 'get'})
 }
 
-// 获取接口对比项目列表
+// 获取接口对比服务列表
 export function getDiffRecordProjectList() {
   return request({url: '/api/diffRecord/project', method: 'get'})
 }

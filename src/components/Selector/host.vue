@@ -82,7 +82,7 @@ export default {
 
   mounted() {
 
-    // 监听项目选择器的变化
+    // 监听服务选择器的变化
     if (this.busOnEventName) {
       this.$bus.$on(this.busOnEventName, (project) => {
         this.tempHostList = project.hosts
@@ -111,7 +111,7 @@ export default {
       }
     },
 
-    // 实时更新项目的host列表
+    // 实时更新服务的host列表
     'hostList': {
       handler(newVal, oldVal) {
         this.tempHostList = newVal

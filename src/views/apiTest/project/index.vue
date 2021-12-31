@@ -3,7 +3,7 @@
 
     <!-- 搜索、添加栏 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'项目名'" style="width: 400px;" class="filter-item" size="mini"
+      <el-input v-model="listQuery.name" :placeholder="'服务名'" style="width: 400px;" class="filter-item" size="mini"
                 @keyup.enter.native="handleFilter"/>
       <el-select v-model="listQuery.create_user" :placeholder="'选择创建人'" clearable style="margin-left: 10px" size="mini"
                  class="filter-item">
@@ -46,7 +46,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'项目名'" prop="name" align="center" min-width="15%" :show-overflow-tooltip=true>
+      <el-table-column :label="'服务名'" prop="name" align="center" min-width="15%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span> {{ scope.row.name }} </span>
         </template>
@@ -85,7 +85,7 @@
       <el-table-column :label="'操作'" align="center" min-width="17%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
 
-          <el-tooltip v-show="row.yapi_id" class="item" effect="dark" content="从yapi拉取此项目下的模块、接口信息" placement="top-start">
+          <el-tooltip v-show="row.yapi_id" class="item" effect="dark" content="从yapi拉取此服务下的模块、接口信息" placement="top-start">
             <el-button
               size="mini"
               icon="el-icon-refresh"
@@ -145,24 +145,24 @@ export default {
       listQuery: {
         pageNum: 1,
         pageSize: 20,
-        name: undefined,  // 项目名
+        name: undefined,  // 服务名
         manager: undefined,  // 负责人
         create_user: undefined, // 创建人
       },
 
-      // 当前选中的项目
+      // 当前选中的服务
       currentProject: {},
 
       // 用户列表
       user_list: [],
 
-      // 项目列表
+      // 服务列表
       project_list: [],
 
-      // 项目数据表格起始
+      // 服务数据表格起始
       tableKey: 0,
 
-      // 项目数据表格总条数
+      // 服务数据表格总条数
       total: 0,
 
       // dialog框状态，edit 为编辑数据, create 为新增数据
@@ -182,7 +182,7 @@ export default {
     // 初始化用户列表
     this.getUserList()
 
-    // 初始化项目列表
+    // 初始化服务列表
     this.getProjectList()
 
   },
@@ -194,7 +194,7 @@ export default {
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'edit', row)
     },
 
-    // 从yapi同步项目信息
+    // 从yapi同步服务信息
     pullByYapi(row){
       this.$set(row, 'isPullByYapi', true)
       projectPull({id: row.id}).then(response => {
@@ -210,7 +210,7 @@ export default {
       })
     },
 
-    // 获取项目列表
+    // 获取服务列表
     getProjectList() {
       this.listLoading = true
       projectList(this.listQuery).then(response => {
@@ -220,13 +220,13 @@ export default {
       this.listLoading = false
     },
 
-    // 删除项目
+    // 删除服务
     delProject(row) {
       this.$set(row, 'submitButtonIsLoading', true)
       deleteProject({"id": row.id}).then(response => {
         this.$set(row, 'submitButtonIsLoading', false)
         if (this.showMessage(this, response)) {
-          this.getProjectList(); // 重新从后台获取项目列表
+          this.getProjectList(); // 重新从后台获取服务列表
         }
       })
     },
@@ -237,7 +237,7 @@ export default {
       this.getProjectList()
     },
 
-    // 点击添加项目
+    // 点击添加服务
     addProject() {
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'add')
     },
@@ -257,7 +257,7 @@ export default {
       this.listQuery = {
         pageNum: 1,
         pageSize: 20,
-        name: undefined,  // 项目名
+        name: undefined,  // 服务名
         manager: undefined,  // 负责人
         create_user: undefined, // 创建人
       }
@@ -279,34 +279,6 @@ export default {
         this.listQuery.sort = '-id'
       }
       this.handleFilter()
-    },
-
-
-    // 下载表格
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'name', 'hosts', 'create_user', 'manger']
-        const filterVal = ['id', 'name', 'hosts', 'create_user', 'manger']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: '项目列表'
-        })
-        this.downloadLoading = false
-      })
-    },
-
-    // 下载表格取json的值
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
     }
   },
   mounted() {

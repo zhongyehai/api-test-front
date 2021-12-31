@@ -115,10 +115,10 @@ export default {
       // 用户列表
       user_list: [],
 
-      // 项目列表
+      // 服务列表
       projectList: [],
 
-      // 当前选中的项目
+      // 当前选中的服务
       currentProject: '',
 
       // 数据列表
@@ -139,7 +139,7 @@ export default {
 
   methods: {
 
-    // 获取项目列表
+    // 获取服务列表
     getKYMProjectList() {
       getDiffRecordProjectList().then(response => {
         this.projectList = response.data
@@ -163,7 +163,7 @@ export default {
       }
     },
 
-    // 选中项目
+    // 选中服务
     getDiffRecordListData(value) {
       getDiffRecordList({
         'pageNum': this.PageNum,

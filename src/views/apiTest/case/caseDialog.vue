@@ -41,8 +41,8 @@
             <el-col :span="6">
               <el-tooltip class="item" effect="dark" placement="top-end">
                 <div slot="content">
-                  请确保此用例涉中及到的所有项目都配置了当前选中环境的域名 <br/>
-                  如：选测试环境，则需确保此用例涉及到的所有项目都配置了测试环境的域名
+                  请确保此用例涉中及到的所有服务都配置了当前选中环境的域名 <br/>
+                  如：选测试环境，则需确保此用例涉及到的所有服务都配置了测试环境的域名
                 </div>
                 <el-form-item label="环境" class="is-required" style="margin-bottom: 5px">
                   <environmentSelectorView

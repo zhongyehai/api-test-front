@@ -66,7 +66,7 @@ export default {
     }
   },
 
-  // 页面销毁前，关闭bus监听项目选中事件
+  // 页面销毁前，关闭bus监听服务选中事件
   beforeDestroy() {
     // this.$bus.$off(this.$busEvents.caseSetSelectorChoiceCaseSet)
     if (this.busOnEventName) {

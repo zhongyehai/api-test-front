@@ -35,7 +35,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="project" label="项目" min-width="10%">
+      <el-table-column :show-overflow-tooltip=true prop="project" label="服务" min-width="10%">
         <template slot-scope="scope">
           <span> {{ scope.row.project }} </span>
         </template>
@@ -108,8 +108,8 @@
         label-position="right"
         label-width="90px"
         style="min-width: 400px;">
-        <el-form-item :label="'项目名'" class="filter-item is-required" prop="name" size="mini">
-          <el-input v-model="currentAccount.project" placeholder="项目名称"/>
+        <el-form-item :label="'服务名'" class="filter-item is-required" prop="name" size="mini">
+          <el-input v-model="currentAccount.project" placeholder="服务名称"/>
         </el-form-item>
         <el-form-item :label="'账户名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="currentAccount.name" placeholder="账户名称"/>

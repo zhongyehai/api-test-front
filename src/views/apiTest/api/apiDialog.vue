@@ -215,7 +215,7 @@ export default {
       // 请求方法选择组件选择的请求方法
       methodSelectorChoiceMethod: '',
 
-      // 当前选中的项目的hosts列表
+      // 当前选中的服务的hosts列表
       // currentChoiceProjectHosts: [],
 
       // 是否展示请求接口时的等待状态
@@ -440,7 +440,7 @@ export default {
 
   watch: {
 
-    // 监控父组件选中的项目, 实时获取对应的模块列表
+    // 监控父组件选中的服务, 实时获取对应的模块列表
     'currentProject': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {

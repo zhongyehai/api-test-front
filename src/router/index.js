@@ -112,7 +112,7 @@ export const constantRoutes = [
         path: 'project',
         name: 'Project',
         component: () => import('@/views/apiTest/project/index'),
-        meta: {title: '项目管理', icon: 'el-icon-folder-opened'}
+        meta: {title: '服务管理', icon: 'el-icon-folder-opened'}
       },
       {
         path: 'api',

@@ -1,13 +1,13 @@
 <template>
-  <!-- 结构树/项目列表 -->
+  <!-- 结构树/服务列表 -->
   <div class="tabs">
     <el-tabs v-model="projectTab">
-      <el-tab-pane label="项目列表" name="project">
-        <!-- 项目列表和操作 -->
+      <el-tab-pane label="服务列表" name="project">
+        <!-- 服务列表和操作 -->
         <el-scrollbar>
           <el-tree
             ref="pTree"
-            class="filter-tree"
+            class="filter-tree project-tree"
             highlight-current
             default-expand-all
             node-key="id"
@@ -19,9 +19,9 @@
                   slot-scope="{ node, data }"
                   @mouseenter="mouseenter(data)"
                   @mouseleave="mouseleave(data)">
-             <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start">
-              <span> {{ labelWidth ? ellipsis(node.label, labelWidth) : node.label }} </span>
-            </el-tooltip>
+            <!-- <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start"> -->
+              <span> {{ data.name }} </span>
+              <!-- </el-tooltip> -->
             <span v-show="data.showMenu" style="margin-left: 10px">
               <el-button size="mini"
                          type="text"
@@ -32,7 +32,7 @@
 
           </el-tree>
         </el-scrollbar>
-        <!-- 项目列表分页 -->
+        <!-- 服务列表分页 -->
         <el-pagination
           small
           @current-change="getCurrentPageProjectList"
@@ -79,7 +79,7 @@ export default {
       pageNum: 1,
       pageSize: 25,
 
-      // 项目列表数据
+      // 服务列表数据
       projects: {
         project_total: 0,
         project_list: [],
@@ -93,14 +93,16 @@ export default {
       // 定义点击次数, 默认0次，区分单击和双击
       treeClickCount: 0,
 
-      // 当前选中的项目
-      currentProjectId: null
+      // 当前选中的服务
+      currentProjectId: null,
 
+      // 当前鼠标滑入的节点名
+      currentLabel: '',
     }
   },
 
   created() {
-    // 初始化项目列表, 取20条数据
+    // 初始化服务列表, 取20条数据
     this.getProjectList({'pageNum': this.pageNum, 'pageSize': this.pageSize})
   },
 
@@ -108,11 +110,18 @@ export default {
 
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
+      if (this.labelWidth) {
+        this.currentLabel = JSON.parse(JSON.stringify(data.name))
+        data.name = this.ellipsis(data.name, this.labelWidth)
+      }
       this.$set(data, 'showMenu', true);
     },
 
     // 鼠标滑出的时候，把可展示菜单的标识去掉
     mouseleave(data) {
+      if (this.labelWidth) {
+        data.name = this.currentLabel
+      }
       this.$set(data, 'showMenu', false);
     },
 
@@ -124,7 +133,7 @@ export default {
       return value
     },
 
-    // 获取该分页的项目列表
+    // 获取该分页的服务列表
     getCurrentPageProjectList(pageNum) {
       this.projects.currentPage = pageNum
       this.getProjectList({
@@ -133,7 +142,7 @@ export default {
       })
     },
 
-    // 获取项目列表
+    // 获取服务列表
     getProjectList(params = null) {
       projectList(params).then(response => {
         this.projects.project_list = response.data.data
@@ -146,7 +155,7 @@ export default {
       })
     },
 
-    // 点击项目时，提交单击的bus事件，当前选中的项目，当前所在页的项目列表
+    // 点击服务时，提交单击的bus事件，当前选中的服务，当前所在页的服务列表
     projectClick(project) {
       if (this.busEventClickTree) {
         this.$bus.$emit(this.busEventClickTree, project, this.projects.project_list)
@@ -157,7 +166,7 @@ export default {
     // 点击菜单时，提交点击菜单触发的bus事件
     clickMenu(node, data) {
       if (this.busEventClickMenu) {
-        // 如果当前任务列表的项目id不为当前点击的项目id，则请求当前点击的项目的任务列表
+        // 如果当前任务列表的服务id不为当前点击的服务id，则请求当前点击的服务的任务列表
         if (this.busEventClickTree && this.currentProjectId !== data.id) {
           this.$bus.$emit(this.busEventClickTree, data)
         }
@@ -167,7 +176,7 @@ export default {
     }
   },
 
-  // 当请求项目列表，返回的数据变了之后，默认点击第一条数据
+  // 当请求服务列表，返回的数据变了之后，默认点击第一条数据
   watch: {
     'defaultSelectedProject': function (newVal, oldVal) {
       if (newVal) {
@@ -181,5 +190,31 @@ export default {
 </script>
 
 <style scoped>
+.project-tree {
+  width: 100%;
+  height: 800px;
+  overflow: scroll;
+}
 
+.project-tree > .el-tree-node {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
+.showName {
+  /*width: 150px;*/
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
 </style>

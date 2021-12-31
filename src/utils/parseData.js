@@ -1,4 +1,4 @@
-// 根据项目id，从初始化的项目列表中取对应项目的hosts
+// 根据服务id，从初始化的服务列表中取对应服务的hosts
 export function parseHostByProjectId(project_list, project_id) {
   for (let project_index in project_list) {
     let project = project_list[project_index]

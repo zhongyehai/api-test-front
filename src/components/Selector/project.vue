@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="tempProjectId"
-    placeholder="请选择项目"
+    placeholder="请选择服务"
     size="mini"
     filterable
     :disabled="isDisabled"
@@ -31,14 +31,14 @@ export default {
   },
   methods: {
 
-    // 获取项目列表
+    // 获取服务列表
     getProjectList() {
       projectList().then(response => {
         this.projectLists = response.data.data
       })
     },
 
-    // 遍历项目列表，获取对应id的项目信息
+    // 遍历服务列表，获取对应id的服务信息
     getProjectFromProjectList(projectId) {
       for (let index in this.projectLists) {
         if (this.projectLists[index]['id'] === projectId) {
@@ -47,7 +47,7 @@ export default {
       }
     },
 
-    // 通过bus发送选中的项目
+    // 通过bus发送选中的服务
     choiceProject(projectId) {
       if (this.busEmitEventName) {
         // console.log('project.method.choiceProject.projectId: ', JSON.stringify(projectId))

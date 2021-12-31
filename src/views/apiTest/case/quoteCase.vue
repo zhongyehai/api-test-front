@@ -46,12 +46,12 @@
 
             <el-row>
 
-              <!-- 项目选择 -->
+              <!-- 服务选择 -->
               <el-col :span="12">
-                <el-form-item label="项目">
+                <el-form-item label="服务">
                   <el-select
                     v-model="projectSelectedId"
-                    placeholder="选择项目"
+                    placeholder="选择服务"
                     size="mini"
                     filterable
                     style="min-width: 20%;padding-right:10px"
@@ -215,7 +215,7 @@ export default {
     }
   },
   mounted() {
-    // 获取项目列表
+    // 获取服务列表
     this.getProjectList()
   },
   created() {
@@ -256,14 +256,14 @@ export default {
       return temp;
     },
 
-    // 获取项目列表
+    // 获取服务列表
     getProjectList() {
       projectList().then(response => {
         this.currentProjectList = response.data.data
       })
     },
 
-    // 选中项目，获取对应的用例集
+    // 选中服务，获取对应的用例集
     selectedProject(projectId) {
       caseSetTree({'project_id': projectId}).then(response => {
         this.currentCaseSetId = ''
