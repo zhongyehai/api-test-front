@@ -2,6 +2,31 @@
 
   <div class="app-container">
 
+    <el-form label-width="200px">
+      <el-form-item :label="'选择服务：'" size="mini">
+        <el-select
+            v-model="currentProjectId"
+            placeholder="选择服务"
+            size="mini"
+            style="width: 500px"
+            filterable
+            @change="getSetList"
+        >
+          <el-option v-for="item in projectListData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+
+        <el-button
+            v-show="currentProjectId"
+            type="primary"
+            size="mini"
+            style="margin-left: 50px"
+            @click.native="addParentSet()"
+        >为当前服务添加一级用例集
+        </el-button>
+
+      </el-form-item>
+    </el-form>
+
     <el-row>
 
       <!-- 第一列服务树 -->
@@ -12,43 +37,39 @@
               <div class="block">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
                 <el-tree
-                  class="project-tree"
-                  ref="tree"
-                  :check-on-click-node="false"
-                  :data="dataList"
-                  :default-expanded-keys="[defaultCaseSet]"
-                  :empty-text="'请先创建服务'"
-                  :expand-on-click-node="false"
-                  :filter-node-method="filterNode"
-                  :highlight-current="true"
-                  lazy
-                  node-key="id"
-                  @node-click="getCaseSetList"
-                  @node-drag-end="nodeDragEnd">
+                    class="project-tree"
+                    ref="tree"
+                    :check-on-click-node="false"
+                    :data="setListData"
+                    :default-expanded-keys="[defaultCaseSet]"
+                    :empty-text="'请先添加一级用例集'"
+                    :expand-on-click-node="false"
+                    :filter-node-method="filterNode"
+                    :highlight-current="true"
+                    lazy
+                    node-key="id"
+                    @node-click="clickTree"
+                    @node-drag-end="nodeDragEnd">
                     <span slot-scope="{ node, data }"
                           class="custom-tree-node"
                           @mouseenter="mouseenter(data)"
                           @mouseleave="mouseleave(data)">
-                      <!-- <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start"> -->
-                            <span> {{ data.name }} </span>
-                      <!-- </el-tooltip> -->
-
+                      <span> {{ data.name }} </span>
                       <span v-show="data.showMenu">
-
-                        <el-dropdown size="mini" type="primary" placement="top-start">
+                        <el-dropdown
+                            size="mini"
+                            type="primary"
+                            placement="top-start"
+                            @visible-change="changeDropdownStatus"
+                        >
                           <i
-                            class="el-icon-more"
-                            style="float: right;
-                            padding-left: 5px;
-                            color: #409EFF;
-                            transform: rotate(90deg)"
+                              class="el-icon-more"
+                              style="float: right;padding-left: 5px;color: #409EFF;transform: rotate(90deg)"
                           ></i>
 
                           <el-dropdown-menu slot="dropdown">
 
-                            <el-dropdown-item
-                              v-if="node.level !== 1"
-                              @click.native.stop="addCase(node, data)"
+                            <el-dropdown-item @click.native.stop="addCase(node, data)"
                             >{{ "添加用例" }}
                             </el-dropdown-item>
 
@@ -56,21 +77,15 @@
                             >{{ '添加用例集' }}
                             </el-dropdown-item>
 
-                            <el-dropdown-item
-                              v-if="node.level !== 1"
-                              @click.native.stop="showCaseSetDialog('edit', node, data)"
+                            <el-dropdown-item @click.native.stop="showCaseSetDialog('edit', node, data)"
                             >{{ '修改当前用例集' }}
                             </el-dropdown-item>
 
-                            <el-dropdown-item
-                              v-if="node.level !== 1"
-                              @click.native.stop="clickDeleteChild(node, data)"
+                            <el-dropdown-item @click.native.stop="clickDeleteChild(node, data)"
                             >{{ "删除当前用例集" }}
                             </el-dropdown-item>
 
-                            <el-dropdown-item
-                              v-if="node.level !== 1"
-                              @click.native.stop="runCaseSet(node, data)"
+                            <el-dropdown-item @click.native.stop="runCaseSet(node, data)"
                             >{{ "运行当前用例集下的用例" }}
                             </el-dropdown-item>
 
@@ -90,8 +105,8 @@
       <el-col style="width: 79%; margin-left: 5px">
         <!-- 用例管理组件 -->
         <caseManage
-          :currentCaseSet="temp_data"
-          :currentProject="currentProject"
+            :currentSetId="currentSetId"
+            :currentProjectId="currentProjectId"
         ></caseManage>
       </el-col>
 
@@ -99,17 +114,16 @@
 
     <!-- 新增/修改用例集表单 -->
     <el-dialog
-      :close-on-click-modal="false"
-      :title=" dialogStatus === 'add' ? '新增用例集' : '修改用例集' "
-      :visible.sync="dialogFormVisible"
-      width="40%">
+        :close-on-click-modal="false"
+        :title=" dialogStatus === 'add' ? '新增用例集' : '修改用例集' "
+        :visible.sync="dialogFormVisible"
+        width="40%">
       <el-form
-        ref="dataForm"
-        :model="tempDataForm"
-        :rules="rules"
-        label-position="left"
-        label-width="100px"
-        style="min-width: 400px;">
+          ref="dataForm"
+          :model="tempDataForm"
+          label-position="left"
+          label-width="100px"
+          style="min-width: 400px;">
         <el-form-item :label="'用例集名称'" class="filter-item" prop="name" size="mini">
           <el-input v-model="tempDataForm.name" placeholder="同一节点下，用例集名称不可重复"/>
         </el-form-item>
@@ -117,10 +131,10 @@
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
         <el-button
-          size="mini"
-          type="primary"
-          :loading="submitButtonIsShow"
-          @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
+            size="mini"
+            type="primary"
+            :loading="isShowLoading"
+            @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
           {{ '确定' }}
         </el-button>
       </div>
@@ -132,8 +146,10 @@
 </template>
 
 <script>
-import caseManage from '@/views/apiTest/case'  // 用例管理组件
 import waves from "@/directive/waves";
+
+import caseManage from '@/views/apiTest/case'  // 用例管理组件
+
 import {projectList} from "@/apis/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/caseSet";
 import {reportIsDone} from "@/apis/report";
@@ -147,39 +163,29 @@ export default {
   directives: {waves},
   data() {
     return {
-      // 查询关键字
-      filterText: '',
-
-      submitButtonIsShow: false,
-
-      projectTab: '服务和用例集',
-
-      defaultCaseSet: {},
-      dataList: [],
-      temp_node: {},
-      temp_data: {},
-      dialog_temp_node: {},
-      dialog_temp_data: {},
-      dialogFormVisible: false,
-      dialogStatus: '',
-      tempProjectList: [],
-      currentProject: {},
+      projectTab: '用例集列表',
+      isShowLoading: false, // 用例集编辑框提交Loading
+      filterText: '',      // 查询关键字
+      projectListData: [],  // 项目列表
+      currentProjectId: '',  // 当前选中的项目id
+      setListData: [],  // 用例集列表
+      currentSetId: '',  // 当前选中的用例集id，用于数据传递，获取用例列表
+      currentSetIdForCommit: '',  // 当前选中的模块id，用于提交新增、修改
+      currentLevelForCommit: 1,  // 当前选中的模块id，用于提交新增、修改
+      currentParent: {}, // 当前选中的模块，用于提交新增、修改
       tempDataForm: {
         name: '',
         id: '',
-        num: '',
         level: '',
         parent: '',
         project_id: '',
       },
-
+      dialogFormVisible: false,
+      defaultCaseSet: {},
+      dialogStatus: '',
+      dropdownStatus: false,  // el-dropdown 的展开/隐藏状态
       // 当前鼠标滑入的节点名
-      currentLabel: '',
-
-      // 检验规则
-      rules: {
-        name: [{required: true, message: '请输入用例集名称', trigger: 'blur'}]
-      },
+      currentLabel: ''
     }
   },
 
@@ -189,8 +195,53 @@ export default {
 
   methods: {
 
+    // el-dropdown 的展开/隐藏状态
+    changeDropdownStatus(status){
+      this.dropdownStatus = status
+    },
+
+    // 获取服务列表
+    getProjectList() {
+      projectList().then(response => {
+        this.projectListData = response.data.data
+      })
+    },
+
+    // 获取用例集列表
+    getSetList(projectId) {
+      this.currentSetId = '' // 切换项目的时候，把选中用例集置为''
+      this.currentSetIdForCommit = '' // 切换项目的时候，把选中用例集置为''
+      this.currentParent = {}
+      this.currentLevelForCommit = 1 // 切换项目的时候，把选中用例集置为''
+      caseSetTree({'project_id': projectId}).then(response => {
+        var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
+        this.setListData = this.arrayToTree(response_data, null)
+      })
+    },
+
+    // 点击树
+    clickTree(data, node, element) {
+      this.currentSetId = data.id
+      this.currentSetIdForCommit = data.id
+      this.currentLevelForCommit = data.level
+      this.currentParent = data
+      this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded // 展开/收缩节点
+    },
+
+    // 添加一级用例集
+    addParentSet() {
+      this.currentSetIdForCommit = ''
+      this.currentLevelForCommit = 1
+      this.currentParent = {}
+      this.showCaseSetDialog('add')
+    },
+
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
+      if (this.dropdownStatus === false){
+        this.currentSetIdForCommit = data.id
+        this.currentParent = data
+      }
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
       data.name = this.ellipsis(data.name, 20)
       this.$set(data, 'showMenu', true);
@@ -212,68 +263,56 @@ export default {
 
     // 打开用例集编辑框
     showCaseSetDialog(command, node, data) {
-      this.dialog_temp_node = node
-      this.dialog_temp_data = data
       this.dialogStatus = command
-      this.tempDataForm.name = command === 'edit' ? this.dialog_temp_data.name : ''
+      this.tempDataForm.name = command === 'edit' ? data.name : ''
       this.dialogFormVisible = true
     },
 
     // 添加用例集
     addCaseSet() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.submitButtonIsShow = true
-          postCaseSet({
-            name: this.tempDataForm.name,
-            id: '',
-            num: '',
-            level: this.dialog_temp_node.level + 1,
-            parent: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
-            // node为第一级，则说明是服务级，直接取id，非第一级，则取当前node的project_id
-            project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
-          }).then(response => {
-            this.submitButtonIsShow = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.currentProject = this.getCurrentProject(this.dialog_temp_node.level === 1 ? this.dialog_temp_data.id : this.dialog_temp_data.project_id)
+      this.isShowLoading = true
+      postCaseSet({
+        name: this.tempDataForm.name,
+        id: '',
+        level: this.currentLevelForCommit + 1,
+        parent: this.currentSetIdForCommit || null,
+        project_id: this.currentProjectId
+      }).then(response => {
+        this.isShowLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
 
-              // 把当前添加的节点加入到父节点下
-              if (!this.dialog_temp_data.children) {
-                this.$set(this.dialog_temp_data, 'children', [])
-              }
-              this.dialog_temp_data.children.push(response.data)
+          // 把当前添加的节点加入到父节点下
+          if (this.currentParent.id) {
+            if (!this.currentParent.children) {
+              this.$set(this.currentParent, 'children', [])
             }
-          })
-        } else {
-          this.$message.error('请确认规则')
+            this.currentParent.children.push(response.data)
+            this.$refs.tree.store.nodesMap[this.currentParent.id].expanded = true  // 展开节点
+          } else {
+            this.setListData.push(response.data)
+          }
+
         }
-      });
+      })
     },
 
     // 修改用例集
     changCaseSet() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.submitButtonIsShow = true
-          putCaseSet({
-            name: this.tempDataForm.name,
-            id: this.dialog_temp_data.id,
-            num: this.dialog_temp_data.num,
-            level: this.dialog_temp_data.level,
-            parent: this.dialog_temp_data.parent,
-            project_id: this.dialog_temp_data.project_id,
-          }).then(response => {
-            this.submitButtonIsShow = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.dialog_temp_data.name = response.data.name
-            }
-          })
-        } else {
-          this.$message.error('请确认规则')
+      this.isShowLoading = true
+      putCaseSet({
+        name: this.tempDataForm.name,
+        id: this.currentParent.id,
+        level: this.currentParent.level,
+        parent: this.currentParent.parent,
+        project_id: this.currentParent.project_id,
+      }).then(response => {
+        this.isShowLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
+          this.currentParent.name = response.data.name
         }
-      });
+      })
     },
 
     // 递归把列表转为树行结构
@@ -291,42 +330,6 @@ export default {
         }
       });
       return temp;
-    },
-
-    // 点击树的时候，获取到对应节点的数据
-    getCaseSetList(data, node, element) {
-      this.temp_node = node
-      this.temp_data = node.level !== 1 ? data : this.temp_data
-      this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
-
-      // 点击的是服务，且服务下无节点，则获取服务下的节点
-      if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
-        caseSetTree({'project_id': data.id}).then(response => {
-          var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-          let parse_data = this.arrayToTree(response_data, null)
-          this.$set(data, 'children', parse_data)
-        })
-      }
-      // 展开/收缩节点
-      this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded
-    },
-
-    // 获取服务列表
-    getProjectList() {
-      projectList().then(response => {
-        this.tempProjectList = response.data.data
-        this.dataList = response.data.data
-      })
-    },
-
-    // 获取服务
-    getCurrentProject(project_id) {
-      for (let index in this.tempProjectList) {
-        let currentProject = this.tempProjectList[index]
-        if (currentProject.id === project_id) {
-          return currentProject
-        }
-      }
     },
 
     // 关键字查询用例集
@@ -351,8 +354,6 @@ export default {
 
     // 添加用例
     addCase(node, data) {
-      this.temp_node = node
-      this.temp_data = data
       this.$bus.$emit(this.$busEvents.caseDialogStatus, 'add')
     },
 

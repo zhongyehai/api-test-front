@@ -27,8 +27,8 @@
               <el-form-item label="用例集" class="is-required" style="margin-bottom: 5px">
                 <caseSetSelectorView
                   ref="caseSetSelector"
-                  :projectId="currentProject ? currentProject.id : ''"
-                  :caseSetId="tempCase.set_id"
+                  :projectId="currentProjectId || ''"
+                  :caseSetId="currentSetId || ''"
                   :isWatchStatus="dialogIsShow"
                   :busOnEventName="$busEvents.projectTreeChoiceProject"
                   :busOnModuleDialogCommit="$busEvents.moduleDialogCommit">
@@ -118,7 +118,7 @@
       <el-tab-pane label="步骤管理" name="stepInFo">
         <stepView
           ref="stepView"
-          :projectId="currentProject ? currentProject.id : ''"
+          :projectId="currentProjectId || ''"
           :caseId="tempCase.id"
           :stepList="tempCase.steps"
         ></stepView>
@@ -143,7 +143,7 @@
 
 <script>
 
-import projectSelectorView from "@/components/Selector/project";
+// import projectSelectorView from "@/components/Selector/project";
 import moduleSelectorView from "@/components/Selector/module";
 import caseSetSelectorView from "@/components/Selector/caseSet";
 import environmentSelectorView from "@/components/Selector/environment";
@@ -152,17 +152,18 @@ import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
 import stepView from '@/views/apiTest/step'
 import quoteCaseView from "@/views/apiTest/case/quoteCase";
+
 import {postCase, putCase, copyCase} from "@/apis/case";
 import {stepList} from "@/apis/step";
 
 export default {
   name: 'caseDialog',
   props: [
-    'currentProject',
-    'currentCaseSet'
+    'currentProjectId',
+    'currentSetId'
   ],
   components: {
-    projectSelectorView,
+    // projectSelectorView,
     moduleSelectorView,
     caseSetSelectorView,
     environmentSelectorView,
@@ -215,8 +216,8 @@ export default {
       this.tempCase.variables = [{key: null, value: null, remark: null}]
       this.tempCase.headers = [{key: null, value: null, remark: null}]
       this.tempCase.steps = []
-      this.tempCase.project_id = this.currentProject ? this.currentProject.id : ''
-      this.tempCase.set_id = this.currentCaseSet ? this.currentCaseSet.id : ''
+      this.tempCase.project_id = this.currentProjectId || ''
+      this.tempCase.set_id = this.currentSetId || ''
       this.dialogStatus = 'add'
       this.dialogIsShow = true
     },
@@ -331,17 +332,17 @@ export default {
 
   watch: {
 
-    'currentProject': {
+    'currentProjectId': {
       deep: true,
       handler(newVal, oldVal) {
-        this.tempCase.project_id = newVal.id
+        this.tempCase.project_id = newVal
       }
     },
 
-    'currentCaseSet': {
+    'currentSetId': {
       deep: true,
       handler(newVal, oldVal) {
-        this.tempCase.set_id = newVal.id
+        this.tempCase.set_id = newVal
       }
     }
   }

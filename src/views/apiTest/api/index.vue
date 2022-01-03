@@ -85,7 +85,7 @@
     </el-tabs>
 
     <apiDialog
-      :currentProject="currentProject"
+      :currentProjectId="currentProjectId"
       :currentModuleId="currentModuleId"
     ></apiDialog>
 
@@ -110,7 +110,7 @@ export default {
 
   // 接收父组件传参的key
   props: [
-    'currentProject',
+    'currentProjectId',
     'currentModuleId'
   ],
   data() {
@@ -311,11 +311,17 @@ export default {
     'currentModuleId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        this.getApiList({
-          'moduleId': newVal,
-          'pageNum': this.pageNum,
-          'pageSize': this.pageSize
-        })
+        if (newVal){
+          this.getApiList({
+            'moduleId': newVal,
+            'pageNum': this.pageNum,
+            'pageSize': this.pageSize
+          })
+        }
+        else {
+          this.api_list = []
+        }
+
       }
     }
   }

@@ -59,7 +59,6 @@ import Pagination from '@/components/Pagination'
 
 import {apiList} from "@/apis/api";
 import {moduleList} from "@/apis/module";
-import {caseList} from "@/apis/case";
 
 export default {
   name: 'apiList',

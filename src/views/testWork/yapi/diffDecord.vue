@@ -7,6 +7,7 @@
           placeholder="选择历史比对类型"
           size="mini"
           style="width: 500px"
+          filterable
           @change="getDiffRecordListData"
         >
           <el-option

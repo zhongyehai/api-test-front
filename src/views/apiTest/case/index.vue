@@ -89,8 +89,8 @@
     </el-tabs>
 
     <caseDialog
-      :currentProject="currentProject"
-      :currentCaseSet="currentCaseSet"
+      :currentProjectId="currentProjectId"
+      :currentSetId="currentSetId"
     ></caseDialog>
 
   </div>
@@ -114,8 +114,8 @@ export default {
 
   // 接收父组件传参的key
   props: [
-    'currentProject',
-    'currentCaseSet'
+    'currentProjectId',
+    'currentSetId'
   ],
   data() {
     return {
@@ -283,7 +283,7 @@ export default {
     getCaseList(params) {
       this.tableLoadingIsShow = true
       caseList({
-        'setId': this.currentCaseSet.id,
+        'setId': this.currentSetId,
         'pageNum': this.pageNum,
         'pageSize': this.pageSize
       }).then(response => {
@@ -329,20 +329,20 @@ export default {
   watch: {
 
     // 监听父组件传过来的当前选中的用例集，实时获取父组件传过来的用例集对应下的用例列表
-    'currentCaseSet': {
+    'currentSetId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        // if (!oldVal && newVal.id !== oldVal.id){
-        if (newVal.id !== oldVal.id) {
+        if (newVal) {
           this.getCaseList({
-            'caseSetId': newVal.id,
+            'caseSetId': newVal,
             'pageNum': this.pageNum,
             'pageSize': this.pageSize
           })
+        }else {
+          this.case_list = []
         }
       }
     },
-
   }
 }
 </script>

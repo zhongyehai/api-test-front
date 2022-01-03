@@ -2,74 +2,91 @@
 
   <div class="app-container">
 
+    <el-form label-width="200px">
+      <el-form-item :label="'选择服务：'" size="mini">
+        <el-select
+          v-model="currentProjectId"
+          placeholder="选择服务"
+          size="mini"
+          style="width: 500px"
+          filterable
+          @change="getModuleList"
+        >
+          <el-option v-for="item in projectListData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+        </el-select>
+
+        <el-button
+          v-show="currentProjectId"
+          type="primary"
+          size="mini"
+          style="margin-left: 50px"
+          @click.native="addParentModule()"
+        >为当前服务添加一级模块
+        </el-button>
+
+      </el-form-item>
+    </el-form>
+
+
     <el-row>
 
       <!-- 第一列服务树 -->
       <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
         <el-scrollbar>
-        <el-tabs v-model="projectTab" class="table_padding table_project">
-          <el-tab-pane :label="projectTab" :name="projectTab">
-            <div class="custom-tree-container">
-              <div class="block">
-                <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
-                <el-tree
-                  class="project-tree"
-                  ref="tree"
-                  :check-on-click-node="false"
-                  :data="dataList"
-                  :default-expanded-keys="[defaultModule]"
-                  :empty-text="'请先创建服务'"
-                  :expand-on-click-node="false"
-                  :filter-node-method="filterNode"
-                  :highlight-current="true"
-                  lazy
-                  node-key="id"
-                  @node-click="getModuleList"
-                  @node-drag-end="nodeDragEnd">
-                  <div slot-scope="{ node, data }"
-                       class="custom-tree-node"
-                       @mouseenter="mouseenter(data)"
-                       @mouseleave="mouseleave(data)">
-                      <!-- <el-tooltip class="item" effect="dark" :content="data.name" placement="top-start"> -->
+          <el-tabs v-model="projectTab" class="table_padding table_project">
+            <el-tab-pane :label="projectTab" :name="projectTab">
+              <div class="custom-tree-container">
+                <div class="block">
+                  <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
+                  <el-tree
+                    class="project-tree"
+                    ref="tree"
+                    :check-on-click-node="false"
+                    :data="moduleListData"
+                    :default-expanded-keys="[defaultModule]"
+                    :empty-text="'请先添加一级模块'"
+                    :expand-on-click-node="false"
+                    :filter-node-method="filterNode"
+                    :highlight-current="true"
+                    lazy
+                    node-key="id"
+                    @node-click="clickTree"
+                    @node-drag-end="nodeDragEnd">
+                    <div slot-scope="{ node, data }"
+                         class="custom-tree-node"
+                         @mouseenter="mouseenter(data)"
+                         @mouseleave="mouseleave(data)">
                       <span> {{ data.name }} </span>
-                      <!-- </el-tooltip> -->
-                    <span v-show="data.showMenu">
-                      <el-dropdown size="mini" type="primary" placement="top-start">
+                      <span v-show="data.showMenu">
+                        <el-dropdown
+                          size="mini"
+                          type="primary"
+                          placement="top-start"
+                          @visible-change="changeDropdownStatus"
+                        >
                         <i
                           class="el-icon-more"
-                          style="
-                          padding-left: 5px;
-                          color: #409EFF;
-                          transform: rotate(90deg)"
+                          style="padding-left: 5px;color: #409EFF;transform: rotate(90deg)"
                         ></i>
-
                         <el-dropdown-menu slot="dropdown">
 
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="addApi(node, data)"
+                          <el-dropdown-item @click.native.stop="addApi(node, data)"
                           >{{ "添加接口" }}
                           </el-dropdown-item>
 
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="showUploadFileDialog(node, data)"
+                          <el-dropdown-item @click.native.stop="showUploadFileDialog(node, data)"
                           >{{ "导入接口" }}
                           </el-dropdown-item>
 
                           <el-dropdown-item @click.native.stop="showModuleDialog('add', node, data)"
-                          >{{ '添加模块' }}
+                          >{{ '添加子模块' }}
                           </el-dropdown-item>
 
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="showModuleDialog('edit', node, data)"
+                          <el-dropdown-item @click.native.stop="showModuleDialog('edit', node, data)"
                           >{{ '修改当前模块' }}
                           </el-dropdown-item>
 
-                          <el-dropdown-item
-                            v-if="node.level !== 1"
-                            @click.native.stop="clickDeleteChild(node, data)"
+                          <el-dropdown-item @click.native.stop="clickDeleteChild(node, data)"
                           >{{ "删除当前模块" }}
                           </el-dropdown-item>
 
@@ -77,22 +94,22 @@
                       </el-dropdown>
 
                     </span>
-                  </div>
-                </el-tree>
-              </div>
+                    </div>
+                  </el-tree>
+                </div>
 
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-          </el-scrollbar>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
+        </el-scrollbar>
       </el-col>
 
       <!-- 第二列，接口列表 -->
       <el-col style="width: 79%; margin-left: 5px">
         <!-- 接口管理组件 -->
         <apiManage
-          :currentModuleId="temp_module_id"
-          :currentProject="currentProject"
+          :currentModuleId="currentModuleId"
+          :currentProjectId="currentProjectId"
         ></apiManage>
       </el-col>
 
@@ -134,11 +151,10 @@
       <el-form
         ref="dataForm"
         :model="tempDataForm"
-        :rules="rules"
         label-position="left"
         label-width="90px"
         style="min-width: 400px;">
-        <el-form-item :label="'模块名称'" class="filter-item" prop="name" size="mini">
+        <el-form-item :label="'模块名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="tempDataForm.name" placeholder="同一节点下，模块名称不可重复"/>
         </el-form-item>
       </el-form>
@@ -160,8 +176,10 @@
 </template>
 
 <script>
-import apiManage from '@/views/apiTest/api'  // 接口管理组件
 import waves from "@/directive/waves";
+
+import apiManage from '@/views/apiTest/api'  // 接口管理组件
+
 import {projectList} from "@/apis/project";
 import {moduleTree, deleteModule, postModule, putModule} from "@/apis/module";
 import {downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/api";
@@ -175,31 +193,26 @@ export default {
   directives: {waves},
   data() {
     return {
-      // 查询关键字
-      filterText: '',
-
-      isShowLoading: false,
-
-      projectTab: '服务和模块',
-
-      defaultModule: {},
-      dataList: [],
-      temp_node: {},
-      temp_module_id: {},
-      dialog_temp_node: {},
-      dialog_temp_data: {},
-      dialogFormVisible: false,
-      dialogStatus: '',
-      tempProjectList: [],
-      currentProject: {},
+      projectTab: '模块列表',  // 服务tab的title
+      filterText: '',  // 查询关键字
+      isShowLoading: false, // 模块编辑框提交Loading
+      projectListData: [],  // 项目列表
+      currentProjectId: '',  // 当前选中的项目id
+      moduleListData: [],  // 模块列表
+      currentModuleId: '',  // 当前选中的模块id，用于数据传递，获取接口列表
+      currentModuleIdForCommit: '',  // 当前选中的模块id，用于提交新增、修改
+      currentLevelForCommit: 1,  // 当前选中的模块id，用于提交新增、修改
+      currentParent: {}, // 当前选中的模块，用于提交新增、修改
       tempDataForm: {
         name: '',
         id: '',
-        num: '',
         level: '',
         parent: '',
         project_id: '',
       },
+      dialogFormVisible: false,
+      dialogStatus: '',
+      defaultModule: {},
 
       // 文件上传框打开状态
       uploadApiMsg: uploadApiMsg,
@@ -207,12 +220,7 @@ export default {
       fileDataList: [],
 
       // 当前鼠标滑入的节点名
-      currentLabel: '',
-
-      // 检验规则
-      rules: {
-        name: [{required: true, message: '请输入模块名称', trigger: 'blur'}]
-      },
+      currentLabel: ''
     }
   },
 
@@ -222,8 +230,55 @@ export default {
 
   methods: {
 
+    // el-dropdown 的展开/隐藏状态
+    changeDropdownStatus(status) {
+      this.dropdownStatus = status
+    },
+
+    // 获取服务列表
+    getProjectList() {
+      projectList().then(response => {
+        this.projectListData = response.data.data
+      })
+    },
+
+    // 获取模块列表
+    getModuleList(projectId) {
+      this.currentModuleId = '' // 切换项目的时候，把选中模块置为''
+      this.currentModuleIdForCommit = '' // 切换项目的时候，把选中模块置为''
+      this.currentParent = {}
+      this.currentLevelForCommit = 1 // 切换项目的时候，把选中模块置为''
+      moduleTree({'project_id': projectId}).then(response => {
+        if (this.showMessage(this, response)) {
+          var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
+          this.moduleListData = this.arrayToTree(response_data, null)
+        }
+      })
+    },
+
+    // 点击树
+    clickTree(data, node, element) {
+      this.currentModuleId = data.id
+      this.currentModuleIdForCommit = data.id
+      this.currentLevelForCommit = data.level
+      this.currentParent = data
+      this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded // 展开/收缩节点
+    },
+
+    // 添加一级模块
+    addParentModule() {
+      this.currentModuleIdForCommit = ''
+      this.currentLevelForCommit = 1
+      this.currentParent = {}
+      this.showModuleDialog('add')
+    },
+
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
+      if (this.dropdownStatus === false) {
+        this.currentModuleIdForCommit = data.id
+        this.currentParent = data
+      }
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
       data.name = this.ellipsis(data.name, 20)
       this.$set(data, 'showMenu', true);
@@ -245,68 +300,56 @@ export default {
 
     // 模块编辑框
     showModuleDialog(command, node, data) {
-      this.dialog_temp_node = node
-      this.dialog_temp_data = data
       this.dialogStatus = command
-      this.tempDataForm.name = command === 'edit' ? this.dialog_temp_data.name : ''
+      this.tempDataForm.name = command === 'edit' ? data.name : ''
       this.dialogFormVisible = true
     },
 
     // 添加模块
     addModule() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.isShowLoading = true
-          postModule({
-            name: this.tempDataForm.name,
-            id: '',
-            num: '',
-            level: this.dialog_temp_node.level + 1,
-            parent: this.dialog_temp_node.level === 1 ? null : this.dialog_temp_node.data.id,
-            // node为第一级，则说明是服务级，直接取id，非第一级，则取当前node的project_id
-            project_id: this.dialog_temp_node.level === 1 ? this.dialog_temp_node.data.id : this.dialog_temp_node.data.project_id,
-          }).then(response => {
-            this.isShowLoading = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.currentProject = this.getCurrentProject(this.dialog_temp_node.level === 1 ? this.dialog_temp_data.id : this.dialog_temp_data.project_id)
+      this.isShowLoading = true
+      postModule({
+        name: this.tempDataForm.name,
+        id: '',
+        level: this.currentLevelForCommit + 1,
+        parent: this.currentModuleIdForCommit || null,
+        project_id: this.currentProjectId
+      }).then(response => {
+        this.isShowLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
 
-              // 把当前添加的节点加入到父节点下
-              if (!this.dialog_temp_data.children) {
-                this.$set(this.dialog_temp_data, 'children', [])
-              }
-              this.dialog_temp_data.children.push(response.data)
+          // 把当前添加的节点加入到父节点下
+          if (this.currentParent.id) {
+            if (!this.currentParent.children) {
+              this.$set(this.currentParent, 'children', [])
             }
-          })
-        } else {
-          this.$message.error('请确认规则')
+            this.currentParent.children.push(response.data)
+            this.$refs.tree.store.nodesMap[this.currentParent.id].expanded = true  // 展开节点
+          } else {
+            this.moduleListData.push(response.data)
+          }
+
         }
-      });
+      })
     },
 
     // 修改模块
     changModule() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.isShowLoading = true
-          putModule({
-            name: this.tempDataForm.name,
-            id: this.dialog_temp_data.id,
-            num: this.dialog_temp_data.num,
-            level: this.dialog_temp_data.level,
-            parent: this.dialog_temp_data.parent,
-            project_id: this.dialog_temp_data.project_id,
-          }).then(response => {
-            this.isShowLoading = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.dialog_temp_data.name = response.data.name
-            }
-          })
-        } else {
-          this.$message.error('请确认规则')
+      this.isShowLoading = true
+      putModule({
+        name: this.tempDataForm.name,
+        id: this.currentParent.id,
+        level: this.currentParent.level,
+        parent: this.currentParent.parent,
+        project_id: this.currentParent.project_id,
+      }).then(response => {
+        this.isShowLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
+          this.currentParent.name = response.data.name
         }
-      });
+      })
     },
 
     // 递归把列表转为树行结构
@@ -324,46 +367,6 @@ export default {
         }
       });
       return temp;
-    },
-
-    // 点击树的时候，获取到对应节点的数据
-    getModuleList(data, node, element) {
-      this.temp_node = node
-      if (node.level !== 1) {
-        this.temp_module_id = data.id
-      }
-      this.currentProject = this.getCurrentProject(node.level === 1 ? data.id : data.project_id)
-
-      // 点击的是服务，且服务下无节点，则获取服务下的节点
-      if (node.level === 1 && (!node.data.children || node.data.children.length < 1)) {
-        moduleTree({'project_id': data.id}).then(response => {
-          if (this.showMessage(this, response)) {
-            var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-            let parse_data = this.arrayToTree(response_data, null)
-            this.$set(data, 'children', parse_data)
-          }
-        })
-      }
-      // 展开/收缩节点
-      this.$refs.tree.store.nodesMap[data.id].expanded = !this.$refs.tree.store.nodesMap[data.id].expanded
-    },
-
-    // 获取服务列表
-    getProjectList() {
-      projectList().then(response => {
-        this.tempProjectList = response.data.data
-        this.dataList = response.data.data
-      })
-    },
-
-    // 获取服务
-    getCurrentProject(project_id) {
-      for (let index in this.tempProjectList) {
-        let currentProject = this.tempProjectList[index]
-        if (currentProject.id === project_id) {
-          return currentProject
-        }
-      }
     },
 
     // 关键字查询模块
@@ -398,8 +401,6 @@ export default {
 
     // 添加接口
     addApi(node, data) {
-      this.temp_node = node
-      this.temp_module_id = data.id
       // 由于 body 组件监听时会解析请求体，所以这给个默认值
       this.$bus.$emit(this.$busEvents.apiDialogStatus, 'add', {
         data_type: 'json',
@@ -424,8 +425,6 @@ export default {
 
     // 从excel导入接口
     showUploadFileDialog(node, data) {
-      this.temp_node = node
-      this.temp_module_id = data.id
       this.uploadFileDialogIsShow = true
     },
 
@@ -433,7 +432,7 @@ export default {
     uploadFile(response, file) {
       let form = new FormData();
       form.append("file", file.raw);
-      form.append("id", this.temp_module_id);
+      form.append("id", this.currentParent.id);
       uploadApi(form).then((response) => {
           if (this.showMessage(this, response)) {
             this.fileDataList = []

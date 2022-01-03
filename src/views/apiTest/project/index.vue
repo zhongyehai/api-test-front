@@ -85,7 +85,12 @@
       <el-table-column :label="'操作'" align="center" min-width="17%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
 
-          <el-tooltip v-show="row.yapi_id" class="item" effect="dark" content="从yapi拉取此服务下的模块、接口信息" placement="top-start">
+          <el-tooltip
+            v-show="row.yapi_id"
+            class="item"
+            effect="dark"
+            content="从yapi拉取此服务下的模块、接口信息"
+            placement="top-start">
             <el-button
               size="mini"
               icon="el-icon-refresh"
@@ -95,11 +100,27 @@
             </el-button>
           </el-tooltip>
 
+          <el-tooltip
+            v-show="!row.yapi_id && row.swagger"
+            class="item"
+            effect="dark"
+            content="从swagger拉取此服务下的模块、接口信息"
+            placement="top-start">
+            <el-button
+              size="mini"
+              icon="el-icon-refresh"
+              :loading="row.isPullBySwagger"
+              type="text"
+              @click="pullBySwagger(row)">
+            </el-button>
+          </el-tooltip>
+
           <el-button size="mini" type="primary" @click="showEditForm(row)">
             {{ '修改' }}
           </el-button>
 
-          <el-button size="mini" type="danger" :loading="row.submitButtonIsLoading" @click="confirmBox(delProject, row, row.name)">
+          <el-button size="mini" type="danger" :loading="row.submitButtonIsLoading"
+                     @click="confirmBox(delProject, row, row.name)">
             {{ '删除' }}
           </el-button>
         </template>
@@ -125,7 +146,7 @@
 </template>
 
 <script>
-import {deleteProject, projectList, projectPull} from '@/apis/project'
+import {deleteProject, projectList, swaggerPull, yapiPull} from '@/apis/project'
 import {userList} from '@/apis/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
@@ -190,16 +211,25 @@ export default {
   methods: {
 
     // 编辑按钮
-    showEditForm(row){
+    showEditForm(row) {
       this.$bus.$emit(this.$busEvents.showProjectDialog, 'edit', row)
     },
 
     // 从yapi同步服务信息
-    pullByYapi(row){
+    pullByYapi(row) {
       this.$set(row, 'isPullByYapi', true)
-      projectPull({id: row.id}).then(response => {
+      yapiPull({id: row.id}).then(response => {
         this.showMessage(this, response)
         this.$set(row, 'isPullByYapi', false)
+      })
+    },
+
+    // 从swagger同步服务信息
+    pullBySwagger(row) {
+      this.$set(row, 'isPullBySwagger', true)
+      swaggerPull({id: row.id}).then(response => {
+        this.showMessage(this, response)
+        this.$set(row, 'isPullBySwagger', false)
       })
     },
 

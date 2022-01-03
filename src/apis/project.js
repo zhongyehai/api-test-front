@@ -30,6 +30,12 @@ export function projectList(params) {
 }
 
 // 同步yapi的信息
-export function projectPull(data) {
+export function yapiPull(data) {
   return request({url: '/api/yapi/pull/all', method: 'post', data: data});
+}
+
+
+// 同步swagger的信息
+export function swaggerPull(data) {
+  return request({url: '/api/swagger/pull', method: 'post', data: data});
 }

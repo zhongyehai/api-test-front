@@ -50,6 +50,11 @@
             <el-form-item :label="'生产环境'" prop="production" class="filter-item" size="mini">
               <el-input v-model="tempProject.production" placeholder="生产环境域名，100位以内"/>
             </el-form-item>
+
+            <!-- swagger地址 -->
+            <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
+              <el-input v-model="tempProject.swagger" placeholder="swagger地址，用于同步数据"/>
+            </el-form-item>
           </el-tab-pane>
 
           <!-- 公用变量 -->
@@ -115,6 +120,7 @@ export default {
         test: '',
         uat: '',
         production: '',
+        swagger: '',
         variables: [{'key': null, 'value': null, 'remark': null}],
         headers: [{'key': null, 'value': null, 'remark': null}],
         func_files: [],
@@ -179,6 +185,7 @@ export default {
       this.tempProject.test = row.test
       this.tempProject.uat = row.uat
       this.tempProject.production = row.production
+      this.tempProject.swagger = row.swagger
       this.tempProject.variables = row.variables
       this.tempProject.headers = row.headers
       this.tempProject.func_files = row.func_files
@@ -194,6 +201,7 @@ export default {
         test: this.tempProject.test,
         uat: this.tempProject.uat,
         production: this.tempProject.production,
+        swagger: this.tempProject.swagger,
         variables: this.tempProject.variables,
         headers: this.tempProject.headers,
         func_files: this.$refs.funcFiles.tempFuncFiles

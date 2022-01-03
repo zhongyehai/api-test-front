@@ -188,7 +188,7 @@ import {reportIsDone} from "@/apis/report";
 export default {
   name: 'apiEditDialog',
   props: [
-    'currentProject',
+    'currentProjectId',
     'currentModuleId',
   ],
   components: {
@@ -370,7 +370,7 @@ export default {
       this.tempApi.extracts = [{key: null, value: null, remark: null}]
       this.tempApi.validates = [{key: null, value: null, validate_type: null, remark: null}]
       this.tempApi.module_id = this.currentModuleId ? this.currentModuleId : ''
-      this.tempApi.project_id = this.currentProject ? this.currentProject.id : ''
+      this.tempApi.project_id = this.currentProjectId || ''
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
@@ -441,10 +441,10 @@ export default {
   watch: {
 
     // 监控父组件选中的服务, 实时获取对应的模块列表
-    'currentProject': {
+    'currentProjectId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        this.tempApi.project_id = newVal.id
+        this.tempApi.project_id = newVal
         // this.currentChoiceProjectHosts = newVal.hosts
       }
     },
