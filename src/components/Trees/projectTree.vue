@@ -193,7 +193,7 @@ export default {
 .project-tree {
   width: 100%;
   height: 800px;
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .project-tree > .el-tree-node {
@@ -208,13 +208,5 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
-}
-
-.showName {
-  /*width: 150px;*/
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
 }
 </style>

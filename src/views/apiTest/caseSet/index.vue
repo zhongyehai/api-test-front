@@ -243,7 +243,7 @@ export default {
         this.currentParent = data
       }
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
-      data.name = this.ellipsis(data.name, 20)
+      data.name = this.ellipsis(data.name, 10)
       this.$set(data, 'showMenu', true);
     },
 
@@ -422,7 +422,7 @@ export default {
 .project-tree {
   width: 100%;
   height: 800px;
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .project-tree > .el-tree-node {
@@ -437,13 +437,5 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
-}
-
-.showName {
-  /*width: 150px;*/
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
 }
 </style>

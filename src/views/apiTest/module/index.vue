@@ -32,7 +32,6 @@
 
       <!-- 第一列服务树 -->
       <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
-        <el-scrollbar>
           <el-tabs v-model="projectTab" class="table_padding table_project">
             <el-tab-pane :label="projectTab" :name="projectTab">
               <div class="custom-tree-container">
@@ -101,7 +100,6 @@
               </div>
             </el-tab-pane>
           </el-tabs>
-        </el-scrollbar>
       </el-col>
 
       <!-- 第二列，接口列表 -->
@@ -280,7 +278,7 @@ export default {
         this.currentParent = data
       }
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
-      data.name = this.ellipsis(data.name, 20)
+      data.name = this.ellipsis(data.name, 10)
       this.$set(data, 'showMenu', true);
     },
 
@@ -454,7 +452,7 @@ export default {
 .project-tree {
   width: 100%;
   height: 800px;
-  overflow: scroll;
+  /*overflow: scroll;*/
 }
 
 .project-tree > .el-tree-node {
