@@ -8,12 +8,7 @@
       :close-on-click-modal="false"
       width="60%"
     >
-      <el-form ref="dataForm"
-               :model="tempProject"
-               :rules="rules"
-               label-width="100px"
-               style="min-width: 200px;"
-      >
+      <el-form ref="dataForm" :model="tempProject" label-width="100px" style="min-width: 200px;">
 
         <!-- 服务信息 -->
         <el-tabs>
@@ -53,7 +48,7 @@
 
             <!-- swagger地址 -->
             <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
-              <el-input v-model="tempProject.swagger" placeholder="swagger地址，用于同步数据"/>
+              <el-input v-model="tempProject.swagger" placeholder="当前服务的swagger地址，用于拉取模块、接口数据"/>
             </el-form-item>
           </el-tab-pane>
 
@@ -136,26 +131,7 @@ export default {
       // dialog框状态，edit为编辑数据, create为新增数据
       dialogStatus: '',
 
-      submitButtonIsLoading: false,
-
-      // 校验规则
-      rules: {
-        name: [{ required: true, message: '请输入服务名称', trigger: 'blur' }],
-        manager: [
-          // { required: true, message: '请选择负责人', trigger: 'blur' },
-          // {
-          //   validator: (rule, value, callback) => {
-          //     if (!value) {
-          //       callback('请选择负责人');
-          //     } else {
-          //       callback();
-          //     }
-          //   },
-          //   trigger: 'change',
-          // }
-        ],
-        // test: [{ required: true, message: '测试环境域名必填', trigger: 'blur' }],
-      }
+      submitButtonIsLoading: false
     }
   },
 
@@ -210,38 +186,26 @@ export default {
 
     // 新增服务
     addProject() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.submitButtonIsLoading = true
-          postProject(this.getProjectForCommit()).then(response => {
-            this.submitButtonIsLoading = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.sendIsCommitStatus()
-            }
-          })
-        } else {
-          this.$message.error('请确认规则')
+      this.submitButtonIsLoading = true
+      postProject(this.getProjectForCommit()).then(response => {
+        this.submitButtonIsLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
+          this.sendIsCommitStatus()
         }
-      });
+      })
     },
 
     // 修改服务
     changProject() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.submitButtonIsLoading = true
-          putProject(this.getProjectForCommit()).then(response => {
-            this.submitButtonIsLoading = false
-            if (this.showMessage(this, response)) {
-              this.dialogFormVisible = false
-              this.sendIsCommitStatus()
-            }
-          })
-        } else {
-          this.$message.error('请确认规则')
+      this.submitButtonIsLoading = true
+      putProject(this.getProjectForCommit()).then(response => {
+        this.submitButtonIsLoading = false
+        if (this.showMessage(this, response)) {
+          this.dialogFormVisible = false
+          this.sendIsCommitStatus()
         }
-      });
+      })
     },
 
     // 数据提交成功后，向父组件发送提交成功的消息，父组件重新请求服务列表

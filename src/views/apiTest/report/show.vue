@@ -3,6 +3,7 @@
     <!--    <reportHeader></reportHeader>-->
     <!--    <div class="reportShow" style="line-height: 36px;font-family:LiSu">-->
     <div class="reportShow" style="line-height: 36px;">
+      <!-- 第一行，头部信息 -->
       <el-row>
         <el-col :span="24">
           <div class="grid-content" style="background-color: #f5f5f5 !important;">
@@ -37,6 +38,7 @@
         </el-col>
       </el-row>
 
+      <!-- 第二行，饼图 -->
       <el-row v-show="this.picStatus">
         <!-- 步骤 -->
         <el-col :span="10"
@@ -73,7 +75,9 @@
         </el-col>
       </el-row>
 
+      <!-- 第三行，用例和详情 -->
       <el-row>
+        <!-- 用例、步骤列表 -->
         <el-col :span="6"
                 style="border-style:solid;border-color: rgb(234, 234, 234) #ffffff #ffffff #ffffff;border-width: 1px;"
         >
@@ -120,25 +124,13 @@
             </div>
           </el-scrollbar>
         </el-col>
+        <!-- 详情页 -->
         <el-col :span="18"
                 style="border-style:solid;border-color:rgb(234, 234, 234) #ffffff rgb(234, 234, 234) rgb(234, 234, 234);border-width: 1px;font-family:Serif"
         >
 
 
           <el-scrollbar :wrapStyle={height:picHeight}>
-            <!--            <div style="float:right;padding-right:15px;position:absolute;z-index:100;right: 1px;top:-2px">-->
-            <!--              <el-tooltip content="查看主要信息" placement="top-start" @click.native="showInfo()">-->
-            <!--                <el-button size="mini" type="info" icon="el-icon-info" circle></el-button>-->
-            <!--              </el-tooltip>-->
-            <!--              <el-tooltip content="查看所有信息" placement="top-start">-->
-            <!--                <el-button size="mini" type="primary" circle @click.native="showAll()">all</el-button>-->
-            <!--              </el-tooltip>-->
-            <!--              <el-tooltip content="查看报错信息" placement="top-start">-->
-            <!--                <el-button size="mini" type="danger" icon="el-icon-error" circle-->
-            <!--                           @click.native="showError()"-->
-            <!--                ></el-button>-->
-            <!--              </el-tooltip>-->
-            <!--            </div>-->
             <div :style={height:picHeight}>
 
               <div style="padding:10px;font-size: 14px;line-height: 25px;width: 100%;position:relative;"
