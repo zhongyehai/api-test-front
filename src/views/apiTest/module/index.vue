@@ -32,31 +32,32 @@
 
       <!-- 第一列服务树 -->
       <el-col style="width: 20%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
-          <el-tabs v-model="projectTab" class="table_padding table_project">
-            <el-tab-pane :label="projectTab" :name="projectTab">
-              <div class="custom-tree-container">
-                <div class="block">
-                  <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
-                  <el-tree
-                    class="project-tree"
-                    ref="tree"
-                    :check-on-click-node="false"
-                    :data="moduleListData"
-                    :default-expanded-keys="[defaultModule]"
-                    :empty-text="'请先添加一级模块'"
-                    :expand-on-click-node="false"
-                    :filter-node-method="filterNode"
-                    :highlight-current="true"
-                    lazy
-                    node-key="id"
-                    @node-click="clickTree"
-                    @node-drag-end="nodeDragEnd">
-                    <div slot-scope="{ node, data }"
-                         class="custom-tree-node"
-                         @mouseenter="mouseenter(data)"
-                         @mouseleave="mouseleave(data)">
-                      <span> {{ data.name }} </span>
-                      <span v-show="data.showMenu">
+        <el-tabs v-model="projectTab" class="table_padding table_project">
+          <el-tab-pane :label="projectTab" :name="projectTab">
+            <div class="custom-tree-container">
+              <div class="block">
+                <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
+                <el-scrollbar style="height:800px">
+                <el-tree
+                  class="project-tree"
+                  ref="tree"
+                  :check-on-click-node="false"
+                  :data="moduleListData"
+                  :default-expanded-keys="[defaultModule]"
+                  :empty-text="'请先添加一级模块'"
+                  :expand-on-click-node="false"
+                  :filter-node-method="filterNode"
+                  :highlight-current="true"
+                  lazy
+                  node-key="id"
+                  @node-click="clickTree"
+                  @node-drag-end="nodeDragEnd">
+                  <div slot-scope="{ node, data }"
+                       class="custom-tree-node"
+                       @mouseenter="mouseenter(data)"
+                       @mouseleave="mouseleave(data)">
+                    <span> {{ data.name }} </span>
+                    <span v-show="data.showMenu">
                         <el-dropdown
                           size="mini"
                           type="primary"
@@ -93,13 +94,14 @@
                       </el-dropdown>
 
                     </span>
-                    </div>
-                  </el-tree>
-                </div>
-
+                  </div>
+                </el-tree>
+                </el-scrollbar>
               </div>
-            </el-tab-pane>
-          </el-tabs>
+
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </el-col>
 
       <!-- 第二列，接口列表 -->
@@ -247,10 +249,8 @@ export default {
       this.currentParent = {}
       this.currentLevelForCommit = 1 // 切换项目的时候，把选中模块置为''
       moduleTree({'project_id': projectId}).then(response => {
-        if (this.showMessage(this, response)) {
           var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
           this.moduleListData = this.arrayToTree(response_data, null)
-        }
       })
     },
 
@@ -449,9 +449,16 @@ export default {
 </script>
 
 <style scoped>
+.el-scrollbar .el-scrollbar__wrap {overflow-x: hidden;}
+.el-tree>.el-tree-node{
+  height: 900px;
+  min-width: 100%;
+  display:inline-block;
+}
+
 .project-tree {
   width: 100%;
-  height: 800px;
+  height: 100%;
   /*overflow: scroll;*/
 }
 
