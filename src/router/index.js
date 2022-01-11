@@ -237,14 +237,14 @@ export const constantRoutes = [
         path: 'diffRecord',
         name: 'DiffRecord',
         component: () => import('@/views/testWork/yapi/diffDecord'),
-        meta: {title: 'swagger监控记录', icon: 'el-icon-s-opportunity'}
+        meta: {title: 'yapi监控记录', icon: 'el-icon-s-opportunity'}
       },
       {
         path: 'diffRecordShow',
         name: 'DiffRecordShow',
         hidden: true,
         component: () => import('@/views/testWork/yapi/diffDetailShow'),
-        meta: {title: 'swagger对比详情'}
+        meta: {title: 'yapi对比详情'}
       }
     ]
   },
