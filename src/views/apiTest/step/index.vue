@@ -21,8 +21,17 @@
         </el-tab-pane>
 
         <!-- 步骤编辑 -->
-        <el-tab-pane label="步骤信息" name="editStepInfo">
+        <el-tab-pane label="编辑步骤" name="editStepInfo">
           <editStepView ref="editStepView" :caseId="caseId"></editStepView>
+        </el-tab-pane>
+
+        <!-- 引用用例 -->
+        <el-tab-pane label="引用用例" name="quoteCase">
+          <quoteCaseView
+            ref="quoteCase"
+            :tempCase="tempCase"
+            :caseId="caseId"
+          ></quoteCaseView>
         </el-tab-pane>
 
       </el-tabs>
@@ -40,20 +49,23 @@
 import stepListView from '@/views/apiTest/step/stepList'
 import apiListView from '@/views/apiTest/step/apiList'
 import editStepView from "@/views/apiTest/step/editStep";
+import quoteCaseView from "@/views/apiTest/step/quoteCase";
 
-import {stepList} from "@/apis/step";
+import {postStep, stepList} from "@/apis/step";
 
 export default {
   name: 'index',
   props: [
     'projectId',
     'caseId',
+    'tempCase',
     'stepList'
   ],
   components: {
     stepListView,
     apiListView,
-    editStepView
+    editStepView,
+    quoteCaseView
   },
   data() {
     return {
@@ -69,8 +81,17 @@ export default {
   mounted() {
 
     // 新增步骤
-    this.$bus.$on(this.$busEvents.addApiToStep, (api) => {
-      this.activeName = 'editStepInfo'
+    this.$bus.$on(this.$busEvents.addApiToStep, (apiOrCase, type) => {
+      if (type !== 'quote'){  // 引用接口
+        this.activeName = 'editStepInfo'
+      }else{  // 引用用例
+        postStep(apiOrCase).then(response => {
+          if (this.showMessage(this, response)) {
+            // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
+            this.$bus.$emit(this.$busEvents.addStepIsCommit, response.data)
+          }
+        })
+      }
     })
 
     // 编辑步骤

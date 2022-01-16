@@ -196,6 +196,7 @@ export default {
         "data_json": this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
         "data_xml": this.$refs.bodyView.tempDataXml,
         "data_driver": this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson) : {},
+        "quote_case": null,
         "case_id": this.caseId,
         "api_id": this.currentStep.api_id,
         "project_id": this.currentStep.project_id
@@ -236,9 +237,11 @@ export default {
   mounted() {
 
     // 新增步骤
-    this.$bus.$on(this.$busEvents.addApiToStep, (step) => {
-      this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
-      this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
+    this.$bus.$on(this.$busEvents.addApiToStep, (step, type) => {
+      if (type !== 'quote'){
+        this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
+        this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
+      }
     })
 
     // 编辑步骤

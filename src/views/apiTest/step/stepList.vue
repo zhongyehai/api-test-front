@@ -13,7 +13,7 @@
       highlight-current-row
       style="width: 100%"
     >
-      <el-table-column prop="num" label="序号" min-width="10%">
+      <el-table-column prop="num" label="序号" min-width="8%">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>
@@ -25,19 +25,53 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="步骤名称" min-width="30%">
+      <el-table-column align="center" label="步骤名称" min-width="40%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" min-width="25%">
+      <el-table-column align="center" label="操作" min-width="15%">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click.native="editStep(scope.row, scope.$index)">编辑</el-button>
-          <el-button type="danger" size="mini"
-                     @click.native="confirmBox(deleteStepOnList, {id: scope.row.id, index: scope.$index}, scope.row.name)">
-            删除
-          </el-button>
+
+          <el-tooltip class="item" effect="dark" content="复制步骤" placement="top-start">
+            <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-document-copy"
+              @click.native="copy(scope.row)"></el-button>
+          </el-tooltip>
+
+          <el-tooltip class="item" effect="dark" content="编辑步骤" placement="top-start">
+            <el-button
+              v-if="!scope.row.quote_case"
+              type="text"
+              size="mini"
+              icon="el-icon-edit"
+              @click.native="editStep(scope.row, scope.$index)"></el-button>
+          </el-tooltip>
+
+          <el-tooltip class="item" effect="dark" content="删除步骤" placement="top-start">
+            <el-button
+              v-if="!scope.row.quote_case"
+              type="text"
+              size="mini"
+              style="color: red"
+              icon="el-icon-delete"
+              @click.native="confirmBox(deleteStepOnList, {id: scope.row.id, index: scope.$index}, scope.row.name)">
+            </el-button>
+          </el-tooltip>
+
+          <el-tooltip class="item" effect="dark" content="解除引用" placement="top-start">
+            <el-button
+              v-if="scope.row.quote_case"
+              type="text"
+              style="color: red"
+              icon="el-icon-delete"
+              @click.native="confirmBox(deleteStepOnList, {id: scope.row.id, index: scope.$index}, scope.row.name)">
+            </el-button>
+          </el-tooltip>
+
         </template>
       </el-table-column>
 
@@ -50,7 +84,7 @@
 <script>
 import Sortable from 'sortablejs'
 
-import {deleteStep, putStepIsRun, stepSort} from "@/apis/step"
+import {deleteStep, putStepIsRun, stepSort, stepCopy} from "@/apis/step"
 
 export default {
   name: 'stepList',
@@ -138,6 +172,15 @@ export default {
     editStep(row, index) {
       this.currentStep = row
       this.$bus.$emit(this.$busEvents.editStep, this.currentStep)
+    },
+
+    // 复制步骤
+    copy(row){
+      stepCopy({'id': row.id}).then(response => {
+        if (this.showMessage(this, response)) {
+          this.stepList.push(response.data)
+        }
+      })
     },
 
     // 拖拽排序

@@ -38,3 +38,8 @@ export function stepList(params) {
 export function stepSort(data) {
   return request({url: '/api/step/sort', method: 'put', data: data});
 }
+
+// 复制步骤
+export function stepCopy(data) {
+  return request({url: '/api/step/copy', method: 'post', data: data});
+}

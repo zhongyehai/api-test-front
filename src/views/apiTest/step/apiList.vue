@@ -1,19 +1,48 @@
 <template>
   <div>
 
-    <!-- 服务选择框 -->
-    <projectSelectorView
-      :busEmitEventName="$busEvents.projectSelectorChoiceProject"
-    ></projectSelectorView>
+    <el-form label-width="60px">
+      <el-row>
 
-    <el-cascader
-      placeholder="选择模块"
-      size="mini"
-      :options="tempModuleList"
-      :props="{ checkStrictly: true }"
-      v-model="selectedOptions"
-      @change="getCaseList"
-      clearable></el-cascader>
+        <!-- 服务选择 -->
+        <el-col :span="11">
+          <el-form-item label="服务">
+            <projectSelectorView
+              :busEmitEventName="$busEvents.projectSelectorChoiceProject"
+            ></projectSelectorView>
+          </el-form-item>
+        </el-col>
+
+        <!-- 选则用例集 -->
+        <el-col :span="13">
+          <el-form-item label="用例集">
+            <el-cascader
+              placeholder="选择模块"
+              size="mini"
+              style="min-width: 100%"
+              :options="tempModuleList"
+              :props="{ checkStrictly: true }"
+              v-model="selectedOptions"
+              @change="getCaseList"
+              clearable></el-cascader>
+          </el-form-item>
+        </el-col>
+      </el-row>
+    </el-form>
+
+<!--    &lt;!&ndash; 服务选择框 &ndash;&gt;-->
+<!--    <projectSelectorView-->
+<!--      :busEmitEventName="$busEvents.projectSelectorChoiceProject"-->
+<!--    ></projectSelectorView>-->
+
+<!--    <el-cascader-->
+<!--      placeholder="选择模块"-->
+<!--      size="mini"-->
+<!--      :options="tempModuleList"-->
+<!--      :props="{ checkStrictly: true }"-->
+<!--      v-model="selectedOptions"-->
+<!--      @change="getCaseList"-->
+<!--      clearable></el-cascader>-->
 
     <!-- 接口列表 -->
     <div>

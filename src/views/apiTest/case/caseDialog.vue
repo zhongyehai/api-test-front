@@ -103,16 +103,16 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- 引用用例 -->
-      <el-tab-pane label="引用用例" name="quoteCase">
-        <quoteCaseView
-          ref="quoteCase"
-          :tempCase="tempCase"
-          :beforeCase="tempCase.before_case"
-          :afterCase="tempCase.after_case"
-          :dialogIsShow="dialogIsShow"
-        ></quoteCaseView>
-      </el-tab-pane>
+<!--      &lt;!&ndash; 引用用例 &ndash;&gt;-->
+<!--      <el-tab-pane label="引用用例" name="quoteCase">-->
+<!--        <quoteCaseView-->
+<!--          ref="quoteCase"-->
+<!--          :tempCase="tempCase"-->
+<!--          :beforeCase="tempCase.before_case"-->
+<!--          :afterCase="tempCase.after_case"-->
+<!--          :dialogIsShow="dialogIsShow"-->
+<!--        ></quoteCaseView>-->
+<!--      </el-tab-pane>-->
 
       <!-- 步骤管理组件 -->
       <el-tab-pane label="步骤管理" name="stepInFo">
@@ -120,6 +120,7 @@
           ref="stepView"
           :projectId="currentProjectId || ''"
           :caseId="tempCase.id"
+          :tempCase="tempCase"
           :stepList="tempCase.steps"
         ></stepView>
       </el-tab-pane>
@@ -237,8 +238,6 @@ export default {
       caseData.set_id = this.$refs.caseSetSelector.tempCaseSetId
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
-      caseData.before_case = this.$refs.quoteCase.tempBeforeCaseIdList
-      caseData.after_case = this.$refs.quoteCase.tempAfterCaseIdList
       caseData.variables = this.$refs.variablesView.tempData
       caseData.headers = this.$refs.headersView.tempData
       caseData.steps = this.$refs.stepView.$refs.stepListView.stepList

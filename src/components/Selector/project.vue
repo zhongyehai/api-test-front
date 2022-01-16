@@ -3,6 +3,7 @@
     v-model="tempProjectId"
     placeholder="请选择服务"
     size="mini"
+    style="min-width: 100%"
     filterable
     :disabled="isDisabled"
     @change="choiceProject"
