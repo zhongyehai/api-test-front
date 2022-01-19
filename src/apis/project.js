@@ -34,6 +34,10 @@ export function yapiPull(data) {
   return request({url: '/api/yapi/pull/all', method: 'post', data: data});
 }
 
+// 同步yapi项目信息
+export function yapiPullProject(data) {
+  return request({url: '/api/yapi/pull/project', method: 'post', data: data});
+}
 
 // 同步swagger的信息
 export function swaggerPull(data) {

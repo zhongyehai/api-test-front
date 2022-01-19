@@ -13,17 +13,39 @@
                  class="filter-item">
         <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
       </el-select>
-      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" size="mini"
-                 @click="handleFilter">
+
+      <el-button
+        v-waves
+        type="primary"
+        style="margin-left: 10px"
+        size="mini"
+        @click="handleFilter">
         {{ '搜索' }}
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini"
-                 @click="addProject">
+
+      <el-button
+        style="margin-left: 10px;"
+        type="primary"
+        size="mini"
+        @click="addProject">
         {{ '添加' }}
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini"
-                 @click="handleInitListQuery">
+
+      <el-button
+        style="margin-left: 10px;"
+        type="primary"
+        size="mini"
+        @click="handleInitListQuery">
         {{ '重置' }}
+      </el-button>
+
+      <el-button
+        style="margin-left: 10px;"
+        type="primary"
+        size="mini"
+        :loading="pullYapiProjectIsLoading"
+        @click="pullYapiProject">
+        {{ '从yapi拉取' }}
       </el-button>
 
     </div>
@@ -146,7 +168,7 @@
 </template>
 
 <script>
-import {deleteProject, projectList, swaggerPull, yapiPull} from '@/apis/project'
+import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from '@/apis/project'
 import {userList} from '@/apis/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
@@ -193,7 +215,9 @@ export default {
       downloadLoading: false,
 
       // 请求加载状态
-      listLoading: true
+      listLoading: true,
+
+      pullYapiProjectIsLoading: false
 
     }
   },
@@ -221,6 +245,17 @@ export default {
       yapiPull({id: row.id}).then(response => {
         this.showMessage(this, response)
         this.$set(row, 'isPullByYapi', false)
+      })
+    },
+
+    // 从yapi同步服务信息
+    pullYapiProject(row) {
+      this.pullYapiProjectIsLoading = true
+      yapiPullProject({}).then(response => {
+        this.pullYapiProjectIsLoading = false
+        if (this.showMessage(this, response)) {
+          this.getProjectList()
+        }
       })
     },
 
