@@ -12,6 +12,7 @@
       row-key="id"
       highlight-current-row
       style="width: 100%"
+      max-height="565"
     >
       <el-table-column prop="num" label="序号" min-width="8%">
         <template slot-scope="scope">
@@ -19,13 +20,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="执行" min-width="10%">
+      <el-table-column align="center" label="执行" min-width="12%">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.is_run" @change="changeStepIsRun(scope.$index)"></el-switch>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="步骤名称" min-width="40%">
+      <el-table-column align="center" label="步骤名称" min-width="38%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
@@ -39,6 +40,7 @@
               type="text"
               size="mini"
               icon="el-icon-document-copy"
+              :loading="scope.row.copyIsLoading"
               @click.native="copy(scope.row)"></el-button>
           </el-tooltip>
 
@@ -176,7 +178,9 @@ export default {
 
     // 复制步骤
     copy(row){
+      this.$set(row, 'copyIsLoading', true)
       stepCopy({'id': row.id}).then(response => {
+        this.$set(row, 'copyIsLoading', false)
         if (this.showMessage(this, response)) {
           this.stepList.push(response.data)
         }
@@ -235,17 +239,5 @@ export default {
 </style>
 
 <style scoped>
-.icon-star {
-  margin-right: 2px;
-}
 
-.drag-handler {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-}
-
-.show-d {
-  margin-top: 15px;
-}
 </style>

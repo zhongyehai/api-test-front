@@ -15,7 +15,7 @@
 
         <!-- 选则用例集 -->
         <el-col :span="13">
-          <el-form-item label="用例集">
+          <el-form-item label="模块">
             <el-cascader
               placeholder="选择模块"
               size="mini"
@@ -29,20 +29,6 @@
         </el-col>
       </el-row>
     </el-form>
-
-<!--    &lt;!&ndash; 服务选择框 &ndash;&gt;-->
-<!--    <projectSelectorView-->
-<!--      :busEmitEventName="$busEvents.projectSelectorChoiceProject"-->
-<!--    ></projectSelectorView>-->
-
-<!--    <el-cascader-->
-<!--      placeholder="选择模块"-->
-<!--      size="mini"-->
-<!--      :options="tempModuleList"-->
-<!--      :props="{ checkStrictly: true }"-->
-<!--      v-model="selectedOptions"-->
-<!--      @change="getCaseList"-->
-<!--      clearable></el-cascader>-->
 
     <!-- 接口列表 -->
     <div>

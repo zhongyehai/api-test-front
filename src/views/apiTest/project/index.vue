@@ -13,7 +13,6 @@
                  class="filter-item">
         <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
       </el-select>
-
       <el-button
         v-waves
         type="primary"
@@ -158,11 +157,11 @@
       :limit.sync="listQuery.pageSize"
       @pagination="getProjectList"/>
 
-    <!-- 编辑框 -->
-    <projectDialog
+    <!-- 抽屉 -->
+    <projectDrawer
       :currentProject="currentProject"
       :currentUserList="user_list"
-    ></projectDialog>
+    ></projectDrawer>
 
   </div>
 </template>
@@ -172,14 +171,13 @@ import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from
 import {userList} from '@/apis/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
-import {parseTime} from "@/utils";
-import projectDialog from '@/views/apiTest/project/dialogForm'
+import projectDrawer from '@/views/apiTest/project/drawer'
 
 export default {
   name: 'Project',
   components: {
     Pagination,
-    projectDialog
+    projectDrawer
   },
   directives: {waves},
   data() {
@@ -218,7 +216,6 @@ export default {
       listLoading: true,
 
       pullYapiProjectIsLoading: false
-
     }
   },
 

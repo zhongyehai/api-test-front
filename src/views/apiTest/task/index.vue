@@ -126,7 +126,7 @@
         </el-tabs>
       </el-col>
     </el-row>
-    <taskDialogView></taskDialogView>
+    <taskDrawer></taskDrawer>
   </div>
 </template>
 
@@ -134,7 +134,7 @@
 import Sortable from 'sortablejs'
 import projectTreeView from '@/components/Trees/projectTree'
 import Pagination from '@/components/Pagination'
-import taskDialogView from "@/views/apiTest/task/taskDialog";
+import taskDrawer from "@/views/apiTest/task/drawer";
 
 import {taskList, disableTask, enableTask, runTask, deleteTask, copyTask, taskSort} from '@/apis/task'
 import {userList} from "@/apis/user";
@@ -142,12 +142,9 @@ import {reportIsDone} from "@/apis/report";
 
 export default {
   name: "index",
-  components: {Pagination, projectTreeView, taskDialogView},
+  components: {Pagination, projectTreeView, taskDrawer},
   data() {
     return {
-      // enableLoadingIsShow: false,
-      // disableLoadingIsShow: false,
-      // deleteLoadingIsShow: false,
       tableLoadingIsShow: false,
       taskTab: 'taskTab',
       taskList: [],

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
@@ -41,9 +41,27 @@ export default {
 }
 </script>
 
-<style scoped>
-  /*统一背景色*/
-  /*#app{*/
-  /*  background-color: #0066cc;*/
-  /*}*/
+<style>
+/*统一背景色*/
+/*#app{*/
+/*  background-color: #0066cc;*/
+/*}*/
+
+/*抽屉body*/
+.el-drawer__body{
+  overflow-y: scroll;
+  margin-bottom: 50px;
+}
+
+/*抽屉footer固定到底部*/
+.demo-drawer__footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-top: 1px solid #e8e8e8;
+  padding: 10px 16px;
+  text-align: right;
+  background-color: white;
+}
 </style>

@@ -1,20 +1,24 @@
 <template>
-  <!-- 新增/修改用例集表单 -->
-  <el-dialog
+  <!-- 新增/修改函数文件表单 -->
+  <el-drawer
     :title="'新增函数文件'"
-    :visible.sync="currentDialogIsShow"
-    :close-on-click-modal="false"
-    width="40%"
-  >
-    <el-form ref="dataForm" label-position="left" label-width="100px" style="min-width: 400px;">
+    size="40%"
+    :wrapperClosable="false"
+    :visible.sync="funcFileDrawerIsShow"
+    :direction="direction">
+    <el-form
+      ref="dataForm"
+      label-position="left"
+      label-width="100px"
+      style="min-width: 400px;;margin-left: 20px;margin-right: 20px">
       <!-- 函数文件名 -->
       <el-form-item :label="'函数文件名'" prop="name" class="is-required" size="mini">
         <el-input v-model="name"/>
       </el-form-item>
     </el-form>
 
-    <div slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="currentDialogIsShow = false"> {{ '取消' }}</el-button>
+    <div class="demo-drawer__footer">
+      <el-button size="mini" @click="funcFileDrawerIsShow = false"> {{ '取消' }}</el-button>
       <el-button
         type="primary"
         size="mini"
@@ -24,18 +28,19 @@
       </el-button>
     </div>
 
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <script>
 import {postFuncFile} from '@/apis/funcFile'
 
 export default {
-  name: "funcFileDialog",
+  name: "drawer",
   data() {
     return {
+      direction: 'rtl',  // 抽屉打开方式
       submitButtonIsLoading: false,
-      currentDialogIsShow: false,
+      funcFileDrawerIsShow: false,
       name: ''
     }
   },
@@ -43,7 +48,7 @@ export default {
   mounted() {
     this.$bus.$on(this.$busEvents.addFuncFileDialogIsShow, (status) => {
       this.name = ''
-      this.currentDialogIsShow = true
+      this.funcFileDrawerIsShow = true
     })
   },
 
@@ -59,7 +64,7 @@ export default {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
           this.$bus.$emit(this.$busEvents.addFuncFileIsCommit, 'addFuncFileIsCommit')
-          this.currentDialogIsShow = false
+          this.funcFileDrawerIsShow = false
         }
       })
     }

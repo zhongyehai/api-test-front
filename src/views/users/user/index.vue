@@ -81,24 +81,20 @@
 
       <el-table-column :label="'操作'" align="center" min-width="22%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
 
           <el-button
             size="mini"
             :type="row.status === 1 ? 'info' : 'success'"
             :loading="row.changStatusLoadingIsShow"
-            @click="changStatus(row)">
-            {{ row.status === 1 ? '禁用' : '启用' }}
+            @click="changStatus(row)">{{ row.status === 1 ? '禁用' : '启用' }}
           </el-button>
 
           <el-button
             size="mini"
             type="danger"
             :loading="row.deleteLoadingIsShow"
-            @click="confirmBox(delUser, row, row.name)">
-            删除
+            @click="confirmBox(delUser, row, row.name)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -113,12 +109,17 @@
       @pagination="getUserList"/>
 
     <!-- 新增/修改表单 -->
-    <el-dialog :title=" dialogStatus==='create'?'新增用户':'修改用户'" :visible.sync="dialogFormVisible">
+    <el-drawer
+      :title=" drawerType === 'add' ? '新增服务' : '修改服务'"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="drawerIsShow"
+      :direction="direction">
       <el-form
         ref="dataForm"
         :model="tempUser"
         label-width="100px"
-        style="min-width: 400px;">
+        style="min-width: 400px;margin-left: 20px;margin-right: 20px">
 
         <!-- 用户信息 -->
         <el-form-item :label="'用户名'" prop="name" class="is-required" size="mini">
@@ -141,18 +142,17 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click="drawerIsShow = false">取消</el-button>
         <el-button
           size="mini"
           type="primary"
           :loading="submitButtonIsLoading"
-          @click="dialogStatus==='create'?addUser():changUser()">
-          {{ '确定' }}
+          @click="drawerType==='create'?addUser():changUser()">确定
         </el-button>
       </div>
 
-    </el-dialog>
+    </el-drawer>
 
   </div>
 </template>
@@ -190,45 +190,23 @@ export default {
       submitButtonIsLoading: false,
       changStatusLoadingIsShow: false,
 
-      // 用户列表
-      user_list: [],
-
-      // 角色列表
-      role_list: [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}],
-
-      // 状态列表
-      status_list: [],
-
-      // 服务数据表格起始
-      tableKey: 0,
-
-      // 服务数据表格总条数
-      total: 0,
-
-      // 编辑框的显示状态
-      dialogFormVisible: false,
-
-      // dialog框状态，edit为编辑数据, create为新增数据
-      dialogStatus: '',
-
-      // 请求加载状态
-      listLoading: true,
-
+      user_list: [],  // 用户列表
+      role_list: [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}],  // 角色列表
+      status_list: [],  // 状态列表
+      tableKey: 0,  // 服务数据表格起始
+      total: 0,  // 服务数据表格总条数
+      drawerIsShow: false,  // 编辑框的显示状态
+      drawerType: '',   // dialog框状态，edit为编辑数据, create为新增数据
+      direction: 'rtl',  // 抽屉打开方式
+      listLoading: true,  // 请求加载状态
     }
   },
 
   created() {
-    // 初始化用户状态
-    this.initStatus()
-
-    // 初始化角色列表
-    this.getRoleList()
-
-    // 初始化用户列表
-    this.getUserList()
-
-    // 初始化临时数据
-    this.initTempUser()
+    this.initStatus()  // 初始化用户状态
+    this.getRoleList()  // 初始化角色列表
+    this.getUserList()  // 初始化用户列表
+    this.initTempUser()  // 初始化临时数据
   },
   mounted() {
   },
@@ -253,19 +231,19 @@ export default {
     // 初始化临时模板数据，点击新增按钮触发
     handleCreate() {
       this.initTempUser()
-      this.dialogStatus = 'create'  // dialog框标识为创建
-      this.dialogFormVisible = true
+      this.drawerType = 'create'  // dialog框标识为创建
+      this.drawerIsShow = true
     },
 
     //  初始化临时模板数据，点击修改按钮触发
     handleUpdate(row) {
-      this.dialogStatus = 'edit'  // dialog框标识为编辑
+      this.drawerType = 'edit'  // dialog框标识为编辑
       this.tempUser.id = row.id
       this.tempUser.name = row.name
       this.tempUser.account = row.account
       this.tempUser.password = row.password
       this.tempUser.role_id = row.role_id
-      this.dialogFormVisible = true
+      this.drawerIsShow = true
     },
 
     // 初始化查询数据
@@ -301,7 +279,7 @@ export default {
       postUser(this.tempUser).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.initTempUser(); // 初始化临时数据模板
           this.getUserList(); // 重新从后台获取服务列表
         }
@@ -314,7 +292,7 @@ export default {
       putUser(this.tempUser).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.initTempUser(); // 初始化临时数据模板
           this.getUserList(); // 重新从后台获取服务列表
         }

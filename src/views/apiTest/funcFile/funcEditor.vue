@@ -30,7 +30,7 @@
 
     </el-form>
 
-    <funcFileDialog></funcFileDialog>
+    <funcFileDrawer></funcFileDrawer>
 
     <el-container>
 
@@ -57,13 +57,13 @@
 </template>
 
 <script>
-import funcFileDialog from "@/views/apiTest/funcFile/funcFileDialog";
+import funcFileDrawer from "@/views/apiTest/funcFile/drawer";
 import {putFuncFile, debugFuncFile} from "@/apis/funcFile";
 
 export default {
   name: "funcEditor",
   components: {
-    funcFileDialog,
+    funcFileDrawer,
     editor: require('vue2-ace-editor'),
   },
   data() {

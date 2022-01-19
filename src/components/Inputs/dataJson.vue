@@ -8,8 +8,8 @@
         lang="json"
         theme="chrome"
         width="100%"
-        height="515px"
-        :options="{}"
+        height="330px"
+        :options="editorOptions"
       >
       </editor>
     </el-container>
@@ -28,6 +28,14 @@ export default {
   data() {
     return {
       tempDataJson: '',
+      editorOptions: {
+        // 设置代码编辑器的样式
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+        tabSize: 2,
+        showPrintMargin: false //去除编辑器里的竖线
+      }
     }
   },
 

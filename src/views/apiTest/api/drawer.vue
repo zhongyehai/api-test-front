@@ -2,20 +2,19 @@
   <div>
 
     <!-- 新增/修改接口表单 -->
-    <el-dialog
-      :title=" dialogStatus === 'update' ? '修改接口' : '新增接口'"
-      :visible.sync="dialogFormVisible"
-      :close-on-click-modal="false"
-      width="90%"
-    >
-
+    <el-drawer
+      :title=" drawerType === 'update' ? '修改接口' : '新增接口'"
+      size="80%"
+      :wrapperClosable="false"
+      :visible.sync="drawerIsShow"
+      :direction="direction">
       <!-- 接口所属信息 -->
-      <el-form :inline="true" style="padding: 20px 20px -10px 10px;" label-width="100px">
+      <el-form :inline="true" style="margin-left: 20px;margin-right: 20px" label-width="100px">
 
         <el-row>
 
           <!-- 接口名称 -->
-          <el-col :span="12">
+          <el-col :span="11">
             <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
               <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 250%">
               </el-input>
@@ -33,13 +32,13 @@
           </el-col>
 
           <!-- 选择模块 -->
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="选择模块" class="is-required" style="margin-bottom: 5px">
               <moduleSelectorView
                 ref="moduleSelector"
                 :moduleId="tempApi.module_id"
                 :projectId="tempApi.project_id"
-                :status="dialogFormVisible"
+                :status="drawerIsShow"
                 :busOnEventName="$busEvents.projectSelectorChoiceProject"
                 :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
                 :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
@@ -69,7 +68,7 @@
       <hr style="height:1px;border:none;border-top:1px solid rgb(241, 215, 215);margin-top: -5px"/>
 
       <!-- 接口内容信息 -->
-      <el-form style="margin: 0 0 0 10px">
+      <el-form style="margin: 0 20px 0 20px;">
         <el-form-item>
 
           <!-- 请求方法选择器 -->
@@ -81,7 +80,7 @@
 
           <!-- 接口地址 -->
           <el-input v-model="tempApi.addr" class="input-with-select" placeholder="请输入接口地址"
-                    size="mini" style="width: 80%;margin-right: 5px">
+                    size="mini" style="width: 75%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->
@@ -94,7 +93,7 @@
       </el-form>
 
       <!-- 参数信息 -->
-      <el-tabs style="margin: 0 0 0 10px" v-model="bodyShow">
+      <el-tabs style="margin: 0 20px 0 20px;" v-model="bodyShow">
 
         <!-- 头部信息 -->
         <el-tab-pane label="头部信息" name="headers">
@@ -150,20 +149,17 @@
 
       </el-tabs>
 
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click=" dialogFormVisible = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click=" drawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
           type="primary"
           size="mini"
           :loading="isShowSubmitLoading"
-          @click=" dialogStatus === 'update' ? changApi() : addApi() ">
+          @click=" drawerType === 'update' ? changApi() : addApi() ">
           {{ '确定' }}
         </el-button>
       </div>
-    </el-dialog>
-
-    <!-- 接口运行结果 -->
-    <!--    <runApiResult :runApiResultData="runApiResultData"></runApiResult>-->
+    </el-drawer>
 
   </div>
 
@@ -179,14 +175,13 @@ import queryStringView from '@/components/Inputs/changeRow'
 import bodyView from '@/components/apiBody'
 import extractsView from '@/components/Inputs/changeRow'
 import validatesView from '@/components/Inputs/validates'
-// import runApiResult from '@/views/api/runApiResult'
 
 import {postApi, putApi, runApi} from '@/apis/api'
 import {reportIsDone} from "@/apis/report";
 
 
 export default {
-  name: 'apiEditDialog',
+  name: 'drawer',
   props: [
     'currentProjectId',
     'currentModuleId',
@@ -200,17 +195,14 @@ export default {
     headersView,
     bodyView,
     extractsView,
-    validatesView,
-    // runApiResult
+    validatesView
   },
   data() {
     return {
 
-      // dialogForm框是否打开
-      dialogFormVisible: false,
-
-      // dialogForm框展示创建还是编辑
-      dialogStatus: '',
+      drawerIsShow: false, // 抽屉是否打开
+      direction: 'rtl',  // 抽屉打开方式
+      drawerType: '',  // title展示创建还是编辑
 
       // 请求方法选择组件选择的请求方法
       methodSelectorChoiceMethod: '',
@@ -229,7 +221,6 @@ export default {
       // 接口新增/编辑临时数据
       tempApi: {
         id: '',
-        // num: '',
         name: '',
         desc: '',
         up_func: '',
@@ -247,10 +238,7 @@ export default {
         validates: [{key: null, value: null, validate_type: null, remark: null}],
         module_id: '',
         project_id: ''
-      },
-
-      // // 调试接口的运行结果
-      // runApiResultData: null
+      }
     }
   },
 
@@ -258,7 +246,6 @@ export default {
 
     // 打开测试报告
     openReportById(reportId) {
-      // console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
       let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
       window.open(href, '_blank')
     },
@@ -284,7 +271,7 @@ export default {
           }
         })
       }
-      this.dialogStatus = 'update'
+      this.drawerType = 'update'
     },
 
     runApis() {
@@ -331,7 +318,7 @@ export default {
       postApi(this.getTempApi()).then(response => {
         this.isShowSubmitLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
         }
       })
@@ -343,7 +330,7 @@ export default {
       putApi(this.getTempApi()).then(response => {
         this.isShowSubmitLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.$bus.$emit(this.$busEvents.apiDialogCommitSuccess, 'success')
         }
       })
@@ -352,7 +339,6 @@ export default {
     // 点击新增接口时，初始化 dialog 数据
     initNewTempApi() {
       this.tempApi.id = ''
-      // this.tempApi.num = ''
       this.tempApi.name = ''
       this.tempApi.desc = ''
       this.tempApi.up_func = ''
@@ -364,34 +350,31 @@ export default {
       this.tempApi.params = [{key: null, value: null}]
       this.tempApi.data_type = ''
       this.tempApi.data_form = [{key: null, data_type: null, remark: null, value: null}]
-      // this.tempApi.data_json = JSON.stringify({})
       this.tempApi.data_json = {}
       this.tempApi.data_xml = ''
       this.tempApi.extracts = [{key: null, value: null, remark: null}]
       this.tempApi.validates = [{key: null, value: null, validate_type: null, remark: null}]
       this.tempApi.module_id = this.currentModuleId ? this.currentModuleId : ''
       this.tempApi.project_id = this.currentProjectId || ''
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
+      this.drawerType = 'create'
+      this.drawerIsShow = true
     },
 
     // 点击修改接口时，初始化 dialog 数据
     initUpdateTempApi(api) {
       this.tempApi = api
-      this.dialogFormVisible = true
+      this.drawerIsShow = true
     },
 
     // 获取 tempApi 用于提交数据
     getTempApi() {
       return {
         id: this.tempApi.id,
-        // num: this.tempApi.num,
         name: this.tempApi.name,
         desc: this.tempApi.desc,
         up_func: this.tempApi.up_func,
         down_func: this.tempApi.down_func,
         addr: this.tempApi.addr,
-
         method: this.$refs.methodsSelectorView.tempMethod,
         choice_host: this.$refs.environmentSelectorView.current_environment,
         headers: this.$refs.headersView.tempData,
@@ -402,7 +385,6 @@ export default {
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         data_json: this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
         data_xml: this.$refs.bodyView.tempDataXml,
-
         module_id: this.$refs.moduleSelector.tempModuleId,
         project_id: this.tempApi.project_id
       }
@@ -423,11 +405,10 @@ export default {
         this.initNewTempApi()  // 新增
       } else if (command === 'edit') {
         this.initUpdateTempApi(api)  // 修改
-        this.dialogStatus = 'update'
+        this.drawerType = 'update'
       } else if (command === 'copy') {
-        // api.num = ''
         this.initUpdateTempApi(api)  // 复制
-        this.dialogStatus = 'add'
+        this.drawerType = 'add'
       }
     })
   },
@@ -445,7 +426,6 @@ export default {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
         this.tempApi.project_id = newVal
-        // this.currentChoiceProjectHosts = newVal.hosts
       }
     },
 

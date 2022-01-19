@@ -84,10 +84,10 @@
 
     </el-tabs>
 
-    <apiDialog
+    <apiDrawer
       :currentProjectId="currentProjectId"
       :currentModuleId="currentModuleId"
-    ></apiDialog>
+    ></apiDrawer>
 
   </div>
 </template>
@@ -95,7 +95,8 @@
 <script>
 import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
-import apiDialog from '@/views/apiTest/api/apiDialog'
+// import apiDialog from '@/views/apiTest/api/apiDialog'
+import apiDrawer from '@/views/apiTest/api/drawer'
 
 import {userList} from '@/apis/user'
 import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/api'
@@ -105,7 +106,7 @@ export default {
   name: 'index',
   components: {
     Pagination,
-    apiDialog
+    apiDrawer
   },
 
   // 接收父组件传参的key

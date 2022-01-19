@@ -5,22 +5,22 @@
     <el-form label-width="200px">
       <el-form-item :label="'选择服务：'" size="mini">
         <el-select
-            v-model="currentProjectId"
-            placeholder="选择服务"
-            size="mini"
-            style="width: 500px"
-            filterable
-            @change="getSetList"
+          v-model="currentProjectId"
+          placeholder="选择服务"
+          size="mini"
+          style="width: 500px"
+          filterable
+          @change="getSetList"
         >
           <el-option v-for="item in projectListData" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
 
         <el-button
-            v-show="currentProjectId"
-            type="primary"
-            size="mini"
-            style="margin-left: 50px"
-            @click.native="addParentSet()"
+          v-show="currentProjectId"
+          type="primary"
+          size="mini"
+          style="margin-left: 50px"
+          @click.native="addParentSet()"
         >为当前服务添加一级用例集
         </el-button>
 
@@ -37,19 +37,19 @@
               <div class="block">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
                 <el-tree
-                    class="project-tree"
-                    ref="tree"
-                    :check-on-click-node="false"
-                    :data="setListData"
-                    :default-expanded-keys="[defaultCaseSet]"
-                    :empty-text="'请先添加一级用例集'"
-                    :expand-on-click-node="false"
-                    :filter-node-method="filterNode"
-                    :highlight-current="true"
-                    lazy
-                    node-key="id"
-                    @node-click="clickTree"
-                    @node-drag-end="nodeDragEnd">
+                  class="project-tree"
+                  ref="tree"
+                  :check-on-click-node="false"
+                  :data="setListData"
+                  :default-expanded-keys="[defaultCaseSet]"
+                  :empty-text="'请先添加一级用例集'"
+                  :expand-on-click-node="false"
+                  :filter-node-method="filterNode"
+                  :highlight-current="true"
+                  lazy
+                  node-key="id"
+                  @node-click="clickTree"
+                  @node-drag-end="nodeDragEnd">
                     <span slot-scope="{ node, data }"
                           class="custom-tree-node"
                           @mouseenter="mouseenter(data)"
@@ -57,14 +57,14 @@
                       <span> {{ data.name }} </span>
                       <span v-show="data.showMenu">
                         <el-dropdown
-                            size="mini"
-                            type="primary"
-                            placement="top-start"
-                            @visible-change="changeDropdownStatus"
+                          size="mini"
+                          type="primary"
+                          placement="top-start"
+                          @visible-change="changeDropdownStatus"
                         >
                           <i
-                              class="el-icon-more"
-                              style="float: right;padding-left: 5px;color: #409EFF;transform: rotate(90deg)"
+                            class="el-icon-more"
+                            style="float: right;padding-left: 5px;color: #409EFF;transform: rotate(90deg)"
                           ></i>
 
                           <el-dropdown-menu slot="dropdown">
@@ -105,40 +105,41 @@
       <el-col style="width: 79%; margin-left: 5px">
         <!-- 用例管理组件 -->
         <caseManage
-            :currentSetId="currentSetId"
-            :currentProjectId="currentProjectId"
+          :currentSetId="currentSetId"
+          :currentProjectId="currentProjectId"
         ></caseManage>
       </el-col>
 
     </el-row>
 
     <!-- 新增/修改用例集表单 -->
-    <el-dialog
-        :close-on-click-modal="false"
-        :title=" dialogStatus === 'add' ? '新增用例集' : '修改用例集' "
-        :visible.sync="dialogFormVisible"
-        width="40%">
+    <el-drawer
+      :title="moduleDrawerStatus === 'add' ? '新增用例集' : '修改用例集'"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="moduleDrawerIsShow"
+      :direction="direction">
       <el-form
-          ref="dataForm"
-          :model="tempDataForm"
-          label-position="left"
-          label-width="100px"
-          style="min-width: 400px;">
-        <el-form-item :label="'用例集名称'" class="filter-item" prop="name" size="mini">
+        ref="dataForm"
+        :model="tempDataForm"
+        label-position="left"
+        label-width="100px"
+        style="min-width: 400px;margin-left: 20px;margin-right: 20px">
+        <el-form-item :label="'用例集名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="tempDataForm.name" placeholder="同一节点下，用例集名称不可重复"/>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click="moduleDrawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
-            size="mini"
-            type="primary"
-            :loading="isShowLoading"
-            @click=" dialogStatus === 'add' ? addCaseSet() : changCaseSet() ">
+          size="mini"
+          type="primary"
+          :loading="isShowLoading"
+          @click=" moduleDrawerStatus === 'add' ? addCaseSet() : changCaseSet() ">
           {{ '确定' }}
         </el-button>
       </div>
-    </el-dialog>
+    </el-drawer>
 
   </div>
 
@@ -163,6 +164,7 @@ export default {
   directives: {waves},
   data() {
     return {
+      direction: 'rtl',  // 抽屉打开方式
       projectTab: '用例集列表',
       isShowLoading: false, // 用例集编辑框提交Loading
       filterText: '',      // 查询关键字
@@ -180,9 +182,9 @@ export default {
         parent: '',
         project_id: '',
       },
-      dialogFormVisible: false,
+      moduleDrawerIsShow: false,
       defaultCaseSet: {},
-      dialogStatus: '',
+      moduleDrawerStatus: '',
       dropdownStatus: false,  // el-dropdown 的展开/隐藏状态
       // 当前鼠标滑入的节点名
       currentLabel: ''
@@ -196,7 +198,7 @@ export default {
   methods: {
 
     // el-dropdown 的展开/隐藏状态
-    changeDropdownStatus(status){
+    changeDropdownStatus(status) {
       this.dropdownStatus = status
     },
 
@@ -238,7 +240,7 @@ export default {
 
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
-      if (this.dropdownStatus === false){
+      if (this.dropdownStatus === false) {
         this.currentSetIdForCommit = data.id
         this.currentParent = data
       }
@@ -263,9 +265,9 @@ export default {
 
     // 打开用例集编辑框
     showCaseSetDialog(command, node, data) {
-      this.dialogStatus = command
+      this.moduleDrawerStatus = command
       this.tempDataForm.name = command === 'edit' ? data.name : ''
-      this.dialogFormVisible = true
+      this.moduleDrawerIsShow = true
     },
 
     // 添加用例集
@@ -280,7 +282,7 @@ export default {
       }).then(response => {
         this.isShowLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.moduleDrawerIsShow = false
 
           // 把当前添加的节点加入到父节点下
           if (this.currentParent.id) {
@@ -309,7 +311,7 @@ export default {
       }).then(response => {
         this.isShowLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.moduleDrawerIsShow = false
           this.currentParent.name = response.data.name
         }
       })

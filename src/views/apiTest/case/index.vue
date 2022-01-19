@@ -88,10 +88,10 @@
 
     </el-tabs>
 
-    <caseDialog
+    <caseDrawer
       :currentProjectId="currentProjectId"
       :currentSetId="currentSetId"
-    ></caseDialog>
+    ></caseDrawer>
 
   </div>
 </template>
@@ -99,7 +99,7 @@
 <script>
 import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
-import caseDialog from '@/views/apiTest/case/caseDialog'
+import caseDrawer from '@/views/apiTest/case/drawer'
 
 import {userList} from '@/apis/user'
 import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/case'
@@ -109,7 +109,7 @@ export default {
   name: 'index',
   components: {
     Pagination,
-    caseDialog
+    caseDrawer
   },
 
   // 接收父组件传参的key

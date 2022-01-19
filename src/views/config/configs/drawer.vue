@@ -1,30 +1,31 @@
 <template>
 
   <!-- 新增/修改配置表单 -->
-  <el-dialog
-    :title=" dialogStatus === 'add' ? '新增配置' : '修改配置' "
-    :visible.sync="dialogIsShow"
-    :close-on-click-modal="false"
-    width="40%"
-  >
+  <el-drawer
+    :title=" drawerType === 'add' ? '新增服务' : '修改服务'"
+    size="40%"
+    :wrapperClosable="false"
+    :visible.sync="drawerIsShow"
+    :direction="direction">
+
     <el-form
       ref="dataForm"
       :model="tempConfig"
       :rules="rules"
       label-width="80px"
-      style="min-width: 400px;">
+      style="min-width: 400px;margin-left: 20px;margin-right: 20px">
 
       <el-form-item :label="'配置类型'" prop="type" class="is-required" size="mini">
         <configTypeSelector
           ref="configTypeSelector"
           :configTypeList="configTypeList"
           :configType="tempConfig.type"
-          :dialogType="dialogStatus"
+          :dialogType="drawerType"
         ></configTypeSelector>
       </el-form-item>
 
       <el-form-item :label="'配置名'" prop="name" class="is-required" size="mini">
-        <el-input v-model="tempConfig.name" :disabled="dialogStatus === 'edit'"/>
+        <el-input v-model="tempConfig.name" :disabled="drawerType === 'edit'"/>
       </el-form-item>
 
       <el-form-item :label="'配置值'" prop="value" class="is-required" size="mini">
@@ -36,17 +37,17 @@
       </el-form-item>
 
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="dialogIsShow = false"> {{ '取消' }}</el-button>
+    <div class="demo-drawer__footer">
+      <el-button size="mini" @click="drawerIsShow = false"> {{ '取消' }}</el-button>
       <el-button
         type="primary"
         size="mini"
         :loading="submitButtonIsLoading"
-        @click=" dialogStatus === 'add' ? addConfig() : changConfig() ">
+        @click=" drawerType === 'add' ? addConfig() : changConfig() ">
         {{ '确定' }}
       </el-button>
     </div>
-  </el-dialog>
+  </el-drawer>
 
 </template>
 
@@ -56,7 +57,7 @@ import {postConfig, putConfig} from "@/apis/config";
 import waves from '@/directive/waves'
 
 export default {
-  name: "configDialog",
+  name: "drawer",
   components: {configTypeSelector},
   directives: {waves},
   props: ['configTypeList'],
@@ -73,13 +74,9 @@ export default {
         type: '',
         desc: '',
       },
-
-      // 编辑框的显示状态
-      dialogIsShow: false,
-
-      // dialog框状态，edit为编辑数据, create为新增数据
-      dialogStatus: 'add',
-
+      drawerIsShow: false,  // 抽屉的显示状态
+      drawerType: 'add',  // 抽屉状态，edit为编辑数据, create为新增数据
+      direction: 'rtl',  // 抽屉打开方式
       // 检验规则
       rules: {
         name: [{required: true, message: '请输入配置名称', trigger: 'blur'}]
@@ -99,7 +96,7 @@ export default {
       } else if (status === 'edit') {
         this.editTempConfig(config)
       }
-      this.dialogIsShow = true
+      this.drawerIsShow = true
     })
   },
 
@@ -111,7 +108,7 @@ export default {
   methods: {
     // 点击新增配置时，初始化 dialog 数据
     initTempConfig() {
-      this.dialogStatus = 'add'
+      this.drawerType = 'add'
       this.tempConfig.id = '';
       this.tempConfig.name = '';
       this.tempConfig.value = '';
@@ -121,7 +118,7 @@ export default {
 
     // 点击修改配置时，初始化 dialog 内容
     editTempConfig(config) {
-      this.dialogStatus = 'edit'
+      this.drawerType = 'edit'
       this.tempConfig.id = config.id;
       this.tempConfig.name = config.name;
       this.tempConfig.value = config.value;
@@ -165,7 +162,7 @@ export default {
 
     // 向父组件发送form表单提交状态
     sendIsCommitStatus() {
-      this.dialogIsShow = false
+      this.drawerIsShow = false
       this.$bus.$emit(this.$busEvents.configDialogIsCommit, 'success')
     },
   },

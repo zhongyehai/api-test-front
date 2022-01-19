@@ -99,7 +99,7 @@
 <script>
 
 import Pagination from '@/components/Pagination'
-import configDialog from "@/views/config/configs/configDialog";
+import configDialog from "@/views/config/configs/drawer";
 
 import {getConfig, configList, deleteConfig, postConfig, putConfig} from '@/apis/config'
 import {userList} from "@/apis/user";

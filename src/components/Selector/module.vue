@@ -3,6 +3,7 @@
     v-model="tempModuleId"
     placeholder="请选择模块"
     size="small"
+    style="width: 100%"
     @change="clickModule"
     filterable
   >

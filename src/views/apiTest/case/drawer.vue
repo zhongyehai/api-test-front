@@ -1,12 +1,11 @@
 <template>
-  <el-dialog
-    :title=" dialogStatus === 'add' ? '新增用例' : dialogStatus === 'update' ? '修改用例' : '复制用例' "
-    :visible.sync="dialogIsShow"
-    :close-on-click-modal="false"
-    width="90%"
-  >
-
-    <el-tabs v-model="activeName">
+  <el-drawer
+    :title=" drawerType === 'update' ? '修改用例' : '新增用例'"
+    size="80%"
+    :wrapperClosable="false"
+    :visible.sync="drawerIsShow"
+    :direction="direction">
+    <el-tabs v-model="activeName" style="margin-left: 20px;margin-right: 20px">
 
       <!-- 用例信息组件 -->
       <el-tab-pane label="用例信息" name="caseInFo">
@@ -29,7 +28,7 @@
                   ref="caseSetSelector"
                   :projectId="currentProjectId || ''"
                   :caseSetId="currentSetId || ''"
-                  :isWatchStatus="dialogIsShow"
+                  :isWatchStatus="drawerIsShow"
                   :busOnEventName="$busEvents.projectTreeChoiceProject"
                   :busOnModuleDialogCommit="$busEvents.moduleDialogCommit">
                   >
@@ -103,17 +102,6 @@
         </el-form>
       </el-tab-pane>
 
-<!--      &lt;!&ndash; 引用用例 &ndash;&gt;-->
-<!--      <el-tab-pane label="引用用例" name="quoteCase">-->
-<!--        <quoteCaseView-->
-<!--          ref="quoteCase"-->
-<!--          :tempCase="tempCase"-->
-<!--          :beforeCase="tempCase.before_case"-->
-<!--          :afterCase="tempCase.after_case"-->
-<!--          :dialogIsShow="dialogIsShow"-->
-<!--        ></quoteCaseView>-->
-<!--      </el-tab-pane>-->
-
       <!-- 步骤管理组件 -->
       <el-tab-pane label="步骤管理" name="stepInFo">
         <stepView
@@ -127,24 +115,22 @@
 
     </el-tabs>
 
-    <div slot="footer" class="dialog-footer">
-      <el-button size="mini" @click=" dialogIsShow = false"> {{ '取消' }}</el-button>
+    <div class="demo-drawer__footer">
+      <el-button size="mini" @click=" drawerIsShow = false"> {{ '取消' }}</el-button>
       <el-button
         size="mini"
         type="primary"
         :loading="submitLoadingIsShow"
-        @click=" dialogStatus === 'add' ? addCase() : changCase() ">
+        @click=" drawerType === 'add' ? addCase() : changCase() ">
         {{ '保存用例' }}
       </el-button>
     </div>
 
-  </el-dialog>
+  </el-drawer>
 
 </template>
 
 <script>
-
-// import projectSelectorView from "@/components/Selector/project";
 import moduleSelectorView from "@/components/Selector/module";
 import caseSetSelectorView from "@/components/Selector/caseSet";
 import environmentSelectorView from "@/components/Selector/environment";
@@ -152,37 +138,34 @@ import funcFilesView from '@/components/Selector/funcFile'
 import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
 import stepView from '@/views/apiTest/step'
-import quoteCaseView from "@/views/apiTest/case/quoteCase";
 
 import {postCase, putCase, copyCase} from "@/apis/case";
 import {stepList} from "@/apis/step";
 
 export default {
-  name: 'caseDialog',
+  name: 'drawer',
   props: [
     'currentProjectId',
     'currentSetId'
   ],
   components: {
-    // projectSelectorView,
     moduleSelectorView,
     caseSetSelectorView,
     environmentSelectorView,
     funcFilesView,
     headersView,
     variablesView,
-    stepView,
-    quoteCaseView
+    stepView
   },
   data() {
     return {
-      dialogStatus: '',
-      dialogIsShow: false,
+      direction: 'rtl',  // 抽屉打开方式
+      drawerType: '',
+      drawerIsShow: false,
       submitLoadingIsShow: false,
       activeName: 'caseInFo',
       tempCase: {
         id: '',
-        // num: '',
         name: '',
         desc: '',
         is_run: true,
@@ -206,7 +189,6 @@ export default {
     // 初始化新增用例模板
     initNewTempCase() {
       this.tempCase.id = ''
-      // this.tempCase.num = ''
       this.tempCase.name = ''
       this.tempCase.desc = ''
       this.tempCase.run_times = ''
@@ -219,17 +201,16 @@ export default {
       this.tempCase.steps = []
       this.tempCase.project_id = this.currentProjectId || ''
       this.tempCase.set_id = this.currentSetId || ''
-      this.dialogStatus = 'add'
-      this.dialogIsShow = true
+      this.drawerType = 'add'
+      this.drawerIsShow = true
     },
 
     // 初始化修改用例模板
     initUpdateTempCase(currentCase) {
-      // console.log('caseDialog.method.initUpdateTempCase.currentCase: ', JSON.stringify(currentCase))
       this.tempCase = currentCase
       this.getStepList()
-      this.dialogStatus = 'update'
-      this.dialogIsShow = true
+      this.drawerType = 'update'
+      this.drawerIsShow = true
     },
 
     // 获取当前的用例数据，用于提交给后端
@@ -253,15 +234,12 @@ export default {
 
     // 新增用例
     addCase() {
-      // console.log(JSON.stringify(this.tempCase))
       this.submitLoadingIsShow = true
       postCase(this.getCaseDataToCommit()).then(response => {
         this.submitLoadingIsShow = false
         if (this.showMessage(this, response)) {
-          // console.log('caseDialog.addCase.response: ', JSON.stringify(response.data))
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.tempCase.id = response.data.id
-          // this.tempCase.num = response.data.num
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
         }
       })
@@ -269,13 +247,11 @@ export default {
 
     // 修改用例
     changCase() {
-      // console.log(JSON.stringify(this.tempCase))
-      // console.log(JSON.stringify(this.getCaseDataToCommit()))
       this.submitLoadingIsShow = true
       putCase(this.getCaseDataToCommit()).then(response => {
         this.submitLoadingIsShow = false
         if (this.showMessage(this, response)) {
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
         }
       })
@@ -287,8 +263,6 @@ export default {
 
     // 监听 caseDialog 的状态
     this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
-      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.command: ', JSON.stringify(command))
-      // console.log('caseDialog.mounted.$bus.$on.caseDialogStatus.currentCase: ', JSON.stringify(currentCase))
       if (command === 'add') {
         this.initNewTempCase()
       } else if (command === 'edit') {
@@ -298,8 +272,8 @@ export default {
             if (this.showMessage(this, response)) {
               this.tempCase = response.data.case
               this.tempCase.steps = response.data.steps
-              this.dialogStatus = 'copy'
-              this.dialogIsShow = true
+              this.drawerType = 'copy'
+              this.drawerIsShow = true
               this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
             }
           }
@@ -314,8 +288,7 @@ export default {
         if (this.showMessage(this, response)) {
           // 把接口返回的用例id赋值给this.tempCase.id
           this.tempCase.id = response.data.id
-          // this.tempCase.num = response.data.num
-          this.dialogStatus = 'update'  // 新增完后把状态改为编辑
+          this.drawerType = 'update'  // 新增完后把状态改为编辑
           this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
         }
       })

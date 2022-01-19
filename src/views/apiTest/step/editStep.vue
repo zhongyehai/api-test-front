@@ -11,6 +11,14 @@
           <el-input v-model="currentStep.name" placeholder="步骤名称"></el-input>
         </el-form-item>
 
+        <el-form-item label="请求方法" prop="name" size="small">
+          <el-input disabled v-model="currentStep.method"></el-input>
+        </el-form-item>
+
+        <el-form-item label="接口地址" prop="name" size="small">
+          <el-input disabled v-model="currentStep.addr"></el-input>
+        </el-form-item>
+
         <el-form-item label="前置处理" size="small">
           <el-input v-model="currentStep.up_func" placeholder="前置处理函数"></el-input>
         </el-form-item>
@@ -115,7 +123,7 @@ import extractsView from "@/components/Inputs/changeRow"
 import validatesView from "@/components/Inputs/validates";
 
 import {postStep, putStep} from "@/apis/step"
-import {copyCase} from "@/apis/case";
+import {getApi} from "@/apis/api";
 
 export default {
   name: "editStep",
@@ -238,7 +246,7 @@ export default {
 
     // 新增步骤
     this.$bus.$on(this.$busEvents.addApiToStep, (step, type) => {
-      if (type !== 'quote'){
+      if (type !== 'quote') {
         this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
         this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
       }
@@ -246,6 +254,13 @@ export default {
 
     // 编辑步骤
     this.$bus.$on(this.$busEvents.editStep, (step) => {
+
+      // 获取接口的地址和请求方法
+      getApi({id: step.api_id}).then(response => {
+        this.$set(this.currentStep, 'addr', response.data.addr)
+        this.$set(this.currentStep, 'method', response.data.method)
+      })
+
       this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
       this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
     })

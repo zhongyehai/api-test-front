@@ -38,26 +38,26 @@
               <div class="block">
                 <el-input v-model="filterText" placeholder="输入关键字进行过滤" size="mini"></el-input>
                 <el-scrollbar style="height:800px">
-                <el-tree
-                  class="project-tree"
-                  ref="tree"
-                  :check-on-click-node="false"
-                  :data="moduleListData"
-                  :default-expanded-keys="[defaultModule]"
-                  :empty-text="'请先添加一级模块'"
-                  :expand-on-click-node="false"
-                  :filter-node-method="filterNode"
-                  :highlight-current="true"
-                  lazy
-                  node-key="id"
-                  @node-click="clickTree"
-                  @node-drag-end="nodeDragEnd">
-                  <div slot-scope="{ node, data }"
-                       class="custom-tree-node"
-                       @mouseenter="mouseenter(data)"
-                       @mouseleave="mouseleave(data)">
-                    <span> {{ data.name }} </span>
-                    <span v-show="data.showMenu">
+                  <el-tree
+                    class="project-tree"
+                    ref="tree"
+                    :check-on-click-node="false"
+                    :data="moduleListData"
+                    :default-expanded-keys="[defaultModule]"
+                    :empty-text="'请先添加一级模块'"
+                    :expand-on-click-node="false"
+                    :filter-node-method="filterNode"
+                    :highlight-current="true"
+                    lazy
+                    node-key="id"
+                    @node-click="clickTree"
+                    @node-drag-end="nodeDragEnd">
+                    <div slot-scope="{ node, data }"
+                         class="custom-tree-node"
+                         @mouseenter="mouseenter(data)"
+                         @mouseleave="mouseleave(data)">
+                      <span> {{ data.name }} </span>
+                      <span v-show="data.showMenu">
                         <el-dropdown
                           size="mini"
                           type="primary"
@@ -94,8 +94,8 @@
                       </el-dropdown>
 
                     </span>
-                  </div>
-                </el-tree>
+                    </div>
+                  </el-tree>
                 </el-scrollbar>
               </div>
 
@@ -115,10 +115,13 @@
 
     </el-row>
 
-    <el-dialog :close-on-click-modal="false" :title="'上传接口文件'" :visible.sync="uploadFileDialogIsShow"
-               width="40%">
-      <el-row>
-
+    <el-drawer
+      :title="'上传接口文件'"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="uploadFileDrawerIsShow"
+      :direction="direction">
+      <el-row style="margin-left: 20px;margin-right: 20px">
         <el-col :span="12">
           <el-upload
             class="upload-demo"
@@ -132,43 +135,40 @@
         <el-col :span="12">
           <el-button size="mini" type="primary" style="float: right" @click="downloadTemplate">下载模板</el-button>
         </el-col>
-
       </el-row>
-
-
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="uploadFileDialogIsShow = false">关闭</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="small" @click="uploadFileDrawerIsShow = false">关闭</el-button>
       </div>
-
-    </el-dialog>
+    </el-drawer>
 
     <!-- 新增/修改模块表单 -->
-    <el-dialog
-      :close-on-click-modal="false"
-      :title=" dialogStatus === 'add' ? '新增模块' : '修改模块' "
-      :visible.sync="dialogFormVisible"
-      width="40%">
+    <el-drawer
+      :title="moduleDrawerStatus === 'add' ? '新增模块' : '修改模块'"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="moduleDrawerIsShow"
+      :direction="direction">
       <el-form
         ref="dataForm"
         :model="tempDataForm"
         label-position="left"
         label-width="90px"
-        style="min-width: 400px;">
+        style="min-width: 400px;margin-left: 20px;margin-right: 20px">
         <el-form-item :label="'模块名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="tempDataForm.name" placeholder="同一节点下，模块名称不可重复"/>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click="moduleDrawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
           size="mini"
           type="primary"
           :loading="isShowLoading"
-          @click=" dialogStatus === 'add' ? addModule() : changModule() ">
+          @click=" moduleDrawerStatus === 'add' ? addModule() : changModule() ">
           {{ '确定' }}
         </el-button>
       </div>
-    </el-dialog>
+    </el-drawer>
 
   </div>
 
@@ -193,6 +193,7 @@ export default {
   directives: {waves},
   data() {
     return {
+      direction: 'rtl',  // 抽屉打开方式
       projectTab: '模块列表',  // 服务tab的title
       filterText: '',  // 查询关键字
       isShowLoading: false, // 模块编辑框提交Loading
@@ -210,13 +211,13 @@ export default {
         parent: '',
         project_id: '',
       },
-      dialogFormVisible: false,
-      dialogStatus: '',
+      moduleDrawerIsShow: false,
+      moduleDrawerStatus: '',
       defaultModule: {},
 
       // 文件上传框打开状态
       uploadApiMsg: uploadApiMsg,
-      uploadFileDialogIsShow: false,
+      uploadFileDrawerIsShow: false,
       fileDataList: [],
 
       // 当前鼠标滑入的节点名
@@ -249,8 +250,8 @@ export default {
       this.currentParent = {}
       this.currentLevelForCommit = 1 // 切换项目的时候，把选中模块置为''
       moduleTree({'project_id': projectId}).then(response => {
-          var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-          this.moduleListData = this.arrayToTree(response_data, null)
+        var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
+        this.moduleListData = this.arrayToTree(response_data, null)
       })
     },
 
@@ -273,10 +274,12 @@ export default {
 
     // 鼠标滑入的时候，设置一个值，代表展示菜单
     mouseenter(data) {
-      if (this.dropdownStatus === false) {
-        this.currentModuleIdForCommit = data.id
-        this.currentParent = data
-      }
+      // if (this.dropdownStatus === false) {
+      //   this.currentModuleIdForCommit = data.id
+      //   this.currentParent = data
+      // }
+      this.currentModuleIdForCommit = data.id
+      this.currentParent = data
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
       data.name = this.ellipsis(data.name, 10)
       this.$set(data, 'showMenu', true);
@@ -298,9 +301,9 @@ export default {
 
     // 模块编辑框
     showModuleDialog(command, node, data) {
-      this.dialogStatus = command
+      this.moduleDrawerStatus = command
       this.tempDataForm.name = command === 'edit' ? data.name : ''
-      this.dialogFormVisible = true
+      this.moduleDrawerIsShow = true
     },
 
     // 添加模块
@@ -315,7 +318,7 @@ export default {
       }).then(response => {
         this.isShowLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.moduleDrawerIsShow = false
 
           // 把当前添加的节点加入到父节点下
           if (this.currentParent.id) {
@@ -344,7 +347,7 @@ export default {
       }).then(response => {
         this.isShowLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.moduleDrawerIsShow = false
           this.currentParent.name = response.data.name
         }
       })
@@ -423,7 +426,7 @@ export default {
 
     // 从excel导入接口
     showUploadFileDialog(node, data) {
-      this.uploadFileDialogIsShow = true
+      this.uploadFileDrawerIsShow = true
     },
 
     // 从excel导入接口
@@ -434,7 +437,7 @@ export default {
       uploadApi(form).then((response) => {
           if (this.showMessage(this, response)) {
             this.fileDataList = []
-            this.uploadFileDialogIsShow = false
+            this.uploadFileDrawerIsShow = false
           }
         }
       )
@@ -449,11 +452,14 @@ export default {
 </script>
 
 <style scoped>
-.el-scrollbar .el-scrollbar__wrap {overflow-x: hidden;}
-.el-tree>.el-tree-node{
+.el-scrollbar .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+
+.el-tree > .el-tree-node {
   height: 900px;
   min-width: 100%;
-  display:inline-block;
+  display: inline-block;
 }
 
 .project-tree {

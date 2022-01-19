@@ -55,16 +55,17 @@
 
 
     <!-- 新增/修改配置类型 -->
-    <el-dialog
-      :title=" dialogStatus === 'add' ? '新增类型' : '修改类型' "
-      :visible.sync="dialogIsShow"
-      :close-on-click-modal="false"
-      width="40%"
-    >
-      <el-form ref="dataForm" label-width="80px">
+    <el-drawer
+      :title=" drawerType === 'add' ? '新增服务' : '修改服务'"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="drawerIsShow"
+      :direction="direction">
+
+      <el-form ref="dataForm" label-width="80px" style="margin-left: 20px;margin-right: 20px">
 
         <el-form-item :label="'参数类型'" class="is-required">
-          <el-input v-model="tempConfigType.name" :disabled="dialogStatus === 'edit'" size="mini"/>
+          <el-input v-model="tempConfigType.name" :disabled="drawerType === 'edit'" size="mini"/>
         </el-form-item>
 
         <el-form-item :label="'备注'">
@@ -72,18 +73,17 @@
         </el-form-item>
 
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogIsShow = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click="drawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
           type="primary"
           size="mini"
           :loading="submitButtonIsLoading"
-          @click=" dialogStatus === 'add' ? addConfigType() : changConfigType()">
+          @click=" drawerType === 'add' ? addConfigType() : changConfigType()">
           {{ '确定' }}
         </el-button>
       </div>
-    </el-dialog>
-
+    </el-drawer>
 
     <pagination
       v-show="total>0"
@@ -111,8 +111,9 @@ export default {
       listLoading: false,
       total: 0,
       list: [],
-      dialogIsShow: false,
-      dialogStatus: '',
+      drawerIsShow: false,
+      drawerType: '',
+      direction: 'rtl',  // 抽屉打开方式
       submitButtonIsLoading: false,
       tempConfigType: {
         id: '',
@@ -149,12 +150,12 @@ export default {
     showAddConfigTypeDialog(row) {
       if (row) {
         this.tempConfigType = row
-        this.dialogStatus = 'edit'
+        this.drawerType = 'edit'
       } else {
         this.tempConfigType = {name: '', desc: ''}
-        this.dialogStatus = 'add'
+        this.drawerType = 'add'
       }
-      this.dialogIsShow = true
+      this.drawerIsShow = true
     },
 
     // 增加配置类型
@@ -163,7 +164,7 @@ export default {
       postConfigType(this.tempConfigType).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.getConfigTypeList()
         }
       })
@@ -175,7 +176,7 @@ export default {
       putConfigType(this.tempConfigType).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.getConfigTypeList()
         }
       })

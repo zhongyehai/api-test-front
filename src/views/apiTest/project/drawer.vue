@@ -1,85 +1,81 @@
 <template>
   <div>
+    <el-drawer
+      :title=" drawerType === 'add' ? '新增服务' : '修改服务'"
+      size="60%"
+      :wrapperClosable="false"
+      :visible.sync="drawerIsShow"
+      :direction="direction">
+      <div class="demo-drawer__content">
+        <el-form ref="dataForm" :model="tempProject" label-width="100px"
+                 style="min-width: 200px;margin-left: 20px;margin-right: 20px">
 
-    <!-- 新增/修改表单 -->
-    <el-dialog
-      :title=" dialogStatus === 'add' ? '新增服务' : '修改服务'"
-      :visible.sync="dialogFormVisible"
-      :close-on-click-modal="false"
-      width="60%"
-    >
-      <el-form ref="dataForm" :model="tempProject" label-width="100px" style="min-width: 200px;">
+          <!-- 服务信息 -->
+          <el-tabs>
+            <el-tab-pane label="服务信息">
+              <el-form-item :label="'服务名'" prop="name" size="mini" class="is-required">
+                <el-input v-model="tempProject.name"/>
+              </el-form-item>
 
-        <!-- 服务信息 -->
-        <el-tabs>
-          <el-tab-pane label="服务信息">
-            <el-form-item :label="'服务名'" prop="name" size="mini" class="is-required">
-              <el-input v-model="tempProject.name"/>
-            </el-form-item>
+              <el-form-item :label="'负责人'" prop="manager" size="mini" class="is-required">
+                <userSelector ref="userSelector" :user="tempProject.manager"></userSelector>
+              </el-form-item>
 
-            <el-form-item :label="'负责人'" prop="manager" size="mini" class="is-required">
-              <userSelector ref="userSelector" :user="tempProject.manager"></userSelector>
-            </el-form-item>
+              <!-- 函数文件 -->
+              <el-form-item label="函数文件" prop="func_files" size="mini">
+                <funcFileView ref="funcFiles" :funcFiles="tempProject.func_files"></funcFileView>
+              </el-form-item>
 
-            <!-- 函数文件 -->
-            <el-form-item label="函数文件" prop="func_files" size="mini">
-              <funcFileView ref="funcFiles" :funcFiles="tempProject.func_files"></funcFileView>
-            </el-form-item>
+              <!-- 开发环境 -->
+              <el-form-item :label="'开发环境'" prop="dev" class="filter-item" size="mini">
+                <el-input v-model="tempProject.dev" placeholder="开发环境域名，100位以内"/>
+              </el-form-item>
 
-            <!-- 开发环境 -->
-            <el-form-item :label="'开发环境'" prop="dev" class="filter-item" size="mini">
-              <el-input v-model="tempProject.dev"  placeholder="开发环境域名，100位以内"/>
-            </el-form-item>
+              <!-- 测试环境 -->
+              <el-form-item :label="'测试环境'" prop="test" class="filter-item is-required" size="mini">
+                <el-input v-model="tempProject.test" placeholder="测试环境域名，必填，100位以内"/>
+              </el-form-item>
 
-            <!-- 测试环境 -->
-            <el-form-item :label="'测试环境'" prop="test" class="filter-item is-required" size="mini">
-              <el-input v-model="tempProject.test"  placeholder="测试环境域名，必填，100位以内"/>
-            </el-form-item>
+              <!-- uat环境 -->
+              <el-form-item :label="'uat环境'" prop="dev" class="filter-item" size="mini">
+                <el-input v-model="tempProject.uat" placeholder="uat环境域名，100位以内"/>
+              </el-form-item>
 
-            <!-- uat环境 -->
-            <el-form-item :label="'uat环境'" prop="dev" class="filter-item" size="mini">
-              <el-input v-model="tempProject.uat"  placeholder="uat环境域名，100位以内"/>
-            </el-form-item>
+              <!-- 生产环境 -->
+              <el-form-item :label="'生产环境'" prop="production" class="filter-item" size="mini">
+                <el-input v-model="tempProject.production" placeholder="生产环境域名，100位以内"/>
+              </el-form-item>
 
-            <!-- 生产环境 -->
-            <el-form-item :label="'生产环境'" prop="production" class="filter-item" size="mini">
-              <el-input v-model="tempProject.production" placeholder="生产环境域名，100位以内"/>
-            </el-form-item>
+              <!-- swagger地址 -->
+              <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
+                <el-input v-model="tempProject.swagger" placeholder="当前服务的swagger地址，用于拉取模块、接口数据"/>
+              </el-form-item>
+            </el-tab-pane>
 
-            <!-- swagger地址 -->
-            <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
-              <el-input v-model="tempProject.swagger" placeholder="当前服务的swagger地址，用于拉取模块、接口数据"/>
-            </el-form-item>
-          </el-tab-pane>
+            <!-- 公用变量 -->
+            <el-tab-pane label="公用变量">
+              <variablesView :currentData="tempProject.variables"></variablesView>
+            </el-tab-pane>
 
-          <!-- 公用变量 -->
-          <el-tab-pane label="公用变量">
-            <variablesView :currentData="tempProject.variables"></variablesView>
-          </el-tab-pane>
+            <!-- 头部信息 -->
+            <el-tab-pane label="头部信息">
+              <headersView :currentData="tempProject.headers"></headersView>
+            </el-tab-pane>
+          </el-tabs>
+        </el-form>
 
-          <!-- 头部信息 -->
-          <el-tab-pane label="头部信息">
-            <headersView :currentData="tempProject.headers"></headersView>
-          </el-tab-pane>
-
-        </el-tabs>
-
-
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogFormVisible = false"> {{ '取消' }}</el-button>
-        <el-button
-          type="primary"
-          size="mini"
-          @click=" dialogStatus === 'add' ? addProject() : changProject() "
-          :loading="submitButtonIsLoading"
-        >
-          {{ '确定' }}
-        </el-button>
+        <div class="demo-drawer__footer">
+          <el-button size="mini" @click="drawerIsShow = false"> {{ '取消' }}</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            @click=" drawerType === 'add' ? addProject() : changProject() "
+            :loading="submitButtonIsLoading"
+          >{{ '确定' }}
+          </el-button>
+        </div>
       </div>
-
-    </el-dialog>
-
+    </el-drawer>
   </div>
 </template>
 
@@ -92,7 +88,7 @@ import userSelector from "@/components/Selector/user";
 import {postProject, putProject} from '@/apis/project'
 
 export default {
-  name: 'projectDialogView',
+  name: 'drawer',
   props: [
     'currentProject',
     'currentUserList'
@@ -105,6 +101,8 @@ export default {
   },
   data() {
     return {
+
+      direction: 'rtl',  // 抽屉打开方式
 
       // 临时数据，添加、修改
       tempProject: {
@@ -126,10 +124,10 @@ export default {
       user_list: [],
 
       // 编辑框的显示状态
-      dialogFormVisible: false,
+      drawerIsShow: false,
 
       // dialog框状态，edit为编辑数据, create为新增数据
-      dialogStatus: '',
+      drawerType: '',
 
       submitButtonIsLoading: false
     }
@@ -190,7 +188,7 @@ export default {
       postProject(this.getProjectForCommit()).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.sendIsCommitStatus()
         }
       })
@@ -202,7 +200,7 @@ export default {
       putProject(this.getProjectForCommit()).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogFormVisible = false
+          this.drawerIsShow = false
           this.sendIsCommitStatus()
         }
       })
@@ -221,8 +219,8 @@ export default {
       } else if (status === 'edit') {
         this.updateTempProject(data)  // 修改
       }
-      this.dialogStatus = status
-      this.dialogFormVisible = true
+      this.drawerType = status
+      this.drawerIsShow = true
     })
   },
 

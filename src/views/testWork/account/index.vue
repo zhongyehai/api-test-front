@@ -96,18 +96,19 @@
     </el-table>
 
     <!-- 新增/修改账号表单 -->
-    <el-dialog
-      :close-on-click-modal="false"
+    <el-drawer
       :title=" currentAccount.id ? '修改模块' : '新增模块' "
-      :visible.sync="dialogIsShow"
-      width="40%">
-      <!--      :rules="rules"-->
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="drawerIsShow"
+      :direction="direction">
+
       <el-form
         ref="dataForm"
         :model="currentAccount"
         label-position="right"
         label-width="90px"
-        style="min-width: 400px;">
+        style="min-width: 400px;margin-left: 20px;margin-right: 20px">
         <el-form-item :label="'服务名'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="currentAccount.project" placeholder="服务名称"/>
         </el-form-item>
@@ -124,8 +125,8 @@
           <el-input type="textarea" v-model="currentAccount.desc" autosize size="mini" placeholder="备注"></el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogIsShow = false"> {{ '取消' }}</el-button>
+      <div class="demo-drawer__footer">
+        <el-button size="mini" @click="drawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
           size="mini"
           type="primary"
@@ -134,7 +135,7 @@
           {{ '确定' }}
         </el-button>
       </div>
-    </el-dialog>
+    </el-drawer>
 
     <!-- 分页组件 -->
     <pagination
@@ -157,17 +158,11 @@ export default {
   components: {Pagination},
   data() {
     return {
-      // 加载状态
-      listLoading: false,
-
+      listLoading: false,  // 加载状态
       submitButtonIsLoading: false,
       deleteButtonIsLoading: false,
-
-      // Dialog状态
-      dialogIsShow: false,
-
-      // 选中的环境
-      currentEvent: 'test',
+      drawerIsShow: false,  // 抽屉是否展示
+      currentEvent: 'test',  // 选中的环境
 
       // 文件类型列表
       eventList: [
@@ -175,11 +170,8 @@ export default {
         {'key': 'test', 'value': '测试环境'},
         {'key': 'uat', 'value': 'uat环境'}
       ],
-
-      // 用户列表
-      user_list: [],
-      // 账号列表
-      currentAccountList: [],
+      user_list: [],  // 用户列表
+      currentAccountList: [],  // 账号列表
       // 账号
       currentAccount: {
         id: '',
@@ -252,7 +244,7 @@ export default {
       } else {  // 增加
         this.initNewAccount()
       }
-      this.dialogIsShow = true
+      this.drawerIsShow = true
     },
 
     // 添加账号
@@ -268,7 +260,7 @@ export default {
       }).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.getAccountList()
         }
       })
@@ -288,7 +280,7 @@ export default {
       }).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
-          this.dialogIsShow = false
+          this.drawerIsShow = false
           this.getAccountList()
         }
       })
