@@ -21,7 +21,7 @@
                  style="margin-left:20px; float: right"
                  @click="formatDataToJson()">格式化
       </el-button>
-      <el-input v-model="tempDataXml" type="textarea" :rows="13"></el-input>
+      <el-input v-model="tempDataXml" type="textarea" :rows="17"></el-input>
 <!--      <dataJsonView :data-json="tempDataJson" ref="dataJsonView"></dataJsonView>-->
     </el-tab-pane>
 

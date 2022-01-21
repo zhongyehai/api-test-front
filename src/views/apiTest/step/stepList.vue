@@ -12,15 +12,16 @@
       row-key="id"
       highlight-current-row
       style="width: 100%"
-      max-height="565"
+      :height="tableHeight"
     >
-      <el-table-column prop="num" label="序号" min-width="8%">
+
+      <el-table-column prop="num" label="序号" min-width="9%">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="执行" min-width="12%">
+      <el-table-column align="center" label="执行" min-width="11%">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.is_run" @change="changeStepIsRun(scope.$index)"></el-switch>
         </template>
@@ -108,6 +109,8 @@ export default {
       sortable: null,
       oldList: [],
       newList: [],
+
+      tableHeight: 500  // 表格高度
     }
   },
 
@@ -139,6 +142,8 @@ export default {
   },
 
   created() {
+
+    this.tableHeight = window.innerHeight * 0.78;
 
     // 初始化父组件传过来的步骤列表
     this.stepList = this.caseStepList ? this.caseStepList : []

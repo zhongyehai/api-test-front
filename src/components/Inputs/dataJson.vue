@@ -8,9 +8,10 @@
         lang="json"
         theme="chrome"
         width="100%"
-        height="330px"
+        :height="tableHeight + 'px'"
         :options="editorOptions"
       >
+<!--        height="330px"-->
       </editor>
     </el-container>
   </div>
@@ -27,6 +28,7 @@ export default {
   props: ['dataJson'],
   data() {
     return {
+      tableHeight: 500,
       tempDataJson: '',
       editorOptions: {
         // 设置代码编辑器的样式
@@ -40,6 +42,7 @@ export default {
   },
 
   created() {
+    this.tableHeight = window.innerHeight * 0.55;
     this.tempDataJson = this.dataJson
   },
 

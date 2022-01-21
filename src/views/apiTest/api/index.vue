@@ -19,12 +19,11 @@
         >
           <el-table-column prop="num" label="序号" min-width="7%">
             <template slot-scope="scope">
-<!--              <span> {{ scope.$index + 1}} </span>-->
               <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
             </template>
           </el-table-column>
 
-          <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="15%">
+          <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="20%">
             <template slot-scope="scope">
               <span> {{ scope.row.name }} </span>
             </template>
@@ -34,7 +33,7 @@
             :show-overflow-tooltip=true
             prop="addr"
             label="接口地址"
-            min-width="26%"
+            min-width="47%"
           ></el-table-column>
 
           <el-table-column :show-overflow-tooltip=true prop="create_user" label="创建者" min-width="10%">
@@ -49,25 +48,62 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="接口操作" min-width="30%">
+          <el-table-column label="接口操作" min-width="14%">
             <template slot-scope="scope">
 
-              <el-button size="mini" type="success" :loading="scope.row.isLoading" @click="runApis(scope.row)">
-                运行
-              </el-button>
-              <el-button size="mini" type="primary" @click="showEditForm(scope.row)">
-                修改
-              </el-button>
-              <el-tooltip class="item" effect="dark" content="复制接口" placement="top-end">
-                <el-button type="primary" size="mini" @click.native="copyApi(scope.row)">复制</el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="运行接口"
+                placement="top-start">
+                <el-button
+                  type="text"
+                  size="mini"
+                  icon="el-icon-video-play"
+                  :loading="scope.row.isLoading"
+                  @click="runApis(scope.row)">
+                </el-button>
               </el-tooltip>
-              <el-button
-                type="danger"
-                size="mini"
-                :loading="scope.row.isShowDeleteLoading"
-                @click.native="confirmBox(delApi, scope.row, scope.row.name)">
-                删除
-              </el-button>
+
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="编辑接口"
+                placement="top-start">
+                <el-button
+                  type="text"
+                  icon="el-icon-edit"
+                  @click="showEditForm(scope.row)">
+                </el-button>
+              </el-tooltip>
+
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="复制接口"
+                placement="top-end">
+                <el-button
+                  type="text"
+                  size="mini"
+                  icon="el-icon-document-copy"
+                  @click.native="copyApi(scope.row)">
+                </el-button>
+              </el-tooltip>
+
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="删除接口"
+                placement="top-start">
+                <el-button
+                  type="text"
+                  size="mini"
+                  style="color: red"
+                  icon="el-icon-delete"
+                  :loading="scope.row.isShowDeleteLoading"
+                  @click.native="confirmBox(delApi, scope.row, scope.row.name)">
+                </el-button>
+              </el-tooltip>
             </template>
           </el-table-column>
 
@@ -312,14 +348,13 @@ export default {
     'currentModuleId': {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
-        if (newVal){
+        if (newVal) {
           this.getApiList({
             'moduleId': newVal,
             'pageNum': this.pageNum,
             'pageSize': this.pageSize
           })
-        }
-        else {
+        } else {
           this.api_list = []
         }
 

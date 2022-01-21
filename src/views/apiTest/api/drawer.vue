@@ -14,15 +14,15 @@
         <el-row>
 
           <!-- 接口名称 -->
-          <el-col :span="11">
+          <el-col :span="10">
             <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 250%">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 200%">
               </el-input>
             </el-form-item>
           </el-col>
 
           <!-- 选择环境 -->
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="选择环境" class="is-required" style="margin-bottom: 5px">
               <environmentSelectorView
                 :choice_environment="tempApi.choice_host"

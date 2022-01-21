@@ -35,7 +35,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :show-overflow-tooltip=true prop="project" label="服务" min-width="10%">
+      <el-table-column :show-overflow-tooltip=true prop="project" label="服务" min-width="20%">
         <template slot-scope="scope">
           <span> {{ scope.row.project }} </span>
         </template>
@@ -77,20 +77,32 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="20%">
+      <el-table-column label="操作" min-width="10%">
         <template slot-scope="scope">
 
-          <el-button type="primary"
-                     size="mini"
-                     @click.native="showDialog(scope.row)">修改
-          </el-button>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="修改"
+            placement="top-start">
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click.native="showDialog(scope.row)"></el-button>
+          </el-tooltip>
 
-          <el-button type="danger"
-                     size="mini"
-                     :loading="scope.row.deleteButtonIsLoading"
-                     @click.native="confirmBox(delAccount, scope.row, scope.row.name)">删除
-          </el-button>
-
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="删除"
+            placement="top-end">
+            <el-button
+              type="text"
+              style="color: red"
+              icon="el-icon-delete"
+              :loading="scope.row.deleteButtonIsLoading"
+              @click.native="confirmBox(delAccount, scope.row, scope.row.name)"></el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

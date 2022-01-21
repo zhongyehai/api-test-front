@@ -42,12 +42,17 @@
 
       <el-table-column :show-overflow-tooltip=true prop="desc" label="操作" min-width="10%">
         <template slot-scope="scope">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="修改"
+            placement="top-start">
           <el-button
+            type="text"
+            icon="el-icon-edit"
             :disabled="roles !== '2'"
-            type="primary"
-            size="mini"
-            @click.native="showAddConfigTypeDialog(scope.row)">修改
-          </el-button>
+            @click.native="showAddConfigTypeDialog(scope.row)"></el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
 
