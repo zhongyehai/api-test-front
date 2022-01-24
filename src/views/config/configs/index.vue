@@ -69,13 +69,16 @@
 
       <el-table-column label="操作" min-width="7%">
         <template slot-scope="scope">
-          <el-tooltip class="item" effect="dark" content="若不清楚配置的规则，请勿修改" placement="right-end">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="若不清楚配置的规则，请勿修改"
+            placement="right-end">
             <el-button
+              type="text"
+              icon="el-icon-edit"
               :disabled="roles !== '2'"
-              type="primary"
-              size="mini"
-              @click.native="editConfig(scope.row)">修改
-            </el-button>
+              @click.native="editConfig(scope.row)"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>

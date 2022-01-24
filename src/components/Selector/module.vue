@@ -2,7 +2,7 @@
   <el-select
     v-model="tempModuleId"
     placeholder="请选择模块"
-    size="small"
+    size="mini"
     style="width: 100%"
     @change="clickModule"
     filterable

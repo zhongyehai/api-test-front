@@ -14,15 +14,15 @@
         <el-row>
 
           <!-- 接口名称 -->
-          <el-col :span="11">
+          <el-col :span="10">
             <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 250%">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 200%">
               </el-input>
             </el-form-item>
           </el-col>
 
           <!-- 选择环境 -->
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="选择环境" class="is-required" style="margin-bottom: 5px">
               <environmentSelectorView
                 :choice_environment="tempApi.choice_host"
@@ -47,25 +47,35 @@
           </el-col>
         </el-row>
 
+        <!-- 前置条件 -->
         <el-row>
+          <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
+            <el-input
+              type="textarea"
+              autosize
+              v-model="tempApi.up_func"
+              placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+              size="mini"
+              style="width: 550%"></el-input>
+          </el-form-item>
+        </el-row>
 
-          <!-- 前置条件 -->
-          <el-col :span="12">
-            <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.up_func" placeholder="前置条件" size="mini" style="width: 250%"></el-input>
-            </el-form-item>
-          </el-col>
-          <!-- 后置条件 -->
-          <el-col :span="12">
-            <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.down_func" placeholder="后置条件" size="mini" style="width: 250%"></el-input>
-            </el-form-item>
-          </el-col>
+        <!-- 后置条件 -->
+        <el-row>
+          <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
+            <el-input
+              type="textarea"
+              autosize
+              v-model="tempApi.down_func"
+              placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+              size="mini"
+              style="width: 550%"></el-input>
+          </el-form-item>
         </el-row>
 
       </el-form>
 
-      <hr style="height:1px;border:none;border-top:1px solid rgb(241, 215, 215);margin-top: -5px"/>
+      <hr style="height:1px;border:none;border-top:1px solid rgb(241, 215, 215);"/>
 
       <!-- 接口内容信息 -->
       <el-form style="margin: 0 20px 0 20px;">

@@ -4,6 +4,7 @@
     clearable
     filterable
     placeholder="请选择运行环境"
+    style="width: 100%"
     size="mini"
   >
     <el-option v-for="(item) in environments"

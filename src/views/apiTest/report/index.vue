@@ -30,7 +30,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="20%">
+              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="35%">
               </el-table-column>
 
               <el-table-column label="生成时间" min-width="17%">
@@ -39,11 +39,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column
-                prop="performer"
-                label="创建者"
-                min-width="8%">
-              </el-table-column>
+              <el-table-column prop="performer" label="创建者"min-width="8%"></el-table-column>
 
               <el-table-column label="是否通过" min-width="10%">
                 <template slot-scope="scope">
@@ -69,26 +65,45 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="操作" min-width="25%">
+              <el-table-column label="操作" min-width="10%">
                 <template slot-scope="scope">
-                  <el-button
-                    v-show="scope.row.is_done === 1"
-                    type="primary"
-                    size="mini"
-                    @click.native="downReport(scope.row.id)">下载
-                  </el-button>
-                  <el-button
-                    v-show="scope.row.is_done === 1"
-                    type="primary"
-                    size="mini"
-                    @click.native="openReportById(scope.row.id)">查看
-                  </el-button>
-                  <el-button
-                    v-show="scope.row.is_done === 1"
-                    type="danger"
-                    size="mini"
-                    @click.native="confirmBox(delReport, scope.row.id, scope.row.name)">删除
-                  </el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="下载报告"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      icon="el-icon-download"
+                      v-show="scope.row.is_done === 1"
+                      @click.native="downReport(scope.row.id)"></el-button>
+                  </el-tooltip>
+
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="查看报告"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      icon="el-icon-view"
+                      v-show="scope.row.is_done === 1"
+                      @click.native="openReportById(scope.row.id)"></el-button>
+                  </el-tooltip>
+
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="删除报告"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      style="color: red"
+                      icon="el-icon-delete"
+                      v-show="scope.row.is_done === 1"
+                      @click.native="confirmBox(delReport, scope.row.id, scope.row.name)"></el-button>
+                  </el-tooltip>
+
                 </template>
               </el-table-column>
 

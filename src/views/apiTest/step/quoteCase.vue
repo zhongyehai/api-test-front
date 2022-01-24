@@ -41,27 +41,32 @@
     <!-- 用例列表 -->
     <el-row>
       <el-table ref="caseTable" :data="caseList" stripe>
-        <el-table-column prop="num" label="序号" min-width="15%">
+        <el-table-column prop="num" label="序号" min-width="10%">
           <template slot-scope="scope">
             <span> {{ (quotePageNum - 1) * quotePageSize + scope.$index + 1 }} </span>
           </template>
         </el-table-column>
 
-        <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="55%">
+        <el-table-column :show-overflow-tooltip=true prop="name" label="用例名称" min-width="82%">
           <template slot-scope="scope">
             <span> {{ scope.row.name }} </span>
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" min-width="30%">
+        <el-table-column label="操作" min-width="8%">
           <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-back"
-              :loading="scope.row.addToQuoteLoadingIsShow"
-              @click.native="addQuote(scope.row)">引用此用例
-            </el-button>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="引用此用例"
+              placement="top-start">
+              <el-button
+                type="text"
+                icon="el-icon-d-arrow-left"
+                :loading="scope.row.addToQuoteLoadingIsShow"
+                @click.native="addQuote(scope.row)">
+              </el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -180,7 +185,7 @@ export default {
         new_api['validates'] = [{"key": "", "remark": null, "validate_type": "", "value": ""}]
         new_api['data_driver'] = []
         this.$bus.$emit(this.$busEvents.addApiToStep, new_api, 'quote')
-      }else {
+      } else {
         this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
       }
     }

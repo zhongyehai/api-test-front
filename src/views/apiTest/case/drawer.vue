@@ -15,14 +15,14 @@
           <el-row>
 
             <!-- 用例名称 -->
-            <el-col :span="12">
+            <el-col :span="10">
               <el-form-item label="用例名称" class="is-required">
-                <el-input v-model="tempCase.name" style="width: 250%"></el-input>
+                <el-input v-model="tempCase.name" style="width: 200%"></el-input>
               </el-form-item>
             </el-col>
 
             <!-- 用例集选择 -->
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="用例集" class="is-required" style="margin-bottom: 5px">
                 <caseSetSelectorView
                   ref="caseSetSelector"
@@ -37,7 +37,7 @@
 
             </el-col>
             <!-- 选择环境 -->
-            <el-col :span="6">
+            <el-col :span="7">
               <el-tooltip class="item" effect="dark" placement="top-end">
                 <div slot="content">
                   请确保此用例涉中及到的所有服务都配置了当前选中环境的域名 <br/>

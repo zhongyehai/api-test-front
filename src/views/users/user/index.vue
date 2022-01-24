@@ -81,21 +81,58 @@
 
       <el-table-column :label="'操作'" align="center" min-width="22%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">编辑</el-button>
 
-          <el-button
-            size="mini"
-            :type="row.status === 1 ? 'info' : 'success'"
-            :loading="row.changStatusLoadingIsShow"
-            @click="changStatus(row)">{{ row.status === 1 ? '禁用' : '启用' }}
-          </el-button>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="编辑"
+            placement="top-start">
+            <el-button
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(row)"></el-button>
+          </el-tooltip>
 
-          <el-button
-            size="mini"
-            type="danger"
-            :loading="row.deleteLoadingIsShow"
-            @click="confirmBox(delUser, row, row.name)">删除
-          </el-button>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="启用"
+            placement="top-start">
+            <el-button
+              type="text"
+              style="color: red"
+              icon="el-icon-check"
+              v-show="row.status !== 1"
+              :loading="row.changStatusLoadingIsShow"
+              @click="changStatus(row)"></el-button>
+          </el-tooltip>
+
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="禁用"
+            placement="top-start">
+            <el-button
+              type="text"
+              style="color: red"
+              icon="el-icon-close"
+              v-show="row.status === 1"
+              :loading="row.changStatusLoadingIsShow"
+              @click="changStatus(row)"></el-button>
+          </el-tooltip>
+
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="删除"
+            placement="top-start">
+            <el-button
+              type="text"
+              style="color: red"
+              icon="el-icon-delete"
+              :loading="row.deleteLoadingIsShow"
+              @click="confirmBox(delUser, row, row.name)"></el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>

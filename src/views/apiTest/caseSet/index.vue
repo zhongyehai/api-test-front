@@ -148,8 +148,9 @@
 
 <script>
 import waves from "@/directive/waves";
-
 import caseManage from '@/views/apiTest/case'  // 用例管理组件
+
+import {ellipsis} from "@/utils/parseData"
 
 import {projectList} from "@/apis/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/caseSet";
@@ -245,7 +246,7 @@ export default {
         this.currentParent = data
       }
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
-      data.name = this.ellipsis(data.name, 10)
+      data.name = ellipsis(data.name, 10)
       this.$set(data, 'showMenu', true);
     },
 
@@ -253,14 +254,6 @@ export default {
     mouseleave(data) {
       data.name = this.currentLabel
       this.$set(data, 'showMenu', false);
-    },
-
-    ellipsis(value, len) {
-      if (!value) return ''
-      if (value.length > len) {
-        return value.slice(0, len) + '...'
-      }
-      return value
     },
 
     // 打开用例集编辑框

@@ -67,13 +67,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'服务名'" prop="name" align="center" min-width="15%" :show-overflow-tooltip=true>
+      <el-table-column :label="'服务名'" prop="name" align="center" min-width="17%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span> {{ scope.row.name }} </span>
         </template>
       </el-table-column>
 
-      <el-table-column :label="'测试环境'" prop="test" align="center" min-width="23%" :show-overflow-tooltip=true>
+      <el-table-column :label="'测试环境'" prop="test" align="center" min-width="28%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{ scope.row.test }}</span>
         </template>
@@ -103,7 +103,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'操作'" align="center" min-width="17%" class-name="small-padding fixed-width">
+      <el-table-column :label="'操作'" align="center" min-width="10%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
 
           <el-tooltip
@@ -136,14 +136,33 @@
             </el-button>
           </el-tooltip>
 
-          <el-button size="mini" type="primary" @click="showEditForm(row)">
-            {{ '修改' }}
-          </el-button>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="编辑服务"
+            placement="top-start">
+            <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-edit"
+              @click="showEditForm(row)">
+            </el-button>
+          </el-tooltip>
 
-          <el-button size="mini" type="danger" :loading="row.submitButtonIsLoading"
-                     @click="confirmBox(delProject, row, row.name)">
-            {{ '删除' }}
-          </el-button>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="删除服务"
+            placement="top-start">
+            <el-button
+              type="text"
+              size="mini"
+              style="color: red"
+              icon="el-icon-delete"
+              :loading="row.submitButtonIsLoading"
+              @click="confirmBox(delProject, row, row.name)">
+            </el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
 

@@ -34,13 +34,13 @@
                 </template>
               </el-table-column>
 
-              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="11%">
+              <el-table-column :show-overflow-tooltip=true prop="name" label="任务名称" min-width="25%">
                 <template slot-scope="scope">
                   <span> {{ scope.row.name }} </span>
                 </template>
               </el-table-column>
 
-              <el-table-column prop="cron" label="cron表达式" min-width="25%"></el-table-column>
+              <el-table-column prop="cron" label="cron表达式" min-width="35%"></el-table-column>
 
               <el-table-column prop="status" label="状态" min-width="9%">
                 <template slot-scope="scope">
@@ -62,52 +62,84 @@
                 </template>
               </el-table-column>
 
-              <el-table-column label="操作" min-width="40%">
+              <el-table-column label="操作" min-width="16%">
                 <template slot-scope="scope">
 
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="禁用任务"
+                    placement="top-start">
                   <el-button
-                    type="primary"
-                    size="mini"
+                    type="text"
+                    icon="el-icon-video-pause"
                     v-if="scope.row.status === '启用中'"
                     :loading="scope.row.disableLoadingIsShow"
-                    @click.native="disable(scope.row)">禁用
-                  </el-button>
+                    @click.native="disable(scope.row)"></el-button>
+                  </el-tooltip>
 
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="启用任务"
+                    placement="top-start">
                   <el-button
-                    type="primary"
-                    size="mini"
+                    type="text"
+                    icon="el-icon-caret-left"
                     v-if="scope.row.status === '禁用中'"
                     :loading="scope.row.enableLoadingIsShow"
-                    @click.native="enable(scope.row)">启用
-                  </el-button>
+                    @click.native="enable(scope.row)"></el-button>
+                  </el-tooltip>
 
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    :disabled="scope.row.status === '启用中'"
-                    @click.native="editTask(scope.row)">修改
-                  </el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="修改任务"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      icon="el-icon-edit"
+                      :disabled="scope.row.status === '启用中'"
+                      @click.native="editTask(scope.row)"></el-button>
+                  </el-tooltip>
 
-                  <el-button
-                    type="primary"
-                    size="mini"
-                    :loading="scope.row.copyButtonIsLoading"
-                    @click.native="copy(scope.row)">复制
-                  </el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="复制任务"
+                    placement="top-end">
+                    <el-button
+                      type="text"
+                      icon="el-icon-document-copy"
+                      :loading="scope.row.copyButtonIsLoading"
+                      @click.native="copy(scope.row)"></el-button>
+                  </el-tooltip>
 
-                  <el-button
-                    type="success"
-                    size="mini"
-                    :loading="scope.row.runButtonIsLoading"
-                    @click.native="run(scope.row)">运行
-                  </el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="运行任务"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      icon="el-icon-video-play"
+                      :loading="scope.row.runButtonIsLoading"
+                      @click.native="run(scope.row)"></el-button>
+                  </el-tooltip>
 
-                  <el-button type="danger"
-                             size="mini"
-                             :disabled="scope.row.status === '启用中'"
-                             :loading="scope.row.deleteLoadingIsShow"
-                             @click.native="confirmBox(delTask, scope.row, scope.row.name)">删除
-                  </el-button>
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="删除接口"
+                    placement="top-start">
+                    <el-button
+                      type="text"
+                      style="color: red"
+                      icon="el-icon-delete"
+                      :disabled="scope.row.status === '启用中'"
+                      :loading="scope.row.deleteLoadingIsShow"
+                      @click.native="confirmBox(delTask, scope.row, scope.row.name)"></el-button>
+                  </el-tooltip>
 
                 </template>
               </el-table-column>

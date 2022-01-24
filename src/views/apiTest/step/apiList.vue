@@ -43,11 +43,20 @@
             <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
           </template>
         </el-table-column>
-        <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="30%"></el-table-column>
-        <el-table-column :show-overflow-tooltip=true prop="addr" label="接口地址" min-width="40%"></el-table-column>
-        <el-table-column align="center" label="操作" min-width="20%">
+        <el-table-column :show-overflow-tooltip=true prop="name" label="接口名称" min-width="37%"></el-table-column>
+        <el-table-column :show-overflow-tooltip=true prop="addr" label="接口地址" min-width="45%"></el-table-column>
+        <el-table-column align="center" label="操作" min-width="8%">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click.native="addApiToStep(scope.row)">添加到步骤</el-button>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="添加到步骤"
+              placement="top-start">
+              <el-button
+                type="text"
+                icon="el-icon-d-arrow-left"
+                @click.native="addApiToStep(scope.row)"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
       </el-table>
@@ -206,7 +215,7 @@ export default {
         new_api['is_run'] = true
         new_api['run_times'] = 1
         this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
-      }else {
+      } else {
         this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')
       }
     }

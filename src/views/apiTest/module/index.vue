@@ -27,7 +27,6 @@
       </el-form-item>
     </el-form>
 
-
     <el-row>
 
       <!-- 第一列服务树 -->
@@ -177,8 +176,9 @@
 
 <script>
 import waves from "@/directive/waves";
-
 import apiManage from '@/views/apiTest/api'  // 接口管理组件
+
+import {ellipsis} from "@/utils/parseData"
 
 import {projectList} from "@/apis/project";
 import {moduleTree, deleteModule, postModule, putModule} from "@/apis/module";
@@ -281,7 +281,7 @@ export default {
       this.currentModuleIdForCommit = data.id
       this.currentParent = data
       this.currentLabel = JSON.parse(JSON.stringify(data.name))
-      data.name = this.ellipsis(data.name, 10)
+      data.name = ellipsis(data.name, 10)
       this.$set(data, 'showMenu', true);
     },
 
@@ -289,14 +289,6 @@ export default {
     mouseleave(data) {
       data.name = this.currentLabel
       this.$set(data, 'showMenu', false);
-    },
-
-    ellipsis(value, len) {
-      if (!value) return ''
-      if (value.length > len) {
-        return value.slice(0, len) + '...'
-      }
-      return value
     },
 
     // 模块编辑框

@@ -14,11 +14,11 @@ import '@/permission' // 权限控制
 import App from './App'
 import store from './store'
 import router from './router'
-import base from '@/utils/base';
+import showMessage from '@/utils/showMessage';
 import busEvents from "@/utils/busEvents";
 
 Vue.use(VCharts);
-Vue.use(base);
+Vue.use(showMessage);
 Vue.use(ElementUI)
 Vue.use(AFTableColumn)
 Vue.use(VueClipboard)

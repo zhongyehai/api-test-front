@@ -20,11 +20,19 @@
         </el-form-item>
 
         <el-form-item label="前置处理" size="small">
-          <el-input v-model="currentStep.up_func" placeholder="前置处理函数"></el-input>
+          <el-input
+            type="textarea"
+            autosize
+            v-model="currentStep.up_func"
+            placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"></el-input>
         </el-form-item>
 
         <el-form-item label="后置处理" size="small">
-          <el-input v-model="currentStep.down_func" placeholder="后置处理函数"></el-input>
+          <el-input
+            type="textarea"
+            autosize
+            v-model="currentStep.down_func"
+            placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"></el-input>
         </el-form-item>
 
         <el-form-item label="执行次数" class="is-required">
