@@ -238,40 +238,44 @@ export default {
       var that = this
       caseSetList({'projectId': project_id}).then(response => {
         // 赋值给级联选中框
-        this.tempCaseSetList = this.arrayToTree(response.data.data, null)
+        // this.tempCaseSetList = this.arrayToTree(response.data.data, null)
+        this.tempCaseSetList = response.data.data ? this.arrayToTree(response.data.data, null) : []
+
 
         // 遍历取当前用例集的父用例集
         // 遍历已选中的用例集
         for (let index in this.tempTask.set_id) {
-          var currentDataList = []
-          currentDataList.unshift(this.tempTask.set_id[index])
+          if (this.tempTask.set_id[index]){  // 有值才执行后面的逻辑
+            var currentDataList = []
+            currentDataList.unshift(this.tempTask.set_id[index])
 
-          let currentData = {}
-          // 第一次循环，获取当前用例集id本身的数据（主要是获取parentId）
-          for (let setIndex in response.data.data) {
-            // 获取当前用例集id本身的数据（主要是获取parentId）
-            if (this.tempTask.set_id[index] === response.data.data[setIndex].id) {
-              currentData = response.data.data[setIndex]
-              break
-            }
-          }
-
-          // 循环所有用例集，组建关系
-          while (true) {
-            // 如果没有parent_id，就不再循环
-            if (currentData.parent === null) {
-              break
-            }
+            let currentData = {}
+            // 第一次循环，获取当前用例集id本身的数据（主要是获取parentId）
             for (let setIndex in response.data.data) {
               // 获取当前用例集id本身的数据（主要是获取parentId）
-              if (currentData.parent === response.data.data[setIndex].id) {
+              if (this.tempTask.set_id[index] === response.data.data[setIndex].id) {
                 currentData = response.data.data[setIndex]
-                currentDataList.unshift(response.data.data[setIndex].id)
                 break
               }
             }
+
+            // 循环所有用例集，组建关系
+            while (true) {
+              // 如果没有parent_id，就不再循环
+              if (currentData.parent === null) {
+                break
+              }
+              for (let setIndex in response.data.data) {
+                // 获取当前用例集id本身的数据（主要是获取parentId）
+                if (currentData.parent === response.data.data[setIndex].id) {
+                  currentData = response.data.data[setIndex]
+                  currentDataList.unshift(response.data.data[setIndex].id)
+                  break
+                }
+              }
+            }
+            that.tempTaskSet.push(currentDataList)
           }
-          that.tempTaskSet.push(currentDataList)
         }
       })
     },
@@ -310,7 +314,9 @@ export default {
     getTaskToCommit() {
       let caseSetList = []
       for (let index in this.currentSelectedCaseSet) {
-        caseSetList.push(this.currentSelectedCaseSet[index].slice(-1)[0])
+        if (this.currentSelectedCaseSet[index].length > 0){
+          caseSetList.push(this.currentSelectedCaseSet[index].slice(-1)[0])
+        }
       }
       return {
         id: this.tempTask.id,
