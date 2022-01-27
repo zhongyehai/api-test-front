@@ -27,7 +27,7 @@
     >
       <el-table-column prop="id" label="编号" min-width="5%">
         <template slot-scope="scope">
-          <span> {{ scope.$index + 1 }} </span>
+          <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
 
@@ -88,8 +88,8 @@
     <pagination
       v-show="mailService.total>0"
       :total="mailService.total"
-      :page.sync="defaultPage.pageNum"
-      :limit.sync="defaultPage.apiPageSize"
+      :page.sync="pageNum"
+      :limit.sync="pageSize"
       @pagination="getConfigList"
     />
 
@@ -130,10 +130,8 @@ export default {
       },
 
       // 初始化数据默认的数据
-      defaultPage: {
-        pageNum: 1,
-        apiPageSize: 20
-      },
+      pageNum: 1,
+      pageSize: 20,
 
       // 用户列表
       user_list: [],
@@ -184,8 +182,8 @@ export default {
     getConfigList() {
       configList({
         'type': this.queryType,
-        'pageNum': this.defaultPage.pageNum,
-        'pageSize': this.defaultPage.apiPageSize
+        'pageNum': this.pageNum,
+        'pageSize': this.pageSize
       }).then(response => {
         this.mailService.list = response.data.data
         this.mailService.total = response.data.total

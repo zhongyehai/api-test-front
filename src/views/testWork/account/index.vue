@@ -31,7 +31,7 @@
     >
       <el-table-column prop="id" label="编号" min-width="5%">
         <template slot-scope="scope">
-          <span> {{ scope.$index + 1 }} </span>
+          <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
 
@@ -153,8 +153,8 @@
     <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="PageNum"
-      :limit.sync="PageSize"
+      :page.sync="pageNum"
+      :limit.sync="pageSize"
       @pagination="getAccountList"
     />
   </div>
@@ -196,8 +196,8 @@ export default {
       },
 
       total: 0,
-      PageNum: 1,
-      PageSize: 20
+      pageNum: 1,
+      pageSize: 20
     }
   },
 
@@ -223,8 +223,8 @@ export default {
     // 获取账号列表
     getAccountList() {
       accountList({
-        'pageNum': this.PageNum,
-        'pageSize': this.PageSize,
+        'pageNum': this.pageNum,
+        'pageSize': this.pageSize,
         'event': this.currentEvent
       }).then(response => {
         this.currentAccountList = response.data.data
@@ -234,8 +234,8 @@ export default {
 
     // 选中事件
     selectType(value) {
-      this.PageNum = 1
-      this.PageSize = 20
+      this.pageNum = 1
+      this.pageSize = 20
       this.getAccountList()
     },
 

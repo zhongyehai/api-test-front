@@ -26,7 +26,7 @@
             >
               <el-table-column prop="id" label="序号" min-width="5%">
                 <template slot-scope="scope">
-                  <span> {{ scope.$index + 1 }} </span>
+                  <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
                 </template>
               </el-table-column>
 
@@ -113,8 +113,8 @@
             <pagination
               v-show="reportTotal>0"
               :total="reportTotal"
-              :page.sync="PageNum"
-              :limit.sync="PageSize"
+              :page.sync="pageNum"
+              :limit.sync="pageSize"
               @pagination="getReportList"
             />
           </el-tab-pane>
@@ -142,15 +142,15 @@ export default {
       projectId: '',
       reportDataList: [],
       reportTotal: 0,
-      PageNum: 0,
-      PageSize: 20,
+      pageNum: 0,
+      pageSize: 20,
     }
   },
   methods: {
 
     // 获取服务对应的报告列表
     getReportList() {
-      reportList({projectId: this.projectId, pageNum: this.PageNum, pageSize: this.PageSize}).then(response => {
+      reportList({projectId: this.projectId, pageNum: this.pageNum, pageSize: this.pageSize}).then(response => {
         this.reportDataList = response.data.data
         this.reportTotal = response.data.total
       })

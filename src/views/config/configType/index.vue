@@ -18,7 +18,7 @@
     >
       <el-table-column prop="id" label="编号" min-width="10%">
         <template slot-scope="scope">
-          <span> {{ scope.$index + 1 }} </span>
+          <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
 

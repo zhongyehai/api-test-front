@@ -43,7 +43,7 @@
     >
       <el-table-column :label="'序号'" prop="id" align="center" min-width="10%">
         <template slot-scope="scope">
-          <span>{{ scope.$index + 1 }}</span>
+          <span> {{ (listQuery.pageNum - 1) * listQuery.pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
       <el-table-column :label="'用户名'" prop="id" align="center" min-width="20%">

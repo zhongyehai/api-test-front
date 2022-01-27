@@ -7,6 +7,7 @@
       <el-col :span="11">
         <el-form-item label="服务">
           <el-select
+            ref="projectSelector"
             v-model="projectSelectedId"
             placeholder="选择服务"
             size="mini"
@@ -26,6 +27,7 @@
       <el-col :span="13">
         <el-form-item label="用例集">
           <el-cascader
+            ref="caseSelector"
             placeholder="选择用例集"
             size="mini"
             style="min-width: 100%"
@@ -171,12 +173,13 @@ export default {
       // 如果有用例id，则添加步骤，否则先保存用例
       if (this.caseId) {
         var new_api = JSON.parse(JSON.stringify(row))
+        var name = this.$refs.projectSelector.selected.label + '/' + this.$refs['caseSelector'].getCheckedNodes()[0].pathLabels.join('/')
         new_api['quote_case'] = new_api['id']
         new_api['id'] = ''
         new_api['case_id'] = this.caseId
         new_api['is_run'] = true
         new_api['run_times'] = 1
-        new_api['name'] = `引用【${new_api['name']}】`
+        new_api['name'] = `引用【${name}】`
         new_api['headers'] = [{"key": null, "remark": null, "value": null}]
         new_api['params'] = [{"key": null, "value": null}]
         new_api['data_form'] = [{"data_type": null, "key": null, "remark": null, "value": null}]

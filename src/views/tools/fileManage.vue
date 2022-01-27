@@ -33,7 +33,7 @@
     >
       <el-table-column prop="id" label="编号" min-width="5%">
         <template slot-scope="scope">
-          <span> {{ scope.$index + 1 }} </span>
+          <span> {{ (pageNum - 1) * pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
 
@@ -95,8 +95,8 @@
     <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="PageNum"
-      :limit.sync="PageSize"
+      :page.sync="pageNum"
+      :limit.sync="pageSize"
       @pagination="getFileList"
     />
 
@@ -133,8 +133,8 @@ export default {
       fileList: [],
 
       total: 0,
-      PageNum: 1,
-      PageSize: 20
+      pageNum: 1,
+      pageSize: 20
     }
   },
 
@@ -142,7 +142,7 @@ export default {
 
     // 获取文件列表
     getFileList() {
-      fileList({'pageNum': this.PageNum, 'pageSize': this.PageSize, 'fileType': this.fileType}).then(response => {
+      fileList({'pageNum': this.pageNum, 'pageSize': this.pageSize, 'fileType': this.fileType}).then(response => {
         this.fileList = response.data.data
         this.total = response.data.total
       })
@@ -150,8 +150,8 @@ export default {
 
     // 选中事件
     selectType(value) {
-      this.PageNum = 1
-      this.PageSize = 20
+      this.pageNum = 1
+      this.pageSize = 20
       this.getFileList()
     },
 
