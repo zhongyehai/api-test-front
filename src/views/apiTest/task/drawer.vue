@@ -15,7 +15,7 @@
               placeholder="请选择服务"
               size="mini"
               filterable
-              style="min-width: 20%;padding-right:10px"
+              style="width: 100%"
               :disabled="true"
             >
               <el-option v-for="(item) in projectLists" :key="item.id" :label="item.name"
@@ -48,6 +48,7 @@
           <el-form-item label="选则用例集">
             <el-cascader
               size="mini"
+              style="width: 100%"
               v-model="tempTaskSet"
               :options="tempCaseSetList"
               :props="{ multiple: true, checkStrictly: true }"
@@ -65,7 +66,7 @@
               placeholder="选择用例"
               value-key="id"
               :disabled="caseSelectorIsDisabled"
-              style="min-width: 20%;padding-right:10px"
+              style="width: 100%"
               size="mini"
             >
               <el-option v-for="item in currentCaseList" :key="item.id" :label="item.name" :value="item.id">
@@ -92,42 +93,46 @@
         <el-radio v-model="tempTask.send_type" label="ding_ding">仅钉钉群</el-radio>
         <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
         <div v-show="tempTask.send_type === 'we_chat'">
+          <el-form-item label="机器人地址" class="is-required">
           <el-input
             type="textarea"
             size="mini"
             autosize
             v-model="tempTask.we_chat"
             placeholder="企业微信机器人地址"></el-input>
+          </el-form-item>
         </div>
         <div v-show="tempTask.send_type === 'ding_ding'">
+          <el-form-item label="机器人地址" class="is-required">
           <el-input
             type="textarea"
             size="mini"
             autosize
             v-model="tempTask.ding_ding"
             placeholder="钉钉机器人地址"></el-input>
+          </el-form-item>
         </div>
         <div v-show="tempTask.send_type === 'email'">
-          <el-form-item label="邮箱服务器">
+          <el-form-item label="邮箱服务器" class="is-required">
             <emailServerSelector
               ref="emailServerSelector"
               :oldEmailServer="tempTask.email_server"></emailServerSelector>
           </el-form-item>
-          <el-form-item label="发件人邮箱">
+          <el-form-item label="发件人邮箱" class="is-required">
             <el-input
               v-model="tempTask.email_from"
               size="mini"
               placeholder="默认支持QQ邮箱，可到全局参数添加对应的服务器，配置类型选邮箱">
             </el-input>
           </el-form-item>
-          <el-form-item label="邮箱密码" prop="desc">
+          <el-form-item label="邮箱密码" prop="desc" class="is-required">
             <el-input
               v-model="tempTask.email_pwd"
               size="mini"
               type="text">
             </el-input>
           </el-form-item>
-          <el-form-item label="收件人邮箱">
+          <el-form-item label="收件人邮箱" class="is-required">
             <el-input
               type="textarea"
               autosize
@@ -140,11 +145,11 @@
       </el-form-item>
 
       <el-form-item label="时间配置" size="mini" class="is-required">
-        <el-input v-model="tempTask.cron" style="width: 70%"
+        <el-input v-model="tempTask.cron" style="width: 80%"
                   placeholder="秒 分 时 日 月 周 年 (0 0 12 * * ? * 每天中午12点触发)">
         </el-input>
         <el-link type="primary" href="https://www.bejson.com/othertools/cron/" target="_blank"
-                 style="width: 30%">
+                 style="width: 20%">
           调试cron表达式
         </el-link>
       </el-form-item>

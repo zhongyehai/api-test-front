@@ -1,11 +1,11 @@
 <template>
 
   <div>
-    <el-form :inline="true" size="small">
+    <el-form size="small">
       <el-row>
         <el-col :span="18">
           <el-form-item label="函数文件名" :label-width="'85px'" size="mini">
-            <el-input v-model="name" style="width: 280%"></el-input>
+            <el-input v-model="name" ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -23,7 +23,7 @@
 
       <el-row>
         <el-form-item label="调试函数" :label-width="'70px'" size="mini">
-          <el-input v-model="debugFuncData" placeholder="输入格式：${func(abc,123)}" style="width: 380%">
+          <el-input v-model="debugFuncData" placeholder="输入格式：${func(abc,123)}">
           </el-input>
         </el-form-item>
       </el-row>

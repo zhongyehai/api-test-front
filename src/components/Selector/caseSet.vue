@@ -5,6 +5,7 @@
     value-key="id"
     filterable
     size="mini"
+    style="width: 100%"
     @change="choiceCaseSet">
     <el-option v-for="item in caseSetLists" :key="item.id" :label="item.name" :value="item.id">
     </el-option>

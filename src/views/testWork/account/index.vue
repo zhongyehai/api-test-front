@@ -1,27 +1,24 @@
 <template>
   <div class="app-container">
 
-    <el-form label-width="120px">
-      <el-form-item :label="'选择环境：'" size="mini">
-        <el-select
-          v-model="currentEvent"
-          placeholder="请选择环境"
-          size="mini"
-          @change="selectType"
-        >
-          <el-option
-            v-for="item in eventList"
-            :key="item.key"
-            :label="item.value"
-            :value="item.key"
-          >
-          </el-option>
-        </el-select>
+    <div class="filter-container">
 
-        <el-button type="primary" @click.native="showDialog('')" size="mini" style="margin-left: 20px">添加账号</el-button>
+      <span style="margin-left: 20px">选择服务：</span>
+      <el-select v-model="currentProject" placeholder="请选择服务" size="mini">
+        <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
+        </el-option>
+      </el-select>
 
-      </el-form-item>
-    </el-form>
+      <span style="margin-left: 20px">选择环境：</span>
+      <el-select v-model="currentEvent" placeholder="请选择环境" size="mini">
+        <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
+        </el-option>
+      </el-select>
+
+      <el-button type="primary" @click.native="doQuery('')" size="mini" style="margin-left: 20px">查询</el-button>
+      <el-button type="primary" @click.native="initQuery('')" size="mini" style="margin-left: 20px">重置</el-button>
+      <el-button type="primary" @click.native="showDialog('')" size="mini" style="margin-left: 20px">添加账号</el-button>
+    </div>
 
     <el-table
       ref="apiTree"
@@ -163,18 +160,20 @@
 <script>
 import Pagination from '@/components/Pagination'
 import {userList} from '@/apis/user'
-import {accountList, postAccount, getAccount, putAccount, deleteAccount} from "@/apis/tools";
+import {accountList, postAccount, getAccount, putAccount, deleteAccount, accountProjectList} from "@/apis/tools";
 
 export default {
   name: 'index',
   components: {Pagination},
   data() {
     return {
+      direction: 'rtl',  // 抽屉打开方式
       listLoading: false,  // 加载状态
       submitButtonIsLoading: false,
       deleteButtonIsLoading: false,
       drawerIsShow: false,  // 抽屉是否展示
       currentEvent: 'test',  // 选中的环境
+      currentProject: '',  // 选中的项目
 
       // 文件类型列表
       eventList: [
@@ -183,6 +182,7 @@ export default {
         {'key': 'uat', 'value': 'uat环境'}
       ],
       user_list: [],  // 用户列表
+      projectList: [],  // 项目列表
       currentAccountList: [],  // 账号列表
       // 账号
       currentAccount: {
@@ -210,6 +210,13 @@ export default {
       })
     },
 
+    // 请求用户信息
+    getAccountProjectList() {
+      accountProjectList().then(response => {
+        this.projectList = response.data
+      })
+    },
+
     // 把用户id解析为用户名
     parsUser(userId) {
       for (let index in this.user_list) {
@@ -225,17 +232,28 @@ export default {
       accountList({
         'pageNum': this.pageNum,
         'pageSize': this.pageSize,
-        'event': this.currentEvent
+        'event': this.currentEvent,
+        'project': this.currentProject,
       }).then(response => {
         this.currentAccountList = response.data.data
         this.total = response.data.total
       })
     },
 
-    // 选中事件
-    selectType(value) {
+
+    // 执行查询
+    doQuery() {
       this.pageNum = 1
       this.pageSize = 20
+      this.getAccountList()
+    },
+
+    // 重置
+    initQuery() {
+      this.pageNum = 1
+      this.pageSize = 20
+      this.currentProject = ''
+      this.currentEvent = ''
       this.getAccountList()
     },
 
@@ -312,6 +330,7 @@ export default {
 
   mounted() {
     this.getUserList()
+    this.getAccountProjectList()
     this.getAccountList()
   },
 }

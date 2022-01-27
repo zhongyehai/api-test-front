@@ -3,16 +3,25 @@
 
     <!-- 搜索、添加栏 -->
     <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'服务名'" style="width: 400px;" class="filter-item" size="mini"
-                @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.create_user" :placeholder="'选择创建人'" clearable style="margin-left: 10px" size="mini"
-                 class="filter-item">
+
+      <span style="margin-left: 20px">服务名：</span>
+      <el-select ref="projectSelector" v-model="listQuery.projectId" :placeholder="'选择服务名'" filterable clearable
+                 style="margin-left: 10px" size="mini" class="filter-item">
+        <el-option v-for="project in project_list" :key="project.id" :label="project.name" :value="project.id"/>
+      </el-select>
+
+      <span style="margin-left: 20px">创建人：</span>
+      <el-select v-model="listQuery.create_user" :placeholder="'选择创建人'" filterable clearable
+                 style="margin-left: 10px" size="mini" class="filter-item">
         <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
       </el-select>
-      <el-select v-model="listQuery.manager" :placeholder="'选择负责人'" clearable style="margin-left: 10px" size="mini"
-                 class="filter-item">
+
+      <span style="margin-left: 20px">负责人：</span>
+      <el-select v-model="listQuery.manager" :placeholder="'选择负责人'" filterable clearable style="margin-left: 10px"
+                 size="mini" class="filter-item">
         <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
       </el-select>
+
       <el-button
         v-waves
         type="primary"
@@ -205,9 +214,9 @@ export default {
       listQuery: {
         pageNum: 1,
         pageSize: 20,
-        name: undefined,  // 服务名
-        manager: undefined,  // 负责人
-        create_user: undefined, // 创建人
+        projectId: '',  // 服务id
+        manager: '',  // 负责人
+        create_user: '', // 创建人
       },
 
       // 当前选中的服务
@@ -338,10 +347,11 @@ export default {
       this.listQuery = {
         pageNum: 1,
         pageSize: 20,
-        name: undefined,  // 服务名
-        manager: undefined,  // 负责人
-        create_user: undefined, // 创建人
+        projectId: '',  // 服务id
+        manager: '',  // 负责人
+        create_user: '', // 创建人
       }
+      this.getProjectList()
     },
 
     // 修改排序

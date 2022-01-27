@@ -9,14 +9,14 @@
       :visible.sync="drawerIsShow"
       :direction="direction">
       <!-- 接口所属信息 -->
-      <el-form :inline="true" style="margin-left: 20px;margin-right: 20px" label-width="100px">
+      <el-form style="margin-left: 20px;margin-right: 20px" label-width="100px">
 
         <el-row>
 
           <!-- 接口名称 -->
           <el-col :span="10">
             <el-form-item label="接口名称" class="is-required" style="margin-bottom: 5px">
-              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini" style="width: 200%">
+              <el-input v-model="tempApi.name" placeholder="接口名称" size="mini">
               </el-input>
             </el-form-item>
           </el-col>
@@ -55,8 +55,7 @@
               autosize
               v-model="tempApi.up_func"
               placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-              size="mini"
-              style="width: 550%"></el-input>
+              size="mini"></el-input>
           </el-form-item>
         </el-row>
 
@@ -68,8 +67,7 @@
               autosize
               v-model="tempApi.down_func"
               placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-              size="mini"
-              style="width: 550%"></el-input>
+              size="mini"></el-input>
           </el-form-item>
         </el-row>
 
@@ -90,7 +88,7 @@
 
           <!-- 接口地址 -->
           <el-input v-model="tempApi.addr" class="input-with-select" placeholder="请输入接口地址"
-                    size="mini" style="width: 75%;margin-right: 5px">
+                    size="mini" style="width: 80%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->

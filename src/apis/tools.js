@@ -21,6 +21,11 @@ export function accountList(params) {
   return request({url: '/api/account/list', method: 'get', params: params});
 }
 
+// 测试账号项目列表
+export function accountProjectList() {
+  return request({url: '/api/account/project/list', method: 'get'});
+}
+
 // 获取测试账号
 export function getAccount(params) {
   return request({url: '/api/account', method: 'get', params: params});

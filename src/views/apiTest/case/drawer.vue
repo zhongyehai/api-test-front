@@ -10,14 +10,14 @@
       <!-- 用例信息组件 -->
       <el-tab-pane label="用例信息" name="caseInFo">
 
-        <el-form :inline="true" size="mini" label-width="100px">
+        <el-form size="mini" label-width="100px">
 
           <el-row>
 
             <!-- 用例名称 -->
             <el-col :span="10">
               <el-form-item label="用例名称" class="is-required">
-                <el-input v-model="tempCase.name" style="width: 200%"></el-input>
+                <el-input v-model="tempCase.name"></el-input>
               </el-form-item>
             </el-col>
 
@@ -57,14 +57,14 @@
           <el-row>
 
             <!-- 函数文件 -->
-            <el-col :span="12">
+            <el-col :span="17">
               <el-form-item label="函数文件">
                 <funcFilesView :funcFiles="tempCase.func_files" ref="funcFilesView"></funcFilesView>
               </el-form-item>
             </el-col>
 
             <!-- 执行次数 -->
-            <el-col :span="12">
+            <el-col :span="7">
               <el-form-item label="执行次数" class="is-required">
                 <el-input-number v-model="tempCase.run_times" :min="1" :max="1000" controls-position="right"
                 ></el-input-number>
