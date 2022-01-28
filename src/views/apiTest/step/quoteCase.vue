@@ -172,14 +172,22 @@ export default {
     addQuote(row) {
       // 如果有用例id，则添加步骤，否则先保存用例
       if (this.caseId) {
+
+        // 不能自己引用自己
+        if (row.id === this.caseId){
+          this.$notify.error('不能自己引用自己');
+          return
+        }
+
         var new_api = JSON.parse(JSON.stringify(row))
+        // 服务名 + 用例集... + 用例名
         var name = this.$refs.projectSelector.selected.label + '/' + this.$refs['caseSelector'].getCheckedNodes()[0].pathLabels.join('/')
         new_api['quote_case'] = new_api['id']
         new_api['id'] = ''
         new_api['case_id'] = this.caseId
         new_api['is_run'] = true
         new_api['run_times'] = 1
-        new_api['name'] = `引用【${name}】`
+        new_api['name'] = `引用【${name}/${row.name}】`
         new_api['headers'] = [{"key": null, "remark": null, "value": null}]
         new_api['params'] = [{"key": null, "value": null}]
         new_api['data_form'] = [{"data_type": null, "key": null, "remark": null, "value": null}]

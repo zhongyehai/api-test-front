@@ -78,23 +78,42 @@
           <el-tabs type="border-card">
 
             <el-tab-pane label="头部信息">
-              <headersView
-                ref="headersView"
-                :currentData="tempCase.headers"
-                :placeholder-key="'key'"
-                :placeholder-value="'value'"
-                :placeholder-desc="'备注'"
-              ></headersView>
+              <el-tooltip class="item" effect="dark" placement="top-end">
+                <div slot="content">
+                  1、可用此功能设置当前用例的固定的头部参数，比如token、cookie <br/>
+                  2、在此处设置的值，在运行此用例下的测试步骤的时候，会自动加到对应的步骤的头部参数上 <br/>
+                  3、此处的value可以使用公共变量设置的值 <br/>
+                  4、此处的value可以使用自定义函数处理/获取数据，比如用自定义函数取数据库获取对应的数据 <br/>
+                  5、若在此处设置的key与服务的头部参数中的某个key一致，则对于这个key，则会用此处设置的值 <br/>
+                  6、若在用例中，测试步骤已用相同的key设置了其他值，则会使用测试步骤中设置的值
+                </div>
+                <headersView
+                  ref="headersView"
+                  :currentData="tempCase.headers"
+                  :placeholder-key="'key'"
+                  :placeholder-value="'value'"
+                  :placeholder-desc="'备注'"
+                ></headersView>
+              </el-tooltip>
             </el-tab-pane>
 
             <el-tab-pane label="公用变量">
-              <variablesView
-                ref="variablesView"
-                :currentData="tempCase.variables"
-                :placeholder-key="'key'"
-                :placeholder-value="'value'"
-                :placeholder-desc="'备注'"
-              ></variablesView>
+              <el-tooltip class="item" effect="dark" placement="top-end">
+                <div slot="content">
+                  1、可用此功能设置一些预设值，比如token、账号信息 <br/>
+                  2、在此处设置的值，对于此用例下的测试步骤均可直接引用 <br/>
+                  3、此处的value可以使用自定义函数处理/获取数据，比如用自定义函数取数据库获取对应的数据 <br/>
+                  4、若在此处设置的key与服务的公共变量中的某个key一致，则对于这个key，则会用此处设置的值 <br/>
+                  5、若在测试步骤中提取的值使用的key和此处设置的key相同，则在此用例的后续测试步骤执行过程用，会用测试步骤中提取到的值
+                </div>
+                <variablesView
+                  ref="variablesView"
+                  :currentData="tempCase.variables"
+                  :placeholder-key="'key'"
+                  :placeholder-value="'value'"
+                  :placeholder-desc="'备注'"
+                ></variablesView>
+              </el-tooltip>
             </el-tab-pane>
 
           </el-tabs>

@@ -8,18 +8,19 @@
             class="h-b-e-a-style"
             :row-style="{'background-color': 'rgb(250, 250, 250)'}">
 
-    <el-table-column property="key" label="Key" header-align="center" min-width="25%">
+    <el-table-column property="key" label="Key" header-align="center" min-width="29%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.key" size="mini" placeholder="实际结果提取表达式">
-        </el-input>
+        <el-input v-model="scope.row.key" size="mini" placeholder="实际结果提取表达式"></el-input>
       </template>
     </el-table-column>
 
     <el-table-column label="validate_type" header-align="center" min-width="20%">
       <template slot-scope="scope">
-        <el-select v-model="scope.row.validate_type"
-                   placeholder="断言类型"
-                   size="mini">
+        <el-select
+          v-model="scope.row.validate_type"
+          placeholder="断言类型"
+          style="width: 100%"
+          size="mini">
           <el-option
             v-for="(item) in validateTypeList"
             :key="item.value"
@@ -30,7 +31,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column property="value" label="Value" header-align="center" min-width="25%">
+    <el-table-column property="value" label="Value" header-align="center" min-width="29%">
       <template slot-scope="scope">
         <el-input
           v-model="scope.row.value"
@@ -48,28 +49,36 @@
 
     <el-table-column label="备注" header-align="center" min-width="13%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.remark" size="mini" placeholder="备注">
-        </el-input>
+        <el-input v-model="scope.row.remark" size="mini" type="textarea" autosize placeholder="备注"></el-input>
       </template>
     </el-table-column>
 
-    <el-table-column label="添加" header-align="center" min-width="8%">
+    <el-table-column label="添加一行" header-align="center" min-width="4%">
       <template slot-scope="scope">
-        <el-button v-show="isShowAddButton(scope.$index)"
-                   type="primary"
-                   size="mini"
-                   @click.native="addRow(scope.$index)">+
-        </el-button>
+        <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
+          <el-button
+            v-show="isShowAddButton(scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-plus"
+            @click.native="addRow(scope.$index)">
+          </el-button>
+        </el-tooltip>
       </template>
     </el-table-column>
 
-    <el-table-column label="删除" header-align="center" min-width="8%">
+    <el-table-column label="删除当前行" header-align="center" min-width="4%">
       <template slot-scope="scope">
-        <el-button v-show="isShowDelButton(scope.$index)"
-                   type="danger"
-                   size="mini"
-                   @click.native="delRow(scope.$index)">-
-        </el-button>
+        <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
+          <el-button
+            v-show="isShowDelButton(scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-minus"
+            style="color: red"
+            @click.native="delRow(scope.$index)">
+          </el-button>
+        </el-tooltip>
       </template>
     </el-table-column>
 

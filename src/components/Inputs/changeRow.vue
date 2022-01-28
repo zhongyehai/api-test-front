@@ -1,45 +1,55 @@
 <template>
   <el-table :data="tempData" stripe :show-header="false" size="mini">
-    <el-table-column label="Key" header-align="center" min-width="30%">
+
+    <el-table-column label="Key" header-align="center" min-width="34%">
       <template slot-scope="scope">
         <el-input v-model="scope.row.key" size="mini" :placeholder="placeholderKey">
         </el-input>
       </template>
     </el-table-column>
-    <el-table-column label="Value" header-align="center" min-width="30%">
+
+    <el-table-column label="Value" header-align="center" min-width="34%">
       <template slot-scope="scope">
         <el-input v-model="scope.row.value" size="mini" :placeholder="placeholderValue">
         </el-input>
       </template>
     </el-table-column>
+
     <el-table-column label="备注" header-align="center" min-width="20%">
       <template slot-scope="scope">
         <el-input v-model="scope.row.remark" size="mini" :placeholder="placeholderDesc">
         </el-input>
       </template>
     </el-table-column>
-    <el-table-column label="添加" header-align="center" min-width="8%">
-      <template slot-scope="scope">
-        <el-button v-show="isShowAddButton( scope.$index)"
-                   type="primary"
-                   size="mini"
 
-                   @click.native="addRow(scope.$index)"
-        >+
-<!--          icon="el-icon-plus"-->
-        </el-button>
+    <el-table-column label="添加" header-align="center" min-width="4%">
+      <template slot-scope="scope">
+        <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
+          <el-button
+            v-show="isShowAddButton( scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-plus"
+            @click.native="addRow(scope.$index)"
+          >
+          </el-button>
+        </el-tooltip>
       </template>
     </el-table-column>
-    <el-table-column label="删除" header-align="center" min-width="8%">
-      <template slot-scope="scope">
-        <el-button v-show="isShowDelButton(scope.$index)"
-                   type="danger"
-                   size="mini"
 
-                   @click.native="delRow(scope.$index)"
-        >-
-<!--          icon="el-icon-minus"-->
-        </el-button>
+    <el-table-column label="删除" header-align="center" min-width="4%">
+      <template slot-scope="scope">
+        <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
+          <el-button
+            v-show="isShowDelButton(scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-minus"
+            style="color: red"
+            @click.native="delRow(scope.$index)"
+          >
+          </el-button>
+        </el-tooltip>
       </template>
     </el-table-column>
   </el-table>

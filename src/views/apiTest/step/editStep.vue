@@ -1,8 +1,7 @@
 <template>
 
 
-  <el-tabs v-model="activeName">
-
+  <el-tabs v-model="activeName" v-show="currentStep.api_id">
     <!-- 步骤信息 -->
     <el-tab-pane label="步骤信息" name="editStepInfo">
       <el-form label-width="120px">
@@ -118,7 +117,6 @@
       :loading="submitButtonIsLoading"
       @click="currentStep.id ? editStep() : addStep()">{{ '保存步骤' }}
     </el-button>
-
   </el-tabs>
 </template>
 

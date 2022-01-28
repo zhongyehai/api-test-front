@@ -9,19 +9,22 @@
       <el-row>
         <!-- 服务选择 -->
         <el-col :span="12">
-          <el-form-item label="选择服务" class="is-required">
-            <el-select
-              v-model="projectSelectedId"
-              placeholder="请选择服务"
-              size="mini"
-              filterable
-              style="width: 100%"
-              :disabled="true"
-            >
-              <el-option v-for="(item) in projectLists" :key="item.id" :label="item.name"
-                         :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">若没有选择用例集，则默认运行此服务下的所有用例</div>
+            <el-form-item label="选择服务" class="is-required">
+              <el-select
+                v-model="projectSelectedId"
+                placeholder="请选择服务"
+                size="mini"
+                filterable
+                style="width: 100%"
+                :disabled="true"
+              >
+                <el-option v-for="(item) in projectLists" :key="item.id" :label="item.name"
+                           :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-tooltip>
         </el-col>
 
         <!-- 选择环境 -->
@@ -45,34 +48,44 @@
 
         <!-- 选则用例集 -->
         <el-col :span="12">
-          <el-form-item label="选则用例集">
-            <el-cascader
-              size="mini"
-              style="width: 100%"
-              v-model="tempTaskSet"
-              :options="tempCaseSetList"
-              :props="{ multiple: true, checkStrictly: true }"
-              @change="selectedCaseSet"
-              clearable></el-cascader>
-          </el-form-item>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">
+              若要运行单个或多个用例集下的所有用例，则只需要选择对应的用例集即可，无需选择用例<br/>
+              若选择了多个用例集，则不能选择指定用例<br/>
+              若选择了多个用例集，但不想运行某些用例，则需要到用例管理，将对应的用例设为不运行即可
+            </div>
+            <el-form-item label="选则用例集">
+              <el-cascader
+                size="mini"
+                style="width: 100%"
+                v-model="tempTaskSet"
+                :options="tempCaseSetList"
+                :props="{ multiple: true, checkStrictly: true }"
+                @change="selectedCaseSet"
+                clearable></el-cascader>
+            </el-form-item>
+          </el-tooltip>
         </el-col>
 
         <!-- 选则用例 -->
         <el-col :span="12">
-          <el-form-item label="选择用例" size="mini">
-            <el-select
-              v-model="tempTask.case_id"
-              multiple
-              placeholder="选择用例"
-              value-key="id"
-              :disabled="caseSelectorIsDisabled"
-              style="width: 100%"
-              size="mini"
-            >
-              <el-option v-for="item in currentCaseList" :key="item.id" :label="item.name" :value="item.id">
-              </el-option>
-            </el-select>
-          </el-form-item>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">若指定了要运行的单个或多个用例，则定时任务触发时，只运行此处选中的用例</div>
+            <el-form-item label="选择用例" size="mini">
+              <el-select
+                v-model="tempTask.case_id"
+                multiple
+                placeholder="选择用例"
+                value-key="id"
+                :disabled="caseSelectorIsDisabled"
+                style="width: 100%"
+                size="mini"
+              >
+                <el-option v-for="item in currentCaseList" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-tooltip>
         </el-col>
       </el-row>
 
@@ -94,22 +107,22 @@
         <el-radio v-model="tempTask.send_type" label="email">仅邮件</el-radio>
         <div v-show="tempTask.send_type === 'we_chat'">
           <el-form-item label="机器人地址" class="is-required">
-          <el-input
-            type="textarea"
-            size="mini"
-            autosize
-            v-model="tempTask.we_chat"
-            placeholder="企业微信机器人地址"></el-input>
+            <el-input
+              type="textarea"
+              size="mini"
+              autosize
+              v-model="tempTask.we_chat"
+              placeholder="企业微信机器人地址"></el-input>
           </el-form-item>
         </div>
         <div v-show="tempTask.send_type === 'ding_ding'">
           <el-form-item label="机器人地址" class="is-required">
-          <el-input
-            type="textarea"
-            size="mini"
-            autosize
-            v-model="tempTask.ding_ding"
-            placeholder="钉钉机器人地址"></el-input>
+            <el-input
+              type="textarea"
+              size="mini"
+              autosize
+              v-model="tempTask.ding_ding"
+              placeholder="钉钉机器人地址"></el-input>
           </el-form-item>
         </div>
         <div v-show="tempTask.send_type === 'email'">
@@ -250,7 +263,7 @@ export default {
         // 遍历取当前用例集的父用例集
         // 遍历已选中的用例集
         for (let index in this.tempTask.set_id) {
-          if (this.tempTask.set_id[index]){  // 有值才执行后面的逻辑
+          if (this.tempTask.set_id[index]) {  // 有值才执行后面的逻辑
             var currentDataList = []
             currentDataList.unshift(this.tempTask.set_id[index])
 
@@ -319,7 +332,7 @@ export default {
     getTaskToCommit() {
       let caseSetList = []
       for (let index in this.currentSelectedCaseSet) {
-        if (this.currentSelectedCaseSet[index].length > 0){
+        if (this.currentSelectedCaseSet[index].length > 0) {
           caseSetList.push(this.currentSelectedCaseSet[index].slice(-1)[0])
         }
       }

@@ -49,26 +49,38 @@
 
         <!-- 前置条件 -->
         <el-row>
-          <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
-            <el-input
-              type="textarea"
-              autosize
-              v-model="tempApi.up_func"
-              placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-              size="mini"></el-input>
-          </el-form-item>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">
+              1、在运行接口之前要做的一些前置操作，使用自定义函数的形式实现 <br/>
+              2、可以执行多个操作，要执行多个操作时，按执行顺序用英文的分号（";"）隔开 <br/>
+            </div>
+            <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
+              <el-input
+                type="textarea"
+                autosize
+                v-model="tempApi.up_func"
+                placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+                size="mini"></el-input>
+            </el-form-item>
+          </el-tooltip>
         </el-row>
 
         <!-- 后置条件 -->
         <el-row>
-          <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
-            <el-input
-              type="textarea"
-              autosize
-              v-model="tempApi.down_func"
-              placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-              size="mini"></el-input>
-          </el-form-item>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">
+              1、在接口运行完毕过后要做的一些后置操作，使用自定义函数的形式实现 <br/>
+              2、可以执行多个操作，要执行多个操作时，按执行顺序用英文的分号（";"）隔开 <br/>
+            </div>
+            <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
+              <el-input
+                type="textarea"
+                autosize
+                v-model="tempApi.down_func"
+                placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+                size="mini"></el-input>
+            </el-form-item>
+          </el-tooltip>
         </el-row>
 
       </el-form>
@@ -87,8 +99,12 @@
           ></methodsSelectorView>
 
           <!-- 接口地址 -->
-          <el-input v-model="tempApi.addr" class="input-with-select" placeholder="请输入接口地址"
-                    size="mini" style="width: 80%;margin-right: 5px">
+          <el-input
+            v-model="tempApi.addr"
+            class="input-with-select"
+            placeholder="请输入接口地址"
+            size="mini"
+            style="width: 80%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->
@@ -105,13 +121,21 @@
 
         <!-- 头部信息 -->
         <el-tab-pane label="头部信息" name="headers">
-          <headersView
-            ref="headersView"
-            :currentData="tempApi.headers"
-            :placeholder-key="'key'"
-            :placeholder-value="'value'"
-            :placeholder-desc="'备注'"
-          ></headersView>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">
+              1、可用此功能设置当前接口的固定的头部参数，比如token、cookie <br/>
+              2、在此处设置的值，在运行此接口的时候，会自动加到头部参数上 <br/>
+              3、此处的value可以使用自定义函数处理/获取数据，比如用自定义函数取数据库获取对应的数据 <br/>
+              4、若在此处设置了与服务的头部参数设置的同样的key，则会用此处设置的value
+            </div>
+            <headersView
+              ref="headersView"
+              :currentData="tempApi.headers"
+              :placeholder-key="'key'"
+              :placeholder-value="'value'"
+              :placeholder-desc="'备注'"
+            ></headersView>
+          </el-tooltip>
         </el-tab-pane>
 
         <!-- 接口查询字符串信息 -->
@@ -138,13 +162,21 @@
 
         <!-- 数据提取信息 -->
         <el-tab-pane label="数据提取" name="extracts">
-          <extractsView
-            ref="extractsView"
-            :currentData="tempApi.extracts"
-            :placeholder-key="'key'"
-            :placeholder-value="'value'"
-            :placeholder-desc="'备注'"
-          ></extractsView>
+          <el-tooltip class="item" effect="dark" placement="top-end">
+            <div slot="content">
+              1、此处提取的数据只在运行时有效 <br/>
+              2、若在此处设置的key与服务/用例设置的公共变量的一致，则会使用此处提取到的值 <br/>
+              3、提取方式详见httpRunner <br/>
+              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值
+            </div>
+            <extractsView
+              ref="extractsView"
+              :currentData="tempApi.extracts"
+              :placeholder-key="'key'"
+              :placeholder-value="'value'"
+              :placeholder-desc="'备注'"
+            ></extractsView>
+          </el-tooltip>
         </el-tab-pane>
 
         <!-- 断言信息 -->
