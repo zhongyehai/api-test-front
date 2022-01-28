@@ -15,7 +15,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="type" header-align="center" min-width="25%">
+    <el-table-column label="type" header-align="center" min-width="20%">
       <template slot-scope="scope">
         <el-select v-model="scope.row.data_type" size="mini" placeholder="选择数据类型">
           <el-option v-for="item in formDataTypes" :key="item" :value="item">
@@ -24,9 +24,8 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="Value" header-align="center" mmin-width="10%">
+    <el-table-column label="Value" header-align="center" min-width="36%">
       <template slot-scope="scope">
-
         <!-- 文件 -->
         <div v-if="scope.row.data_type === 'file'">
           <el-row>
@@ -49,41 +48,48 @@
 
         <!-- 文本 -->
         <div v-else>
-          <el-input v-model="scope.row.value" placeholder="value"
-                    :id="'data_input' + scope.$index "
-                    type="textarea"
-                    rows=1
-                    size="mini"
-                    resize="none">
+          <el-input
+            v-model="scope.row.value" placeholder="value"
+            :id="'data_input' + scope.$index "
+            type="textarea"
+            rows=1
+            size="mini"
+            resize="none">
           </el-input>
         </div>
-
-      </template>
-
-    </el-table-column>
-    <el-table-column label="备注" header-align="center" min-width="20%">
-      <template slot-scope="scope">
-        <el-input v-model="scope.row.remark" size="mini" placeholder="备注">
-        </el-input>
       </template>
     </el-table-column>
 
-    <el-table-column label="添加" header-align="center" min-width="12%">
+    <el-table-column label="备注" header-align="center" min-width="12%">
       <template slot-scope="scope">
-        <el-button v-show="isShowAddButton(scope.$index)"
-                   type="primary"
-                   size="mini"
-                   @click.native="addRow(scope.$index)">+
-        </el-button>
+        <el-input v-model="scope.row.remark" size="mini" type="textarea" autosize placeholder="备注"></el-input>
       </template>
     </el-table-column>
-    <el-table-column label="删除" header-align="center" min-width="12%">
+
+    <el-table-column label="添加" header-align="center" min-width="6%">
       <template slot-scope="scope">
-        <el-button v-show="isShowDelButton(scope.$index)"
-                   type="danger"
-                   size="mini"
-                   @click.native="delRow(scope.$index)">-
-        </el-button>
+        <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
+          <el-button
+            v-show="isShowAddButton(scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-plus"
+            @click.native="addRow(scope.$index)"></el-button>
+        </el-tooltip>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="删除" header-align="center" min-width="6%">
+      <template slot-scope="scope">
+        <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
+          <el-button
+            v-show="isShowDelButton(scope.$index)"
+            type="text"
+            size="mini"
+            icon="el-icon-minus"
+            style="color: red"
+            @click.native="delRow(scope.$index)"></el-button>
+        </el-tooltip>
       </template>
     </el-table-column>
 
@@ -138,7 +144,7 @@ export default {
             this.uploadFileToServer(form)
           }).catch(() => {
           });
-        }else {
+        } else {
           this.uploadFileToServer(form)
         }
       })
