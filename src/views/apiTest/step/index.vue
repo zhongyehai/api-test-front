@@ -5,24 +5,25 @@
 
     <!-- 步骤列表 -->
     <el-col :span="10">
-      <stepListView ref="stepListView" :caseStepList="stepList" :caseId="caseId"></stepListView>
+      <stepListView
+        ref="stepListView"
+        :caseStepList="stepList"
+        :caseId="caseId"></stepListView>
     </el-col>
 
-    <!-- 步骤操作 -->
+    <!-- 添加步骤/引用用例 -->
     <el-col :span="14">
 
       <el-tabs v-model="activeName">
 
         <!-- 接口列表 -->
         <el-tab-pane label="接口列表" name="apiList">
-          <apiListView ref="apiListView" :projectId="this.projectId" :dialogIsShow="dialogIsShow"
-                       :currentCaseId="caseId"
+          <apiListView
+            ref="apiListView"
+            :projectId="this.projectId"
+            :dialogIsShow="dialogIsShow"
+            :currentCaseId="caseId"
           ></apiListView>
-        </el-tab-pane>
-
-        <!-- 步骤编辑 -->
-        <el-tab-pane label="编辑步骤" name="editStepInfo">
-          <editStepView ref="editStepView" :caseId="caseId"></editStepView>
         </el-tab-pane>
 
         <!-- 引用用例 -->
@@ -38,6 +39,10 @@
 
     </el-col>
 
+    <!-- 步骤编辑 -->
+    <editStepView
+      ref="editStepView"
+      :caseId="caseId"></editStepView>
   </el-row>
 
 
@@ -69,6 +74,7 @@ export default {
   },
   data() {
     return {
+      direction: 'rtl',  // 抽屉打开方式
       dialogStatus: '',
       dialogIsShow: false,
       activeName: 'apiList',
@@ -82,9 +88,7 @@ export default {
 
     // 新增步骤
     this.$bus.$on(this.$busEvents.addApiToStep, (apiOrCase, type) => {
-      if (type !== 'quote'){  // 引用接口
-        this.activeName = 'editStepInfo'
-      }else{  // 引用用例
+      if (type === 'quote') {  // 引用接口
         postStep(apiOrCase).then(response => {
           if (this.showMessage(this, response)) {
             // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
@@ -92,11 +96,6 @@ export default {
           }
         })
       }
-    })
-
-    // 编辑步骤
-    this.$bus.$on(this.$busEvents.editStep, (api) => {
-      this.activeName = 'editStepInfo'
     })
 
     // 打开用例caseDialog的时候，定位到接口列表栏
@@ -110,22 +109,6 @@ export default {
     this.$bus.$off(this.$busEvents.addApiToStep)
     this.$bus.$off(this.$busEvents.editStep)
     this.$bus.$off(this.$busEvents.caseDialogStatus)
-  },
-
-  created() {
-    // console.log('step.index.created.this.stepList: ', JSON.stringify(this.stepList))
-  },
-
-
-  watch: {
-
-    // 'projectId': {
-    //   deep: true,
-    //   handler(newVal, oldVal) {
-    //     this.tempCase.project_id = newVal
-    //   }
-    // },
-
   }
 }
 </script>

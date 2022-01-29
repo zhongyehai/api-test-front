@@ -8,9 +8,9 @@
     style="background-color: rgb(250, 250, 250)"
     :row-style="{'background-color': 'rgb(250, 250, 250)'}">
 
-    <el-table-column label="Key" header-align="center" min-width="20%">
+    <el-table-column label="Key" header-align="center" min-width="24%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.key" size="mini" placeholder="key">
+        <el-input v-model="scope.row.key" size="mini" type="textarea" autosize placeholder="key">
         </el-input>
       </template>
     </el-table-column>
@@ -24,7 +24,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="Value" header-align="center" min-width="36%">
+    <el-table-column label="Value" header-align="center" min-width="38%">
       <template slot-scope="scope">
         <!-- 文件 -->
         <div v-if="scope.row.data_type === 'file'">
@@ -49,10 +49,11 @@
         <!-- 文本 -->
         <div v-else>
           <el-input
-            v-model="scope.row.value" placeholder="value"
+            v-model="scope.row.value"
+            placeholder="value"
             :id="'data_input' + scope.$index "
             type="textarea"
-            rows=1
+            :rows=1
             size="mini"
             resize="none">
           </el-input>
@@ -66,7 +67,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="添加" header-align="center" min-width="6%">
+    <el-table-column label="添加" header-align="center" min-width="4%">
       <template slot-scope="scope">
         <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
           <el-button
@@ -79,7 +80,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="删除" header-align="center" min-width="6%">
+    <el-table-column label="删除" header-align="center" min-width="4%">
       <template slot-scope="scope">
         <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
           <el-button

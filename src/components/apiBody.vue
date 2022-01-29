@@ -7,22 +7,19 @@
     </el-tab-pane>
 
     <el-tab-pane label="json" name="json">
-      <el-button type="primary" size="mini"
-                 v-show="tempDataType === 'json'"
-                 style="margin-left:20px; float: right"
-                 @click="formatDataToJson()">格式化
-      </el-button>
-      <dataJsonView :data-json="tempDataJson" ref="dataJsonView"></dataJsonView>
+      <jsonEditorView
+          ref="jsonEditorView"
+          :data-json="dataJson"
+      ></jsonEditorView>
     </el-tab-pane>
 
     <el-tab-pane label="xml" name="xml">
-      <el-button type="primary" size="mini"
-                 v-show="tempDataType === 'xml'"
-                 style="margin-left:20px; float: right"
-                 @click="formatDataToJson()">格式化
-      </el-button>
+<!--      <el-button type="primary" size="mini"-->
+<!--                 v-show="tempDataType === 'xml'"-->
+<!--                 style="margin-left:20px; float: right"-->
+<!--                 @click="formatDataToJson()">格式化-->
+<!--      </el-button>-->
       <el-input v-model="tempDataXml" type="textarea" :rows="17"></el-input>
-<!--      <dataJsonView :data-json="tempDataJson" ref="dataJsonView"></dataJsonView>-->
     </el-tab-pane>
 
   </el-tabs>
@@ -32,13 +29,15 @@
 <script>
 import dataFormView from "@/components/Inputs/dataForm";
 import dataJsonView from "@/components/Inputs/dataJson";
+import jsonEditorView from "@/components/jsonView";
 
 
 export default {
   name: "apiEditBody",
   components: {
     dataFormView,
-    dataJsonView
+    dataJsonView,
+    jsonEditorView
   },
   props: ['dataType', 'dataJson', 'dataForm', 'dataXml'],
   data() {
@@ -89,7 +88,7 @@ export default {
       try {
         this.tempDataJson = JSON.stringify(JSON.parse(this.$refs.dataJsonView.tempDataJson), null, 4)
       } catch (err) {
-        this.$message({showClose: true, message: 'json格式错误', type: 'warning'})
+        this.$notify.error('json格式错误')
       }
     },
   },
