@@ -423,7 +423,7 @@ export default {
         validates: this.$refs.validatesView.tempValidates,
         data_type: this.$refs.bodyView.activeName,
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
-        data_json: this.$refs.bodyView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.dataJsonView.tempDataJson) : {},
+        data_json: this.$refs.bodyView.$refs.jsonEditorView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.jsonEditorView.tempDataJson) : {},
         data_xml: this.$refs.bodyView.tempDataXml,
         module_id: this.$refs.moduleSelector.tempModuleId,
         project_id: this.tempApi.project_id
