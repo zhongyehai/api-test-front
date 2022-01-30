@@ -3,21 +3,28 @@
 
     <div class="filter-container">
 
-      <span style="margin-left: 20px">选择服务：</span>
-      <el-select v-model="currentProject" placeholder="请选择服务" size="mini">
-        <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
-        </el-option>
-      </el-select>
+      <!-- inline="true"，el-form-item不自动换行 -->
+      <el-form label-width="100px" :inline="true">
 
-      <span style="margin-left: 20px">选择环境：</span>
-      <el-select v-model="currentEvent" placeholder="请选择环境" size="mini">
-        <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
-        </el-option>
-      </el-select>
+        <el-form-item :label="'选择服务：'" size="mini">
+          <el-select v-model="currentProject" placeholder="请选择服务" size="mini">
+            <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-button type="primary" @click.native="doQuery('')" size="mini" style="margin-left: 20px">查询</el-button>
-      <el-button type="primary" @click.native="initQuery('')" size="mini" style="margin-left: 20px">重置</el-button>
-      <el-button type="primary" @click.native="showDialog('')" size="mini" style="margin-left: 20px">添加账号</el-button>
+        <el-form-item :label="'选择环境：'" size="mini">
+          <el-select v-model="currentEvent" placeholder="请选择环境" size="mini">
+            <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-button type="primary" @click.native="doQuery('')" size="mini">查询</el-button>
+        <el-button type="primary" @click.native="initQuery('')" size="mini">重置</el-button>
+        <el-button type="primary" @click.native="showDialog('')" size="mini">添加账号</el-button>
+      </el-form>
+
     </div>
 
     <el-table
@@ -159,8 +166,15 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import {userList} from '@/apis/user'
-import {accountList, postAccount, getAccount, putAccount, deleteAccount, accountProjectList} from "@/apis/tools";
+import {userList} from '@/apis/user/user'
+import {
+  accountList,
+  postAccount,
+  getAccount,
+  putAccount,
+  deleteAccount,
+  accountProjectList
+} from "@/apis/testWork/account";
 
 export default {
   name: 'index',

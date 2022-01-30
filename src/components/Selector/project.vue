@@ -14,7 +14,7 @@
 
 <script>
 
-import {projectList} from '@/apis/project'
+import {projectList} from '@/apis/apiTest/project'
 
 export default {
   name: "project",

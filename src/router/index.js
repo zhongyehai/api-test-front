@@ -234,6 +234,18 @@ export const constantRoutes = [
         meta: {title: '测试账号', icon: 'el-icon-s-check'}
       },
       {
+        path: 'dataPool',
+        name: 'DataPool',
+        component: () => import('@/views/testWork/dataPool'),
+        meta: {title: '数据池', icon: 'el-icon-files'}
+      },
+      {
+        path: 'autoTestUser',
+        name: 'AutoTestUser',
+        component: () => import('@/views/testWork/autoTestUser'),
+        meta: {title: '自动化用户数据', icon: 'el-icon-files'}
+      },
+      {
         path: 'diffRecord',
         name: 'DiffRecord',
         component: () => import('@/views/testWork/yapi/diffDecord'),
@@ -257,12 +269,6 @@ export const constantRoutes = [
     name: 'Tools',
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
-      {
-        path: 'dataPool',
-        name: 'DataPool',
-        component: () => import('@/views/tools/dataPool'),
-        meta: {title: '数据池', icon: 'el-icon-files'}
-      },
       {
         path: 'file',
         name: 'File',

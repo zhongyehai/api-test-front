@@ -87,9 +87,9 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {projectList} from "@/apis/project";
-import {caseSetTree} from "@/apis/caseSet";
-import {caseList} from "@/apis/case";
+import {projectList} from "@/apis/apiTest/project";
+import {caseSetTree} from "@/apis/apiTest/caseSet";
+import {caseList} from "@/apis/apiTest/case";
 
 export default {
   name: "quoteCase",

@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import {moduleList, moduleStick, deleteModule} from '@/apis/module'
+import {moduleList, moduleStick, deleteModule} from '@/apis/apiTest/module'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 

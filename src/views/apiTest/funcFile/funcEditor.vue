@@ -58,7 +58,7 @@
 
 <script>
 import funcFileDrawer from "@/views/apiTest/funcFile/drawer";
-import {putFuncFile, debugFuncFile} from "@/apis/funcFile";
+import {putFuncFile, debugFuncFile} from "@/apis/apiTest/funcFile";
 
 export default {
   name: "funcEditor",

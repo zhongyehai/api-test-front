@@ -127,9 +127,9 @@ import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
 import caseDrawer from '@/views/apiTest/case/drawer'
 
-import {userList} from '@/apis/user'
-import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/case'
-import {reportIsDone} from "@/apis/report";
+import {userList} from '@/apis/user/user'
+import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/apiTest/case'
+import {reportIsDone} from "@/apis/apiTest/report";
 
 export default {
   name: 'index',

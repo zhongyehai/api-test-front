@@ -19,7 +19,7 @@
 
 <script>
 
-import {funcFileList} from '@/apis/funcFile'
+import {funcFileList} from '@/apis/apiTest/funcFile'
 
 export default {
   name: 'funcFile',

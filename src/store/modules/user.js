@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/apis/user'
+import { login, logout } from '@/apis/user/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -42,50 +42,50 @@ const actions = {
       })
     })
   },
-
-  // 获取用户信息
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('验证失败，请重新登录')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // 登出
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // 必须先删除token
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // 删除token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // 必须先删除token
-      commit('RESET_STATE')
-      resolve()
-    })
-  }
+  //
+  // // 获取用户信息
+  // getInfo({ commit, state }) {
+  //   return new Promise((resolve, reject) => {
+  //     getInfo(state.token).then(response => {
+  //       const { data } = response
+  //
+  //       if (!data) {
+  //         return reject('验证失败，请重新登录')
+  //       }
+  //
+  //       const { name, avatar } = data
+  //
+  //       commit('SET_NAME', name)
+  //       commit('SET_AVATAR', avatar)
+  //       resolve(data)
+  //     }).catch(error => {
+  //       reject(error)
+  //     })
+  //   })
+  // },
+  //
+  // // 登出
+  // logout({ commit, state }) {
+  //   return new Promise((resolve, reject) => {
+  //     logout(state.token).then(() => {
+  //       removeToken() // 必须先删除token
+  //       resetRouter()
+  //       commit('RESET_STATE')
+  //       resolve()
+  //     }).catch(error => {
+  //       reject(error)
+  //     })
+  //   })
+  // },
+  //
+  // // 删除token
+  // resetToken({ commit }) {
+  //   return new Promise(resolve => {
+  //     removeToken() // 必须先删除token
+  //     commit('RESET_STATE')
+  //     resolve()
+  //   })
+  // }
 }
 
 export default {

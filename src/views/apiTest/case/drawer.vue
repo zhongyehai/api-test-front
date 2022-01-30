@@ -158,8 +158,8 @@ import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
 import stepView from '@/views/apiTest/step'
 
-import {postCase, putCase, copyCase} from "@/apis/case";
-import {stepList} from "@/apis/step";
+import {postCase, putCase, copyCase} from "@/apis/apiTest/case";
+import {stepList} from "@/apis/apiTest/step";
 
 export default {
   name: 'drawer',

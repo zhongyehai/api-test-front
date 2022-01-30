@@ -122,8 +122,8 @@
 </template>
 
 <script>
-    import {ProGatherList} from "@/apis/project";
-    import {ReportDelete, ReportDownload, ReportList} from "@/apis/report";
+    import {ProGatherList} from "@/apis/apiTest/project";
+    import {ReportDelete, ReportDownload, ReportList} from "@/apis/apiTest/report";
 
     export default {
         name: 'reportManage',

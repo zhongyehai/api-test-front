@@ -87,7 +87,7 @@
 <script>
 import Sortable from 'sortablejs'
 
-import {deleteStep, putStepIsRun, stepSort, stepCopy} from "@/apis/step"
+import {deleteStep, putStepIsRun, stepSort, stepCopy} from "@/apis/apiTest/step"
 
 export default {
   name: 'stepList',

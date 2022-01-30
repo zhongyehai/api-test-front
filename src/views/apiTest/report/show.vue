@@ -403,7 +403,7 @@
 import JsonViewer from "vue-json-viewer";
 import vkbeautify from "vkbeautify";
 
-import {getReport} from '@/apis/report'
+import {getReport} from '@/apis/apiTest/report'
 
 export default {
   name: 'reportShow',

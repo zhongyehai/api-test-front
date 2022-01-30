@@ -187,9 +187,9 @@
 import environmentSelectorView from "@/components/Selector/environment";
 import emailServerSelector from "@/components/Selector/email";
 
-import {postTask, putTask} from '@/apis/task'
-import {caseSetList} from "@/apis/caseSet";
-import {caseList} from '@/apis/case'
+import {postTask, putTask} from '@/apis/apiTest/task'
+import {caseSetList} from "@/apis/apiTest/caseSet";
+import {caseList} from '@/apis/apiTest/case'
 
 export default {
   name: "drawer",

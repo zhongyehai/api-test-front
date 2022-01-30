@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {configList} from "@/apis/config";
+import {configList} from "@/apis/config/config";
 
 export default {
   name: "email",

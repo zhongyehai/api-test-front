@@ -134,9 +134,9 @@ import Pagination from '@/components/Pagination'
 // import apiDialog from '@/views/apiTest/api/apiDialog'
 import apiDrawer from '@/views/apiTest/api/drawer'
 
-import {userList} from '@/apis/user'
-import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/api'
-import {reportIsDone} from "@/apis/report";
+import {userList} from '@/apis/user/user'
+import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/apiTest/api'
+import {reportIsDone} from "@/apis/apiTest/report";
 
 export default {
   name: 'index',

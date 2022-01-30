@@ -70,8 +70,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/funcFile'
-import {userList} from '@/apis/user'
+import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/apiTest/funcFile'
+import {userList} from '@/apis/user/user'
 
 export default {
   name: "funcTable",

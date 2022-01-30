@@ -1,34 +1,57 @@
 <template>
   <div class="app-container">
 
-    <!-- 搜索、添加栏 -->
-    <div class="filter-container">
-      <el-input v-model="listQuery.name" :placeholder="'用户名'" style="width: 200px;" class="filter-item" size="mini"
-                @keyup.enter.native="handleFilter"/>
-      <el-input v-model="listQuery.account" :placeholder="'账号'" style="width: 200px;margin-left: 10px"
-                class="filter-item" size="mini"
-                @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.status" :placeholder="'状态'" clearable style="margin-left: 10px" size="mini"
-                 class="filter-item">
-        <el-option v-for="status in status_list" :key="status.name" :label="status.name" :value="status.id"/>
-      </el-select>
-      <el-select v-model="listQuery.role_id" :placeholder="'角色'" clearable style="margin-left: 10px" size="mini"
-                 class="filter-item">
-        <el-option v-for="role in role_list" :key="role.name" :label="role.name" :value="role.id"/>
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px" icon="el-icon-search" size="mini"
-                 @click="handleFilter">
-        {{ '搜索' }}
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-plus" size="mini"
-                 @click="handleCreate">
-        {{ '添加' }}
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-refresh" size="mini"
-                 @click="handleInitListQuery">
-        {{ '重置' }}
-      </el-button>
-    </div>
+    <!-- inline="true"，el-form-item不自动换行 -->
+    <el-form label-width="80px" :inline="true">
+
+      <el-form-item :label="'用户名：'" size="mini">
+        <el-input
+          v-model="listQuery.name"
+          :placeholder="'用户名'"
+          style="width: 100%"
+          class="filter-item"
+          size="mini"
+          @keyup.enter.native="handleFilter"/>
+      </el-form-item>
+
+      <el-form-item :label="'账号：'" size="mini">
+        <el-input
+          v-model="listQuery.account"
+          :placeholder="'账号'"
+          style="width: 100%"
+          class="filter-item"
+          size="mini"
+          @keyup.enter.native="handleFilter"/>
+      </el-form-item>
+
+      <el-form-item :label="'状态：'" size="mini">
+        <el-select
+          v-model="listQuery.status"
+          :placeholder="'状态'"
+          clearable
+          size="mini"
+          class="filter-item">
+          <el-option v-for="status in status_list" :key="status.name" :label="status.name" :value="status.id"/>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item :label="'角色：'" size="mini">
+        <el-select
+          v-model="listQuery.role_id"
+          :placeholder="'角色'"
+          clearable
+          size="mini"
+          class="filter-item">
+          <el-option v-for="role in role_list" :key="role.name" :label="role.name" :value="role.id"/>
+        </el-select>
+      </el-form-item>
+
+      <el-button v-waves class="filter-item" type="primary" size="mini" @click="handleFilter">搜索</el-button>
+      <el-button class="filter-item" type="primary" size="mini" @click="handleCreate">添加</el-button>
+      <el-button class="filter-item" type="primary" size="mini" @click="handleInitListQuery">重置</el-button>
+
+    </el-form>
+
     <br>
 
     <!-- 表格栏 -->
@@ -195,7 +218,7 @@
 </template>
 
 <script>
-import {userList, deleteUser, postUser, putUser, getUser, roleList, userStatus} from '@/apis/user'
+import {userList, deleteUser, postUser, putUser, getUser, roleList, userStatus} from '@/apis/user/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 
@@ -292,6 +315,7 @@ export default {
         manager: undefined,  // 负责人
         create_user: undefined, // 创建人
       }
+      this.getUserList()
     },
 
     // 获取角色列表

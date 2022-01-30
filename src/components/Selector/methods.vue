@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {getMethodsMapping} from "@/apis/api";
+import {getMethodsMapping} from "@/apis/apiTest/api";
 
 export default {
   name: "methods",

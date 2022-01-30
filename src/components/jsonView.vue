@@ -8,7 +8,7 @@
     </el-button>
     <dataJsonView
       ref="dataJsonView"
-      :data-json="tempDataJson"
+      :dataJson="tempDataJson"
     ></dataJsonView>
   </div>
 </template>

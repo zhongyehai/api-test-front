@@ -2,7 +2,7 @@
 
   <!-- 新增/修改配置表单 -->
   <el-drawer
-    :title=" drawerType === 'add' ? '新增服务' : '修改服务'"
+    :title=" drawerType === 'add' ? '新增配置' : '修改配置'"
     size="40%"
     :wrapperClosable="false"
     :visible.sync="drawerIsShow"
@@ -53,7 +53,7 @@
 
 <script>
 import configTypeSelector from "@/components/Selector/configType";
-import {postConfig, putConfig} from "@/apis/config";
+import {postConfig, putConfig} from "@/apis/config/config";
 import waves from '@/directive/waves'
 
 export default {

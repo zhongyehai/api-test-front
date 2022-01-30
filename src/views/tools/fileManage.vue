@@ -108,7 +108,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import uploadFileView from "@/components/file/uploadFile";
-import {fileList, fileDelete, fileDownload} from "@/apis/file";
+import {fileList, fileDelete, fileDownload} from "@/apis/tools/file";
 
 export default {
   name: 'fileManage',

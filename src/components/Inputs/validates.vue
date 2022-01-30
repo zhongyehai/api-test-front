@@ -87,7 +87,7 @@
 
 <script>
 
-import {getAssertMapping} from '@/apis/api'
+import {getAssertMapping} from '@/apis/apiTest/api'
 
 export default {
   name: "validates",

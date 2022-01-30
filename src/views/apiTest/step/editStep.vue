@@ -142,8 +142,8 @@ import jsonEditorView from "@/components/jsonView";
 import extractsView from "@/components/Inputs/changeRow"
 import validatesView from "@/components/Inputs/validates";
 
-import {postStep, putStep} from "@/apis/step"
-import {getApi} from "@/apis/api";
+import {postStep, putStep} from "@/apis/apiTest/step"
+import {getApi} from "@/apis/apiTest/api";
 
 export default {
   name: "editStep",
@@ -212,6 +212,7 @@ export default {
     },
 
     getStepForCommit() {
+      var json_data = this.$refs.bodyView.$refs.jsonEditorView.$refs.dataJsonView.tempDataJson
       return {
         'id': this.currentStep.id,
         "is_run": this.currentStep.is_run,
@@ -224,7 +225,7 @@ export default {
         "extracts": this.$refs.extractsView.tempData,
         "validates": this.$refs.validatesView.tempValidates,
         "data_form": this.$refs.bodyView.$refs.dataFormView.tempDataForm,
-        "data_json": this.$refs.bodyView.$refs.jsonEditorView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.jsonEditorView.tempDataJson) : {},
+        "data_json": json_data ? JSON.parse(json_data) : {},
         "data_xml": this.$refs.bodyView.tempDataXml,
         "data_driver": this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson ? JSON.parse(this.$refs.dataDriverView.$refs.dataJsonView.tempDataJson) : {},
         "quote_case": null,

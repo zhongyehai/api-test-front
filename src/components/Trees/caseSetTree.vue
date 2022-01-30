@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import {caseSetList, caseSetStick, deleteCaseSet} from '@/apis/caseSet'
+import {caseSetList, caseSetStick, deleteCaseSet} from '@/apis/apiTest/caseSet'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 

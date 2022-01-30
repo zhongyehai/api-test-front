@@ -4,58 +4,82 @@
     <!-- 搜索、添加栏 -->
     <div class="filter-container">
 
-      <span style="margin-left: 20px">服务名：</span>
-      <el-select ref="projectSelector" v-model="listQuery.projectId" :placeholder="'选择服务名'" filterable clearable
-                 style="margin-left: 10px" size="mini" class="filter-item">
-        <el-option v-for="project in project_list" :key="project.id" :label="project.name" :value="project.id"/>
-      </el-select>
+      <!-- inline="true"，el-form-item不自动换行 -->
+      <el-form label-width="100px" :inline="true">
 
-      <span style="margin-left: 20px">创建人：</span>
-      <el-select v-model="listQuery.create_user" :placeholder="'选择创建人'" filterable clearable
-                 style="margin-left: 10px" size="mini" class="filter-item">
-        <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
-      </el-select>
+        <el-form-item :label="'服务名：'" size="mini">
+          <el-select
+            ref="projectSelector"
+            v-model="listQuery.projectId"
+            :placeholder="'选择服务名'"
+            filterable
+            clearable
+            size="mini"
+            class="filter-item">
+            <el-option v-for="project in project_list" :key="project.id" :label="project.name" :value="project.id"/>
+          </el-select>
+        </el-form-item>
 
-      <span style="margin-left: 20px">负责人：</span>
-      <el-select v-model="listQuery.manager" :placeholder="'选择负责人'" filterable clearable style="margin-left: 10px"
-                 size="mini" class="filter-item">
-        <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
-      </el-select>
+        <el-form-item :label="'创建人：'" size="mini">
+          <el-select
+            v-model="listQuery.create_user"
+            :placeholder="'选择创建人'"
+            filterable
+            clearable
+            size="mini"
+            class="filter-item">
+            <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+          </el-select>
+        </el-form-item>
 
-      <el-button
-        v-waves
-        type="primary"
-        style="margin-left: 10px"
-        size="mini"
-        @click="handleFilter">
-        {{ '搜索' }}
-      </el-button>
+        <el-form-item :label="'负责人：'" size="mini">
+          <el-select
+            v-model="listQuery.manager"
+            :placeholder="'选择负责人'"
+            filterable
+            clearable
+            size="mini"
+            class="filter-item">
+            <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+          </el-select>
+        </el-form-item>
 
-      <el-button
-        style="margin-left: 10px;"
-        type="primary"
-        size="mini"
-        @click="addProject">
-        {{ '添加' }}
-      </el-button>
+        <el-button
+          v-waves
+          type="primary"
+          size="mini"
+          @click="handleFilter">
+          {{ '搜索' }}
+        </el-button>
 
-      <el-button
-        style="margin-left: 10px;"
-        type="primary"
-        size="mini"
-        @click="handleInitListQuery">
-        {{ '重置' }}
-      </el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          @click="addProject">
+          {{ '添加' }}
+        </el-button>
 
-      <el-button
-        style="margin-left: 10px;"
-        type="primary"
-        size="mini"
-        :loading="pullYapiProjectIsLoading"
-        @click="pullYapiProject">
-        {{ '从yapi拉取' }}
-      </el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          @click="handleInitListQuery">
+          {{ '重置' }}
+        </el-button>
 
+        <el-tooltip
+          class="item"
+          effect="dark"
+          content="从yapi拉取项目列表"
+          placement="top-start">
+          <el-button
+            type="primary"
+            size="mini"
+            :loading="pullYapiProjectIsLoading"
+            @click="pullYapiProject">
+            {{ '从yapi拉取' }}
+          </el-button>
+        </el-tooltip>
+      </el-form>
     </div>
     <br>
 
@@ -195,8 +219,8 @@
 </template>
 
 <script>
-import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from '@/apis/project'
-import {userList} from '@/apis/user'
+import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from '@/apis/apiTest/project'
+import {userList} from '@/apis/user/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import projectDrawer from '@/views/apiTest/project/drawer'

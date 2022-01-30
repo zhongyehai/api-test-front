@@ -81,8 +81,8 @@ import moduleSelectorView from "@/components/Selector/module";
 import editStepView from "@/views/apiTest/step/editStep";
 import Pagination from '@/components/Pagination'
 
-import {apiList} from "@/apis/api";
-import {moduleList} from "@/apis/module";
+import {apiList} from "@/apis/apiTest/api";
+import {moduleList} from "@/apis/apiTest/module";
 
 export default {
   name: 'apiList',

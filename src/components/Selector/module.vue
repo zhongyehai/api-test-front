@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {moduleList} from "@/apis/module";
+import {moduleList} from "@/apis/apiTest/module";
 
 export default {
   name: "module",

@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import {projectList} from '@/apis/project'
+import {projectList} from '@/apis/apiTest/project'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 

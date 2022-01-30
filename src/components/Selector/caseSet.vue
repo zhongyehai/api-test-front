@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import {caseSetList} from "@/apis/caseSet";
+import {caseSetList} from "@/apis/apiTest/caseSet";
 
 export default {
   name: "caseSetSelector",
