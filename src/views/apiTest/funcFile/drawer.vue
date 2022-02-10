@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import {postFuncFile} from '@/apis/funcFile'
+import {postFuncFile} from '@/apis/apiTest/funcFile'
 
 export default {
   name: "drawer",

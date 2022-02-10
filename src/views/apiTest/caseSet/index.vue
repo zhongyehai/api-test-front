@@ -10,6 +10,7 @@
           size="mini"
           style="width: 500px"
           filterable
+          default-first-option
           @change="getSetList"
         >
           <el-option v-for="item in projectListData" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -152,9 +153,9 @@ import caseManage from '@/views/apiTest/case'  // 用例管理组件
 
 import {ellipsis} from "@/utils/parseData"
 
-import {projectList} from "@/apis/project";
-import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/caseSet";
-import {reportIsDone} from "@/apis/report";
+import {projectList} from "@/apis/apiTest/project";
+import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/apiTest/caseSet";
+import {reportIsDone} from "@/apis/apiTest/report";
 
 
 export default {

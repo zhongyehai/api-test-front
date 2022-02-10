@@ -4,8 +4,8 @@
     <el-form size="small">
       <el-row>
         <el-col :span="18">
-          <el-form-item label="函数文件名" :label-width="'85px'" size="mini">
-            <el-input v-model="name" ></el-input>
+          <el-form-item label="文件名" :label-width="'85px'" size="mini">
+            <el-input v-model="name"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -17,12 +17,18 @@
             @click="debugFunc">调试
           </el-button>
 
-          <el-button class="filter-item" type="primary" size="mini" @click="openFuncFileDialog()">新建</el-button>
+          <el-button
+            class="filter-item"
+            style="margin-left: 5px"
+            type="primary"
+            size="mini"
+            @click="openFuncFileDialog()">新建
+          </el-button>
         </el-col>
       </el-row>
 
       <el-row>
-        <el-form-item label="调试函数" :label-width="'70px'" size="mini">
+        <el-form-item label="调试函数" :label-width="'85px'" size="mini">
           <el-input v-model="debugFuncData" placeholder="输入格式：${func(abc,123)}">
           </el-input>
         </el-form-item>
@@ -58,7 +64,7 @@
 
 <script>
 import funcFileDrawer from "@/views/apiTest/funcFile/drawer";
-import {putFuncFile, debugFuncFile} from "@/apis/funcFile";
+import {putFuncFile, debugFuncFile} from "@/apis/apiTest/funcFile";
 
 export default {
   name: "funcEditor",

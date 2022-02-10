@@ -6,13 +6,14 @@
     slot="prepend"
     placeholder="选择请求方式"
     filterable
+    default-first-option
     @change="choiceMethod">
     <el-option v-for="item in methods_list" :key="item.value" :value="item.value" :label="item.value"></el-option>
   </el-select>
 </template>
 
 <script>
-import {getMethodsMapping} from "@/apis/api";
+import {getMethodsMapping} from "@/apis/apiTest/api";
 
 export default {
   name: "methods",

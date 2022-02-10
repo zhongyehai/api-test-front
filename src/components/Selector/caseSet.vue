@@ -4,6 +4,7 @@
     placeholder="请选择用例集"
     value-key="id"
     filterable
+    default-first-option
     size="mini"
     style="width: 100%"
     @change="choiceCaseSet">
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-import {caseSetList} from "@/apis/caseSet";
+import {caseSetList} from "@/apis/apiTest/caseSet";
 
 export default {
   name: "caseSetSelector",

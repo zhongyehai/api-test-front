@@ -6,13 +6,14 @@
     style="width: 100%"
     @change="clickModule"
     filterable
+    default-first-option
   >
     <el-option v-for="(item) in tempModuleList" :key="item.id" :label="item.name" :value="item.id"></el-option>
   </el-select>
 </template>
 
 <script>
-import {moduleList} from "@/apis/module";
+import {moduleList} from "@/apis/apiTest/module";
 
 export default {
   name: "module",

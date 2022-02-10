@@ -12,13 +12,15 @@
             placeholder="选择服务"
             size="mini"
             filterable
+            default-first-option
             style="min-width: 100%"
             @change="selectedProject"
           >
-            <el-option v-for="(item) in currentProjectList"
-                       :key="item.id"
-                       :label="item.name"
-                       :value="item.id"></el-option>
+            <el-option
+              v-for="(item) in currentProjectList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"></el-option>
           </el-select>
         </el-form-item>
       </el-col>
@@ -28,6 +30,7 @@
         <el-form-item label="用例集">
           <el-cascader
             ref="caseSelector"
+            filterable
             placeholder="选择用例集"
             size="mini"
             style="min-width: 100%"
@@ -87,9 +90,9 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {projectList} from "@/apis/project";
-import {caseSetTree} from "@/apis/caseSet";
-import {caseList} from "@/apis/case";
+import {projectList} from "@/apis/apiTest/project";
+import {caseSetTree} from "@/apis/apiTest/caseSet";
+import {caseList} from "@/apis/apiTest/case";
 
 export default {
   name: "quoteCase",
@@ -174,7 +177,7 @@ export default {
       if (this.caseId) {
 
         // 不能自己引用自己
-        if (row.id === this.caseId){
+        if (row.id === this.caseId) {
           this.$notify.error('不能自己引用自己');
           return
         }

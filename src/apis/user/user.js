@@ -53,7 +53,3 @@ export function userPassword(data) {
 export function roleList() {
   return request({url: '/api/role/list', method: 'get'});
 }
-
-export function getInfo(token) {
-  return request({url: '/vue-admin-template/user/info', method: 'get', params: {token}})
-}

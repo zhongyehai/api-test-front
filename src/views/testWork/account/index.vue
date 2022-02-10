@@ -3,21 +3,28 @@
 
     <div class="filter-container">
 
-      <span style="margin-left: 20px">选择服务：</span>
-      <el-select v-model="currentProject" placeholder="请选择服务" size="mini">
-        <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
-        </el-option>
-      </el-select>
+      <!-- inline="true"，el-form-item不自动换行 -->
+      <el-form label-width="100px" :inline="true">
 
-      <span style="margin-left: 20px">选择环境：</span>
-      <el-select v-model="currentEvent" placeholder="请选择环境" size="mini">
-        <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
-        </el-option>
-      </el-select>
+        <el-form-item :label="'选择服务：'" size="mini">
+          <el-select v-model="currentProject" filterable placeholder="请选择服务" size="mini">
+            <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-button type="primary" @click.native="doQuery('')" size="mini" style="margin-left: 20px">查询</el-button>
-      <el-button type="primary" @click.native="initQuery('')" size="mini" style="margin-left: 20px">重置</el-button>
-      <el-button type="primary" @click.native="showDialog('')" size="mini" style="margin-left: 20px">添加账号</el-button>
+        <el-form-item :label="'选择环境：'" size="mini">
+          <el-select v-model="currentEvent" placeholder="请选择环境" size="mini">
+            <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-button type="primary" @click.native="doQuery('')" size="mini">查询</el-button>
+        <el-button type="primary" @click.native="initQuery('')" size="mini">重置</el-button>
+        <el-button type="primary" @click.native="showDialog('')" size="mini">添加账号</el-button>
+      </el-form>
+
     </div>
 
     <el-table
@@ -106,7 +113,7 @@
 
     <!-- 新增/修改账号表单 -->
     <el-drawer
-      :title=" currentAccount.id ? '修改模块' : '新增模块' "
+      :title=" currentAccount.id ? '修改账号' : '新增账号' "
       size="40%"
       :wrapperClosable="false"
       :visible.sync="drawerIsShow"
@@ -118,18 +125,40 @@
         label-position="right"
         label-width="90px"
         style="min-width: 400px;margin-left: 20px;margin-right: 20px">
-        <el-form-item :label="'服务名'" class="filter-item is-required" prop="name" size="mini">
-          <el-input v-model="currentAccount.project" placeholder="服务名称"/>
+
+        <el-form-item class="filter-item is-required" :label="'服务名'" size="mini">
+          <el-select
+            v-model="currentAccount.project"
+            filterable
+            allow-create
+            default-first-option
+            placeholder="服务名，可手动输入"
+            size="mini"
+            style="width:100%">
+            <el-option v-for="item in projectList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
         </el-form-item>
+
+        <el-form-item class="filter-item is-required" :label="'环境'" size="mini">
+          <el-select v-model="currentAccount.event" placeholder="请选择环境" size="mini" style="width:100%">
+            <el-option v-for="item in eventList" :key="item.key" :label="item.value" :value="item.key">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item :label="'账户名称'" class="filter-item is-required" prop="name" size="mini">
           <el-input v-model="currentAccount.name" placeholder="账户名称"/>
         </el-form-item>
+
         <el-form-item :label="'登录账号'" class="filter-item is-required" prop="account" size="mini">
           <el-input v-model="currentAccount.account" placeholder="登录账号，不可重复"/>
         </el-form-item>
+
         <el-form-item :label="'登录密码'" class="filter-item is-required" prop="password" size="mini">
           <el-input v-model="currentAccount.password" placeholder="登录密码"/>
         </el-form-item>
+
         <el-form-item :label="'备注'" class="filter-item" prop="desc">
           <el-input type="textarea" v-model="currentAccount.desc" autosize size="mini" placeholder="备注"></el-input>
         </el-form-item>
@@ -159,8 +188,15 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import {userList} from '@/apis/user'
-import {accountList, postAccount, getAccount, putAccount, deleteAccount, accountProjectList} from "@/apis/tools";
+import {userList} from '@/apis/user/user'
+import {
+  accountList,
+  postAccount,
+  getAccount,
+  putAccount,
+  deleteAccount,
+  accountProjectList
+} from "@/apis/testWork/account";
 
 export default {
   name: 'index',
@@ -257,17 +293,28 @@ export default {
       this.getAccountList()
     },
 
+    // 在抽屉中新加的服务名添加到服务list中
+    addProjectName(projectName) {
+      for (let index in this.projectList) {
+        if (projectName === this.projectList[index]['key']) {
+          return
+        }
+      }
+      this.projectList.push({key: projectName, value: projectName})
+    },
+
+    // 初始化新账号
     initNewAccount() {
       this.currentAccount.id = ''
-      this.currentAccount.project = ''
+      this.currentAccount.project = this.currentProject
       this.currentAccount.name = ''
       this.currentAccount.account = ''
       this.currentAccount.password = ''
       this.currentAccount.desc = ''
-      this.currentAccount.event = ''
+      this.currentAccount.event = this.currentEvent
     },
 
-    // 打开 dialog
+    // 打开抽屉
     showDialog(row) {
       if (row) {  // 修改
         this.currentAccount = JSON.parse(JSON.stringify(row))
@@ -290,6 +337,8 @@ export default {
       }).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
+          // 提交成功后，如果是新加的服务名，则加到服务名list中
+          this.addProjectName(this.currentAccount.project)
           this.drawerIsShow = false
           this.getAccountList()
         }
@@ -310,6 +359,8 @@ export default {
       }).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
+          // 提交成功后，如果是新加的服务名，则加到服务名list中
+          this.addProjectName(this.currentAccount.project)
           this.drawerIsShow = false
           this.getAccountList()
         }

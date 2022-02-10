@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import {caseList} from '@/apis/case'
+import {caseList} from '@/apis/apiTest/case'
 
 export default {
   name: "caseSelector",

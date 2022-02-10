@@ -1,14 +1,14 @@
 <template>
   <el-table :data="tempData" stripe :show-header="false" size="mini">
 
-    <el-table-column label="Key" header-align="center" min-width="36%">
+    <el-table-column label="Key" header-align="center" min-width="35%">
       <template slot-scope="scope">
         <el-input v-model="scope.row.key" size="mini" :placeholder="placeholderKey">
         </el-input>
       </template>
     </el-table-column>
 
-    <el-table-column label="Value" header-align="center" min-width="36%">
+    <el-table-column label="Value" header-align="center" min-width="35%">
       <template slot-scope="scope">
         <el-input v-model="scope.row.value" size="mini" :placeholder="placeholderValue">
         </el-input>
@@ -22,7 +22,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="添加" header-align="center" min-width="4%">
+    <el-table-column label="添加" header-align="center" min-width="5%">
       <template slot-scope="scope">
         <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
           <el-button
@@ -37,7 +37,7 @@
       </template>
     </el-table-column>
 
-    <el-table-column label="删除" header-align="center" min-width="4%">
+    <el-table-column label="删除" header-align="center" min-width="5%">
       <template slot-scope="scope">
         <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
           <el-button

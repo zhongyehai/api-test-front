@@ -166,7 +166,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {getDataPool} from "@/apis/tools";
+import {getDataPool} from "@/apis/testWork/dataPool";
 
 export default {
   name: 'dataPool',

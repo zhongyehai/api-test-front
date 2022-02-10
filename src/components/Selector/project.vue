@@ -5,6 +5,7 @@
     size="mini"
     style="min-width: 100%"
     filterable
+    default-first-option
     :disabled="isDisabled"
     @change="choiceProject"
   >
@@ -14,7 +15,7 @@
 
 <script>
 
-import {projectList} from '@/apis/project'
+import {projectList} from '@/apis/apiTest/project'
 
 export default {
   name: "project",

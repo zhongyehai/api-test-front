@@ -168,9 +168,9 @@ import projectTreeView from '@/components/Trees/projectTree'
 import Pagination from '@/components/Pagination'
 import taskDrawer from "@/views/apiTest/task/drawer";
 
-import {taskList, disableTask, enableTask, runTask, deleteTask, copyTask, taskSort} from '@/apis/task'
-import {userList} from "@/apis/user";
-import {reportIsDone} from "@/apis/report";
+import {taskList, disableTask, enableTask, runTask, deleteTask, copyTask, taskSort} from '@/apis/apiTest/task'
+import {userList} from "@/apis/user/user";
+import {reportIsDone} from "@/apis/apiTest/report";
 
 export default {
   name: "index",

@@ -126,7 +126,7 @@ import variablesView from '@/components/Inputs/changeRow'
 import funcFileView from '@/components/Selector/funcFile'
 import userSelector from "@/components/Selector/user";
 
-import {postProject, putProject} from '@/apis/project'
+import {postProject, putProject} from '@/apis/apiTest/project'
 
 export default {
   name: 'drawer',

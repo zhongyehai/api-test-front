@@ -56,7 +56,7 @@ import apiListView from '@/views/apiTest/step/apiList'
 import editStepView from "@/views/apiTest/step/editStep";
 import quoteCaseView from "@/views/apiTest/step/quoteCase";
 
-import {postStep, stepList} from "@/apis/step";
+import {postStep, stepList} from "@/apis/apiTest/step";
 
 export default {
   name: 'index',

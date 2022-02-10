@@ -1,16 +1,18 @@
 <template>
   <div class="app-container">
 
-    <div class="filter-container">
-      题目名称：
-      <el-input
-        v-model="keywords"
-        placeholder="输入题目关键字搜索"
-        style="width: 50%"
-        class="filter-item"
-        size="mini"
-      />
-    </div>
+    <!-- inline="true"，el-form-item不自动换行 -->
+    <el-form label-width="100px" :inline="true">
+      <el-form-item :label="'题目名称：'" size="mini">
+        <el-input
+          v-model="keywords"
+          placeholder="输入题目关键字搜索"
+          style="width: 300%"
+          class="filter-item"
+          size="mini"
+        />
+      </el-form-item>
+    </el-form>
 
     <el-table :data="question_result" stripe>
       <el-table-column prop="question" label="题目" min-width="60"></el-table-column>
@@ -21,7 +23,7 @@
 </template>
 
 <script>
-import {examination} from "@/apis/tools";
+import {examination} from "@/apis/tools/examination";
 
 export default {
   name: "examination",

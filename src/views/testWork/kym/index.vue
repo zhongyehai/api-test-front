@@ -7,6 +7,8 @@
           v-model="currentProject"
           placeholder="请选择服务"
           size="mini"
+          filterable
+          default-first-option
           @change="getKYMByProject"
         >
           <el-option
@@ -84,7 +86,14 @@
 // 使用方法详见：https://inspiring-golick-3c01b9.netlify.app/
 import MindElixir, {E} from "mind-elixir";
 
-import {getProjectKYM, putProjectKYM, addKYM, KYMProjectList, getKymAsXmind, getDiffRecordAsXmind} from "@/apis/tools";
+import {
+  getProjectKYM,
+  putProjectKYM,
+  addKYM,
+  KYMProjectList,
+  getKymAsXmind,
+  getDiffRecordAsXmind
+} from "@/apis/testWork/kym";
 
 export default {
   name: 'index',

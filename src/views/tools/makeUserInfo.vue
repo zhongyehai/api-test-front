@@ -26,8 +26,6 @@
 
       <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 
-      <div style="margin: 15px 0;"></div>
-
       <el-checkbox-group v-model="checkedData" @change="handleCheckedCitiesChange">
         <el-checkbox v-for="key in allOptionKeys" :label="key" :key="key">{{ key }}</el-checkbox>
       </el-checkbox-group>
@@ -61,7 +59,7 @@
 
 <script>
 
-import {makeUserInfoMapping, makeUser} from "@/apis/tools";
+import {makeUserInfoMapping, makeUser} from "@/apis/tools/makeUser";
 
 export default {
   name: "makeUserInfo",

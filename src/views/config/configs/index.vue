@@ -2,21 +2,43 @@
   <div class="app-container">
 
     <div class="filter-container">
+      <el-form label-width="120px" :inline="true">
 
-      <el-select v-model="queryType"
-                 :placeholder="'选择配置类型'"
-                 clearable
-                 style="margin-left: 10px; width: 30%"
-                 size="mini"
-                 class="filter-item"
-                 @change="getConfigList"
-      >
-        <el-option v-for="type in currentConfigTypeList" :key="type.id" :label="type.name" :value="type.name"/>
-      </el-select>
+        <el-form-item :label="'选择配置类型：'" size="mini">
+          <el-select
+            v-model="queryType"
+            :placeholder="'选择配置类型'"
+            clearable
+            filterable
+            default-first-option
+            style="margin-left: 10px; width: 100%"
+            size="mini"
+            class="filter-item"
+            @change="getConfigList"
+          >
+            <el-option v-for="type in currentConfigTypeList" :key="type.id" :label="type.name" :value="type.name"/>
+          </el-select>
+        </el-form-item>
 
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini" @click="addConfig">
-        {{ '添加配置' }}
-      </el-button>
+        <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini" @click="addConfig">
+          {{ '添加配置' }}
+        </el-button>
+
+      </el-form>
+      <!--      <el-select v-model="queryType"-->
+      <!--                 :placeholder="'选择配置类型'"-->
+      <!--                 clearable-->
+      <!--                 style="margin-left: 10px; width: 30%"-->
+      <!--                 size="mini"-->
+      <!--                 class="filter-item"-->
+      <!--                 @change="getConfigList"-->
+      <!--      >-->
+      <!--        <el-option v-for="type in currentConfigTypeList" :key="type.id" :label="type.name" :value="type.name"/>-->
+      <!--      </el-select>-->
+
+      <!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini" @click="addConfig">-->
+      <!--        {{ '添加配置' }}-->
+      <!--      </el-button>-->
     </div>
 
     <el-table
@@ -104,9 +126,9 @@
 import Pagination from '@/components/Pagination'
 import configDialog from "@/views/config/configs/drawer";
 
-import {getConfig, configList, deleteConfig, postConfig, putConfig} from '@/apis/config'
-import {userList} from "@/apis/user";
-import {configTypeList} from "@/apis/configType";
+import {getConfig, configList, deleteConfig, postConfig, putConfig} from '@/apis/config/config'
+import {userList} from "@/apis/user/user";
+import {configTypeList} from "@/apis/config/configType";
 
 export default {
   name: "config",

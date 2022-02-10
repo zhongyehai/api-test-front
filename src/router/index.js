@@ -234,10 +234,28 @@ export const constantRoutes = [
         meta: {title: '测试账号', icon: 'el-icon-s-check'}
       },
       {
+        path: 'file',
+        name: 'File',
+        component: () => import('@/views/testWork/files'),
+        meta: {title: '文件管理', icon: 'el-icon-files'}
+      },
+      {
+        path: 'dataPool',
+        name: 'DataPool',
+        component: () => import('@/views/testWork/dataPool'),
+        meta: {title: '数据池', icon: 'el-icon-s-operation'}
+      },
+      {
+        path: 'autoTestUser',
+        name: 'AutoTestUser',
+        component: () => import('@/views/testWork/autoTestUser'),
+        meta: {title: '自动化用户数据', icon: 'el-icon-s-custom'}
+      },
+      {
         path: 'diffRecord',
         name: 'DiffRecord',
         component: () => import('@/views/testWork/yapi/diffDecord'),
-        meta: {title: 'yapi监控记录', icon: 'el-icon-s-opportunity'}
+        meta: {title: 'yapi监控记录', icon: 'el-icon-video-camera-solid'}
       },
       {
         path: 'diffRecordShow',
@@ -257,18 +275,6 @@ export const constantRoutes = [
     name: 'Tools',
     meta: {title: '小工具', icon: 'el-icon-s-tools'},
     children: [
-      {
-        path: 'dataPool',
-        name: 'DataPool',
-        component: () => import('@/views/tools/dataPool'),
-        meta: {title: '数据池', icon: 'el-icon-files'}
-      },
-      {
-        path: 'file',
-        name: 'File',
-        component: () => import('@/views/tools/fileManage'),
-        meta: {title: '文件管理', icon: 'el-icon-files'}
-      },
       {
         path: 'examination',
         name: 'Examination',

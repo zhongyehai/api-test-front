@@ -1,6 +1,8 @@
 <template>
   <el-select
     v-model="tempConfigType"
+    filterable
+    default-first-option
     placeholder="选择配置类型"
     value-key="id"
     :disabled="dialogType === 'edit'"

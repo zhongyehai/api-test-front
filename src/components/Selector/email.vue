@@ -1,6 +1,8 @@
 <template>
   <el-select
     v-model="tempEmailServer"
+    filterable
+    default-first-option
     placeholder="选择邮箱服务器"
     value-key="id"
     style="min-width: 100%"
@@ -12,7 +14,7 @@
 </template>
 
 <script>
-import {configList} from "@/apis/config";
+import {configList} from "@/apis/config/config";
 
 export default {
   name: "email",

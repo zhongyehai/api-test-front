@@ -60,7 +60,7 @@
 <script>
 import * as types from '@/store/types'
 import {validUsername} from '@/utils/validate'
-import {login} from '@/apis/user'
+import {login} from '@/apis/user/user'
 
 export default {
   name: 'Login',

@@ -216,8 +216,8 @@ import bodyView from '@/components/apiBody'
 import extractsView from '@/components/Inputs/changeRow'
 import validatesView from '@/components/Inputs/validates'
 
-import {postApi, putApi, runApi} from '@/apis/api'
-import {reportIsDone} from "@/apis/report";
+import {postApi, putApi, runApi} from '@/apis/apiTest/api'
+import {reportIsDone} from "@/apis/apiTest/report";
 
 
 export default {
@@ -408,6 +408,7 @@ export default {
 
     // 获取 tempApi 用于提交数据
     getTempApi() {
+      var json_data = this.$refs.bodyView.$refs.jsonEditorView.$refs.dataJsonView.tempDataJson
       return {
         id: this.tempApi.id,
         name: this.tempApi.name,
@@ -423,7 +424,7 @@ export default {
         validates: this.$refs.validatesView.tempValidates,
         data_type: this.$refs.bodyView.activeName,
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
-        data_json: this.$refs.bodyView.$refs.jsonEditorView.tempDataJson ? JSON.parse(this.$refs.bodyView.$refs.jsonEditorView.tempDataJson) : {},
+        data_json: json_data ? JSON.parse(json_data) : {},
         data_xml: this.$refs.bodyView.tempDataXml,
         module_id: this.$refs.moduleSelector.tempModuleId,
         project_id: this.tempApi.project_id

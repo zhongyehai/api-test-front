@@ -4,14 +4,17 @@
     v-model="tempFuncFiles"
     multiple
     filterable
+    default-first-option
+    clearable
     size="mini"
     style="width:100%"
     placeholder="请选择函数文件"
     class="filter-item">
-    <el-option v-for="funcFile in funcFilesList"
-               :key="funcFile.id"
-               :label="funcFile.name"
-               :value="funcFile.name"
+    <el-option
+      v-for="funcFile in funcFilesList"
+      :key="funcFile.id"
+      :label="funcFile.name"
+      :value="funcFile.name"
     ></el-option>
   </el-select>
 
@@ -19,7 +22,7 @@
 
 <script>
 
-import {funcFileList} from '@/apis/funcFile'
+import {funcFileList} from '@/apis/apiTest/funcFile'
 
 export default {
   name: 'funcFile',

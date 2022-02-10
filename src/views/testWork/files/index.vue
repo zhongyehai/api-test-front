@@ -7,6 +7,8 @@
           v-model="fileType"
           placeholder="请选择文件类型"
           size="mini"
+          filterable
+          default-first-option
           @change="selectType"
         >
           <el-option
@@ -108,10 +110,10 @@
 <script>
 import Pagination from '@/components/Pagination'
 import uploadFileView from "@/components/file/uploadFile";
-import {fileList, fileDelete, fileDownload} from "@/apis/file";
+import {fileList, fileDelete, fileDownload} from "@/apis/tools/file";
 
 export default {
-  name: 'fileManage',
+  name: 'index',
   components: {Pagination, uploadFileView},
   data() {
     return {

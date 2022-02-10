@@ -17,6 +17,7 @@
                 placeholder="请选择服务"
                 size="mini"
                 filterable
+                default-first-option
                 style="width: 100%"
                 :disabled="true"
               >
@@ -57,6 +58,7 @@
             <el-form-item label="选则用例集">
               <el-cascader
                 size="mini"
+                filterable
                 style="width: 100%"
                 v-model="tempTaskSet"
                 :options="tempCaseSetList"
@@ -75,6 +77,8 @@
               <el-select
                 v-model="tempTask.case_id"
                 multiple
+                filterable
+                default-first-option
                 placeholder="选择用例"
                 value-key="id"
                 :disabled="caseSelectorIsDisabled"
@@ -187,9 +191,9 @@
 import environmentSelectorView from "@/components/Selector/environment";
 import emailServerSelector from "@/components/Selector/email";
 
-import {postTask, putTask} from '@/apis/task'
-import {caseSetList} from "@/apis/caseSet";
-import {caseList} from '@/apis/case'
+import {postTask, putTask} from '@/apis/apiTest/task'
+import {caseSetList} from "@/apis/apiTest/caseSet";
+import {caseList} from '@/apis/apiTest/case'
 
 export default {
   name: "drawer",

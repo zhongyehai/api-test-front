@@ -20,6 +20,8 @@
           v-model="scope.row.validate_type"
           placeholder="断言类型"
           style="width: 100%"
+          filterable
+          default-first-option
           size="mini">
           <el-option
             v-for="(item) in validateTypeList"
@@ -87,7 +89,7 @@
 
 <script>
 
-import {getAssertMapping} from '@/apis/api'
+import {getAssertMapping} from '@/apis/apiTest/api'
 
 export default {
   name: "validates",

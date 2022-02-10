@@ -102,8 +102,8 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import {configTypeList, postConfigType, putConfigType, deleteConfigType, getConfigType} from "@/apis/configType";
-import {userList} from "@/apis/user";
+import {configTypeList, postConfigType, putConfigType, deleteConfigType, getConfigType} from "@/apis/config/configType";
+import {userList} from "@/apis/user/user";
 
 export default {
   name: "index",

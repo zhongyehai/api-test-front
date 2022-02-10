@@ -28,7 +28,7 @@
 
 
 <script>
-import {uploadApi, fileCheck, filePost} from "@/apis/file";
+import {uploadApi, fileCheck, filePost} from "@/apis/tools/file";
 
 export default {
   name: 'uploadFile',

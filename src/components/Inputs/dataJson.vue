@@ -2,6 +2,7 @@
   <div style="border:1px solid rgb(234, 234, 234) ">
     <el-container>
       <editor
+        ref="jsonEditor"
         style="font-size: 15px"
         v-model="tempDataJson"
         @init="initJsonEditor"

@@ -30,7 +30,7 @@
           <el-tooltip
             class="item"
             effect="dark"
-            content="编辑接口"
+            content="编辑"
             placement="top-start">
             <el-button
               type="text"
@@ -42,7 +42,7 @@
           <el-tooltip
             class="item"
             effect="dark"
-            content="编辑接口"
+            content="删除"
             placement="top-start">
             <el-button
               type="text"
@@ -70,8 +70,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/funcFile'
-import {userList} from '@/apis/user'
+import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/apiTest/funcFile'
+import {userList} from '@/apis/user/user'
 
 export default {
   name: "funcTable",

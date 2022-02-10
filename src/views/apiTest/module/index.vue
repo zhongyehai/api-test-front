@@ -10,6 +10,7 @@
           size="mini"
           style="width: 500px"
           filterable
+          default-first-option
           @change="getModuleList"
         >
           <el-option v-for="item in projectListData" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -180,9 +181,9 @@ import apiManage from '@/views/apiTest/api'  // 接口管理组件
 
 import {ellipsis} from "@/utils/parseData"
 
-import {projectList} from "@/apis/project";
-import {moduleTree, deleteModule, postModule, putModule} from "@/apis/module";
-import {downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/api";
+import {projectList} from "@/apis/apiTest/project";
+import {moduleTree, deleteModule, postModule, putModule} from "@/apis/apiTest/module";
+import {downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/apiTest/api";
 
 
 export default {

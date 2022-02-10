@@ -9,16 +9,11 @@
     <el-tab-pane label="json" name="json">
       <jsonEditorView
           ref="jsonEditorView"
-          :data-json="dataJson"
+          :dataJson="dataJson"
       ></jsonEditorView>
     </el-tab-pane>
 
     <el-tab-pane label="xml" name="xml">
-<!--      <el-button type="primary" size="mini"-->
-<!--                 v-show="tempDataType === 'xml'"-->
-<!--                 style="margin-left:20px; float: right"-->
-<!--                 @click="formatDataToJson()">格式化-->
-<!--      </el-button>-->
       <el-input v-model="tempDataXml" type="textarea" :rows="17"></el-input>
     </el-tab-pane>
 

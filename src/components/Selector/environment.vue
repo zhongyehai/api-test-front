@@ -1,8 +1,8 @@
 <template>
   <el-select
     v-model="current_environment"
-    clearable
     filterable
+    default-first-option
     placeholder="请选择运行环境"
     style="width: 100%"
     size="mini"
