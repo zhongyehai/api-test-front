@@ -6,3 +6,21 @@ export function ellipsis(data, len) {
   }
   return data
 }
+
+// 根据id从list中获取数据
+export function getDataFormListById(data, data_id) {
+  for (let index in data) {
+    if (data[index].id === data_id) {
+      return data[index]
+    }
+  }
+}
+
+// 根据name从list中获取数据
+export function getDataFormListByName(data, data_name) {
+  for (let index in data) {
+    if (data[index].name === data_name) {
+      return data[index]
+    }
+  }
+}

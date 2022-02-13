@@ -1,112 +1,116 @@
 <template>
-  <div>
-    <el-button type="text" @click="table = true">打开嵌套表格的 Drawer</el-button>
-    <el-button type="text" @click="dialog = true">打开嵌套 Form 的 Drawer</el-button>
-    <el-drawer
-      title="我嵌套了表格!"
-      :visible.sync="table"
-      direction="rtl"
-      size="50%">
-      <el-table :data="gridData">
-        <el-table-column property="date" label="日期" width="150"></el-table-column>
-        <el-table-column property="name" label="姓名" width="200"></el-table-column>
-        <el-table-column property="address" label="地址"></el-table-column>
-      </el-table>
-    </el-drawer>
-
-    <el-drawer
-      title="我嵌套了 Form !"
-      :before-close="handleClose"
-      :visible.sync="dialog"
-      direction="ltr"
-      custom-class="demo-drawer"
-      ref="drawer"
-    >
-      <div class="demo-drawer__content">
-        <el-form :model="form">
-          <el-form-item label="活动名称" :label-width="formLabelWidth">
-            <el-input v-model="form.name" autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="活动区域" :label-width="formLabelWidth">
-            <el-select v-model="form.region" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div class="demo-drawer__footer">
-          <el-button @click="cancelForm">取 消</el-button>
-          <el-button type="primary" @click="$refs.drawer.closeDrawer()" :loading="loading">{{
-              loading ? '提交中 ...' : '确 定'
-            }}
-          </el-button>
-        </div>
-      </div>
-    </el-drawer>
-  </div>
+  <el-tree
+    :data="data"
+    node-key="id"
+    default-expand-all
+    @node-drag-start="handleDragStart"
+    @node-drag-enter="handleDragEnter"
+    @node-drag-leave="handleDragLeave"
+    @node-drag-over="handleDragOver"
+    @node-drag-end="handleDragEnd"
+    @node-drop="handleDrop"
+    draggable
+    :allow-drop="allowDrop"
+    :allow-drag="allowDrag">
+  </el-tree>
 </template>
 <script>
 export default {
   data() {
     return {
-      table: false,
-      dialog: false,
-      loading: false,
-      gridData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+      data: [{
+        id: 1,
+        label: '一级 1',
+        children: [{
+          id: 4,
+          label: '二级 1-1',
+          children: [{
+            id: 9,
+            label: '三级 1-1-1'
+          }, {
+            id: 10,
+            label: '三级 1-1-2'
+          }]
+        }]
       }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        id: 2,
+        label: '一级 2',
+        children: [{
+          id: 5,
+          label: '二级 2-1'
+        }, {
+          id: 6,
+          label: '二级 2-2'
+        }]
       }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        id: 3,
+        label: '一级 3',
+        children: [{
+          id: 7,
+          label: '二级 3-1'
+        }, {
+          id: 8,
+          label: '二级 3-2',
+          children: [{
+            id: 11,
+            label: '三级 3-2-1'
+          }, {
+            id: 12,
+            label: '三级 3-2-2'
+          }, {
+            id: 13,
+            label: '三级 3-2-3'
+          }]
+        }]
       }],
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
-      formLabelWidth: '80px',
-      timer: null,
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     };
   },
   methods: {
-    handleClose(done) {
-      if (this.loading) {
-        return;
-      }
-      this.$confirm('确定要提交表单吗？')
-        .then(_ => {
-          this.loading = true;
-          this.timer = setTimeout(() => {
-            done();
-            // 动画关闭需要一定的时间
-            setTimeout(() => {
-              this.loading = false;
-            }, 400);
-          }, 2000);
-        })
-        .catch(_ => {
-        });
+    // 节点开始拖拽时触发的事件
+    handleDragStart(node, ev) {
+      console.log('drag start', node);
     },
-    cancelForm() {
-      this.loading = false;
-      this.dialog = false;
-      clearTimeout(this.timer);
+    // 拖拽进入其他节点时触发的事件
+    handleDragEnter(draggingNode, dropNode, ev) {
+      console.log('tree drag enter: ', dropNode.label);
+    },
+    // 拖拽离开某个节点时触发的事件
+    handleDragLeave(draggingNode, dropNode, ev) {
+      console.log('tree drag leave: ', dropNode.label);
+    },
+    // 在拖拽节点时触发的事件（类似浏览器的 mouseover 事件）
+    handleDragOver(draggingNode, dropNode, ev) {
+      console.log('tree drag over: ', dropNode.label);
+    },
+    // 拖拽结束时（可能未成功）触发的事件
+    handleDragEnd(draggingNode, dropNode, dropType, ev) {
+      console.log('tree drag end: ', dropNode && dropNode.label, dropType);
+    },
+    // 拖拽成功完成时触发的事件
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      console.log('拖拽成功完成.dropType: ', dropType);
+
+      console.log('拖拽成功完成.draggingNode: ', draggingNode);
+
+      console.log('拖拽成功完成.ev: ', ev);
+    },
+    // 判断节点能否被拖拽
+    allowDrop(draggingNode, dropNode, type) {
+      return true
+      // if (dropNode.data.label === '二级 3-1') {
+      //   return type !== 'inner';
+      // } else {
+      //   return true;
+      // }
+    },
+    // 拖拽时判定目标节点能否被放置。type 参数有三种情况：'prev'、'inner' 和 'next'，分别表示放置在目标节点前、插入至目标节点和放置在目标节点后
+    allowDrag(draggingNode) {
+      return draggingNode.data.label.indexOf('三级 3-2-2') === -1;
     }
   }
-}
+};
 </script>

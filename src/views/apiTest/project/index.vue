@@ -227,6 +227,7 @@ import {userList} from '@/apis/user/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import projectDrawer from '@/views/apiTest/project/drawer'
+import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: 'Project',
@@ -361,12 +362,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      for (let index in this.user_list) {
-        let user_data = this.user_list[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.user_list, userId).name
     },
 
     // 初始化查询数据

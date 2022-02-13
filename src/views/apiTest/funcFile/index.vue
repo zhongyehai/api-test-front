@@ -5,7 +5,7 @@
     <el-row>
 
       <!-- 第一列，函数文件列表 -->
-      <el-col :span="8">
+      <el-col :span="8" style="overflow: hidden">
         <funcTableView></funcTableView>
       </el-col>
 
