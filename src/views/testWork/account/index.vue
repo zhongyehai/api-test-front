@@ -197,6 +197,7 @@ import {
   deleteAccount,
   accountProjectList
 } from "@/apis/testWork/account";
+import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: 'index',
@@ -255,12 +256,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      for (let index in this.user_list) {
-        let user_data = this.user_list[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.user_list, userId).name
     },
 
     // 获取账号列表

@@ -13,7 +13,12 @@ import getPageTitle from '@/utils/get-page-title'
 NProgress.configure({showSpinner: false}) // showSpinner: false 隐藏显示加载中的转圈
 
 // 白名单列表，不需要权限就可访问的路由
-const whiteList = ['/login', '/tools/examination', '/tools/makeUserInfo']
+const whiteList = [
+  '/login',
+  '/apiTest/errorRecord',
+  '/testManage/diffRecordShow',
+  '/tools/examination', '/tools/makeUserInfo'
+]
 
 router.beforeEach(async (to, from, next) => {
 

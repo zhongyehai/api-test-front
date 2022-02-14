@@ -104,6 +104,7 @@
 import Pagination from '@/components/Pagination'
 import {configTypeList, postConfigType, putConfigType, deleteConfigType, getConfigType} from "@/apis/config/configType";
 import {userList} from "@/apis/user/user";
+import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: "index",
@@ -137,12 +138,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      for (let index in this.user_list) {
-        let user_data = this.user_list[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.user_list, userId).name
     },
 
     // 用户列表

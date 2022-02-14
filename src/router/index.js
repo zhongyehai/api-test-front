@@ -152,6 +152,12 @@ export const constantRoutes = [
         component: () => import('@/views/apiTest/report/index')
       },
       {
+        path: 'errorRecord',
+        name: 'ErrorRecord',
+        meta: {title: '执行错误记录', icon: 'el-icon-video-camera-solid'},
+        component: () => import('@/views/apiTest/errorRecord/index')
+      },
+      {
         path: 'debug',
         name: 'debug',
         hidden: true,

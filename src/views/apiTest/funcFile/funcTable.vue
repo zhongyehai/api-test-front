@@ -72,6 +72,7 @@ import Pagination from '@/components/Pagination'
 
 import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/apiTest/funcFile'
 import {userList} from '@/apis/user/user'
+import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: "funcTable",
@@ -102,12 +103,7 @@ export default {
 
     // 根据用户id，解析用户
     parsUser(userId) {
-      for (let index in this.userLists) {
-        let user_data = this.userLists[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.userLists, userId).name
     },
 
     getFuncFileList() {

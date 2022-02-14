@@ -129,6 +129,7 @@ import configDialog from "@/views/config/configs/drawer";
 import {getConfig, configList, deleteConfig, postConfig, putConfig} from '@/apis/config/config'
 import {userList} from "@/apis/user/user";
 import {configTypeList} from "@/apis/config/configType";
+import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: "config",
@@ -186,12 +187,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      for (let index in this.user_list) {
-        let user_data = this.user_list[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.user_list, userId).name
     },
 
     // 用户列表

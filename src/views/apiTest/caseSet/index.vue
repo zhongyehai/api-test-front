@@ -156,7 +156,7 @@ import {ellipsis} from "@/utils/parseData"
 import {projectList} from "@/apis/apiTest/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/apiTest/caseSet";
 import {reportIsDone} from "@/apis/apiTest/report";
-
+import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
   name: 'index',
@@ -376,12 +376,7 @@ export default {
               queryCount += 1
             } else {
               that.$set(data, 'runButtonIsNotShow', false)
-              that.$notify({
-                title: '测试长时间未运行结束',
-                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
-                type: 'warning',
-                duration: 0
-              });
+              that.$notify(runTestTimeOutMessage);
               clearInterval(timer)  // 关闭定时器
             }
           }, 3000)

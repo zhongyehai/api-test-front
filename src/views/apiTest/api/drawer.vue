@@ -218,7 +218,7 @@ import validatesView from '@/components/Inputs/validates'
 
 import {postApi, putApi, runApi} from '@/apis/apiTest/api'
 import {reportIsDone} from "@/apis/apiTest/report";
-
+import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
   name: 'drawer',
@@ -339,15 +339,11 @@ export default {
               queryCount += 1
             } else {
               that.isShowDebugLoading = false
-              that.$notify({
-                title: '测试长时间未运行结束',
-                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
-                type: 'warning',
-                duration: 0
-              });
+              that.$notify(runTestTimeOutMessage);
               clearInterval(timer)  // 关闭定时器
             }
-          }, 3000)
+          }, 1000)
+          // }, 3000)
         }
       })
     },

@@ -130,6 +130,8 @@ import caseDrawer from '@/views/apiTest/case/drawer'
 import {userList} from '@/apis/user/user'
 import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/apiTest/case'
 import {reportIsDone} from "@/apis/apiTest/report";
+import {getDataFormListById} from "@/utils/parseData";
+import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
   name: 'index',
@@ -218,12 +220,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      for (let index in this.user_list) {
-        let user_data = this.user_list[index]
-        if (user_data.id === userId) {
-          return user_data.name
-        }
-      }
+      return getDataFormListById(this.user_list, userId).name
     },
 
     // 用户列表
@@ -278,12 +275,7 @@ export default {
               queryCount += 1
             } else {
               that.$set(caseData, 'isShowRunLoading', false)
-              that.$notify({
-                title: '测试长时间未运行结束',
-                message: '测试长时间未运行结束，不再等待，请到测试报告页查看测试报告',
-                type: 'warning',
-                duration: 0
-              });
+              that.$notify(runTestTimeOutMessage);
               clearInterval(timer)  // 关闭定时器
             }
           }, 3000)
