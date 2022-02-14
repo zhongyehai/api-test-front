@@ -15,6 +15,7 @@ NProgress.configure({showSpinner: false}) // showSpinner: false 隐藏显示加�
 // 白名单列表，不需要权限就可访问的路由
 const whiteList = [
   '/login',
+  '/apiTest/reportShow',
   '/apiTest/errorRecord',
   '/testManage/diffRecordShow',
   '/tools/examination', '/tools/makeUserInfo'
