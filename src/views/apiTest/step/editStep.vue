@@ -243,8 +243,8 @@ export default {
         if (this.showMessage(this, response)) {
           // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
           this.$bus.$emit(this.$busEvents.addStepIsCommit, response.data)
+          this.drawerIsShow = false
         }
-        this.drawerIsShow = false
       })
     },
 
@@ -256,8 +256,8 @@ export default {
         if (this.showMessage(this, response)) {
           // 避免重复请求步骤列表，新建完步骤过后，把新增的步骤给步骤列表更新
           this.$bus.$emit(this.$busEvents.editStepIsCommit, response.data)
+          this.drawerIsShow = false
         }
-        this.drawerIsShow = false
       })
     },
 
