@@ -104,7 +104,7 @@
             class="input-with-select"
             placeholder="请输入接口地址"
             size="mini"
-            style="width: 80%;margin-right: 5px">
+            style="width: 78%;margin-right: 5px">
           </el-input>
 
           <!-- 调试按钮 -->
@@ -172,8 +172,8 @@
             <extractsView
               ref="extractsView"
               :currentData="tempApi.extracts"
-              :placeholder-key="'key'"
-              :placeholder-value="'value'"
+              :placeholder-key="'起个变量名'"
+              :placeholder-value="'提取表达式'"
               :placeholder-desc="'备注'"
             ></extractsView>
           </el-tooltip>
@@ -213,7 +213,7 @@ import methodsSelectorView from "@/components/Selector/methods";
 import headersView from '@/components/Inputs/changeRow'
 import queryStringView from '@/components/Inputs/changeRow'
 import bodyView from '@/components/apiBody'
-import extractsView from '@/components/Inputs/changeRow'
+import extractsView from '@/components/Inputs/extract'
 import validatesView from '@/components/Inputs/validates'
 
 import {postApi, putApi, runApi} from '@/apis/apiTest/api'
@@ -342,8 +342,9 @@ export default {
               that.$notify(runTestTimeOutMessage);
               clearInterval(timer)  // 关闭定时器
             }
-          }, 1000)
-          // }, 3000)
+          }, 3000)
+        }else {
+          this.isShowDebugLoading = false
         }
       })
     },

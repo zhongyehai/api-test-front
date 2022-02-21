@@ -8,9 +8,36 @@
       </template>
     </el-table-column>
 
+    <el-table-column label="数据源" header-align="center" min-width="20%">
+      <template slot-scope="scope">
+          <el-row>
+            <el-select
+              v-model="scope.row.data_source"
+              placeholder="选择数据源"
+              style="width: 100%"
+              filterable
+              clearable
+              default-first-option
+              size="mini">
+              <el-option
+                v-for="(item) in responseDataSourceMapping"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </el-row>
+      </template>
+    </el-table-column>
+
     <el-table-column label="Value" header-align="center" min-width="35%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.value" size="mini" type="textarea" :rows="1" :placeholder="placeholderValue">
+        <el-input
+          v-model="scope.row.value"
+          size="mini"
+          type="textarea"
+          :rows="1"
+          :placeholder="getPlaceholder(scope.row.data_source)">
         </el-input>
       </template>
     </el-table-column>
@@ -56,8 +83,10 @@
 </template>
 
 <script>
+import {getConfigByName} from "@/apis/config/config";
+
 export default {
-  name: 'changeRow',
+  name: 'extract',
   props: [
     'currentData',
     'placeholderKey',
@@ -66,10 +95,29 @@ export default {
   ],
   data() {
     return {
-      tempData: []
+      tempData: [],
+      responseDataSourceMapping: []
     }
   },
   methods: {
+
+    // 从后端获取响应数据源映射
+    getResponseDataSourceMapping(){
+      getConfigByName({'name': 'response_data_source_mapping'}).then(response => {
+        this.responseDataSourceMapping = JSON.parse(response.data.value)
+      })
+    },
+
+    // 根据选择的数据源显示不同的提示
+    getPlaceholder(_type){
+      if (!_type){
+        return this.placeholderValue
+      }else if (_type === 'regexp'){
+        return '请填写正确的正则表达式'
+      }else{
+        return 'jsonpath表达式，若要提取整个对象，则不填写'
+      }
+    },
 
     // 是否显示添加按钮
     isShowAddButton(index) {
@@ -78,7 +126,7 @@ export default {
 
     // 添加一行
     addRow() {
-      this.tempData.push({key: null, value: null, remark: null})
+      this.tempData.push({key: null, data_source: null, value: null, remark: null})
     },
 
     // 是否显示删除按钮
@@ -92,6 +140,7 @@ export default {
     }
   },
   created() {
+    this.getResponseDataSourceMapping()
     this.tempData = this.currentData
   },
   watch: {
@@ -101,7 +150,7 @@ export default {
         if (newVal) {
           this.tempData = newVal
         } else {
-          this.tempData = [{key: null, value: null, remark: null}]
+          this.tempData = [{key: null, data_source: null, value: null, remark: null}]
         }
       }
     },
