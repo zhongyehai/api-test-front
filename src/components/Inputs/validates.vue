@@ -1,138 +1,254 @@
 <template>
+  <div>
+    <!-- 使用示例 -->
+    <el-collapse accordion>
+      <el-collapse-item>
+        <template slot="title">
+          <div style="color:#409eff"> 点击查看示例</div>
+        </template>
 
-  <!-- 断言 -->
-  <el-table
-    :data="tempValidates"
-    size="mini"
-    stripe
-    :show-header="false"
-    class="h-b-e-a-style"
-    :row-style="{'background-color': 'rgb(250, 250, 250)'}">
+        <div style="margin-left: 20px">
+          <div style="margin-left: 20px; margin-bottom: 5px">
+            示例数据： {"status": 200, "message": "获取成功", "list": [{"id": 1},{"id": 2}]}
+          </div>
+          <div style="margin-left: 20px">
 
-    <el-table-column label="数据源" header-align="center" min-width="20%">
-      <template slot-scope="scope">
-        <el-row>
+            <!-- 断言整数 -->
+            <el-row style="margin-top: 5px">
+              <el-col :span="5">
+                <div>断言整数</div>
+              </el-col>
+              <el-col :span="5">
+                <el-input size="mini" disabled :placeholder="'响应体'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'status'" style="width: 90%"></el-input>
+              </el-col>
+
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'相等'" style="width: 90%"></el-input>
+              </el-col>
+
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'整数'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'200'" style="width: 90%"></el-input>
+              </el-col>
+            </el-row>
+
+            <!-- 断言普通字符串 -->
+            <el-row style="margin-top: 5px">
+              <el-col :span="5">
+                <div>断言普通字符串</div>
+              </el-col>
+              <el-col :span="5">
+                <el-input size="mini" disabled :placeholder="'响应体'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'message'" style="width: 90%"></el-input>
+              </el-col>
+
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'相等'" style="width: 90%"></el-input>
+              </el-col>
+
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'普通字符串'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'获取成功'" style="width: 90%"></el-input>
+              </el-col>
+            </el-row>
+
+            <!-- 断言自定义变量 -->
+            <el-row style="margin-top: 5px">
+              <el-col :span="5">
+                <div>断言自定义变量</div>
+              </el-col>
+              <el-col :span="5">
+                <el-input size="mini" disabled :placeholder="'响应体'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'status'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'相等'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'自定义变量'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'$extract_name_2'" style="width: 90%"></el-input>
+              </el-col>
+            </el-row>
+
+            <!-- 断言自定义函数 -->
+            <el-row style="margin-top: 5px">
+              <el-col :span="5">
+                <div>断言自定义函数</div>
+              </el-col>
+              <el-col :span="5">
+                <el-input size="mini" disabled :placeholder="'响应体'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'status'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'相等'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'自定义函数'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'${do_something(status)}'" style="width: 90%"></el-input>
+              </el-col>
+            </el-row>
+
+            <!-- 断言自定义函数+自定义变量 -->
+            <el-row style="margin-top: 5px">
+              <el-col :span="5">
+                <div>断言自定义函数+自定义变量</div>
+              </el-col>
+              <el-col :span="5">
+                <el-input size="mini" disabled :placeholder="'响应体'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'status'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'相等'" style="width: 90%"></el-input>
+              </el-col>
+              <el-col :span="7">
+                <el-input size="mini" disabled :placeholder="'自定义函数'" style="width: 90%"></el-input>
+                <el-input size="mini" disabled :placeholder="'${do_something($extract_name_2)}'" style="width: 90%"></el-input>
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
+
+
+    <!-- 断言 -->
+    <el-table
+      :data="tempValidates"
+      size="mini"
+      stripe
+      :show-header="false"
+      class="h-b-e-a-style"
+      :row-style="{'background-color': 'rgb(250, 250, 250)'}">
+
+      <el-table-column label="数据源" header-align="center" min-width="20%">
+        <template slot-scope="scope">
           <el-row>
-            <el-select
-              v-model="scope.row.data_source"
-              placeholder="选择数据源"
-              style="width: 100%"
-              filterable
-              clearable
-              default-first-option
-              size="mini">
-              <el-option
-                v-for="(item) in responseDataSourceMapping"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
+            <el-row>
+              <el-select
+                v-model="scope.row.data_source"
+                placeholder="选择数据源"
+                style="width: 100%"
+                filterable
+                clearable
+                default-first-option
+                size="mini">
+                <el-option
+                  v-for="(item) in responseDataSourceMapping"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-row>
+            <el-row>
+              <el-input
+                v-model="scope.row.key"
+                type="textarea"
+                size="mini"
+                :rows="1"
+                :placeholder="getDataSourcePlaceholder(scope.row.data_source)"></el-input>
+            </el-row>
           </el-row>
-          <el-row>
-            <el-input
-              v-model="scope.row.key"
-              type="textarea"
-              size="mini"
-              :rows="1"
-              :placeholder="getDataSourcePlaceholder(scope.row.data_source)"></el-input>
-          </el-row>
-        </el-row>
 
-      </template>
-    </el-table-column>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="validate_type" header-align="center" min-width="20%">
-      <template slot-scope="scope">
-        <el-select
-          v-model="scope.row.validate_type"
-          placeholder="断言类型"
-          style="width: 100%"
-          filterable
-          clearable
-          default-first-option
-          size="mini"
-          @change="selectValidateType($event, scope.row)"
-        >
-          <el-option
-            v-for="(item) in validateTypeList"
-            :key="item.value"
-            :label="item.value"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </template>
-    </el-table-column>
+      <el-table-column label="validate_type" header-align="center" min-width="20%">
+        <template slot-scope="scope">
+          <el-select
+            v-model="scope.row.validate_type"
+            placeholder="断言类型"
+            style="width: 100%"
+            filterable
+            clearable
+            default-first-option
+            size="mini"
+            @change="selectValidateType($event, scope.row)"
+          >
+            <el-option
+              v-for="(item) in validateTypeList"
+              :key="item.value"
+              :label="item.value"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
 
-    <el-table-column property="value" label="Value" header-align="center" min-width="29%">
-      <template slot-scope="scope">
-        <el-row>
+      <el-table-column property="value" label="Value" header-align="center" min-width="29%">
+        <template slot-scope="scope">
           <el-row>
-            <el-select
-              v-model="scope.row.data_type"
-              placeholder="选择数据类型"
-              :disabled="scope.row.validate_type === '值为真' || scope.row.validate_type === '值为假'"
-              style="width: 100%"
-              filterable
-              clearable
-              default-first-option
-              size="mini">
-              <el-option
-                v-for="(item) in dataTypeMapping"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-row>
-          <el-row>
-            <el-input
-              v-model="scope.row.value"
-              size="mini"
-              type="textarea"
-              :disabled="scope.row.validate_type === '值为真' || scope.row.validate_type === '值为假'"
-              :rows="1"
-              :placeholder="
+            <el-row>
+              <el-select
+                v-model="scope.row.data_type"
+                placeholder="选择数据类型"
+                :disabled="scope.row.validate_type === '值为真' || scope.row.validate_type === '值为假'"
+                style="width: 100%"
+                filterable
+                clearable
+                default-first-option
+                size="mini">
+                <el-option
+                  v-for="(item) in dataTypeMapping"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-row>
+            <el-row>
+              <el-input
+                v-model="scope.row.value"
+                size="mini"
+                type="textarea"
+                :disabled="scope.row.validate_type === '值为真' || scope.row.validate_type === '值为假'"
+                :rows="1"
+                :placeholder="
                   scope.row.validate_type === '契约校验' ?
                   '详见：https://pypi.org/project/pactverify/，注：契约校验标识符改用@':
                   '预期结果'
                 ">
-            </el-input>
+              </el-input>
+            </el-row>
           </el-row>
-        </el-row>
-      </template>
-    </el-table-column>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="添加一行" header-align="center" min-width="4%">
-      <template slot-scope="scope">
-        <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
-          <el-button
-            v-show="isShowAddButton(scope.$index)"
-            type="text"
-            size="mini"
-            icon="el-icon-plus"
-            @click.native="addRow(scope.$index)">
-          </el-button>
-        </el-tooltip>
-      </template>
-    </el-table-column>
+      <el-table-column label="添加一行" header-align="center" min-width="4%">
+        <template slot-scope="scope">
+          <el-tooltip class="item" effect="dark" placement="top-end" content="添加一行">
+            <el-button
+              v-show="isShowAddButton(scope.$index)"
+              type="text"
+              size="mini"
+              icon="el-icon-plus"
+              @click.native="addRow(scope.$index)">
+            </el-button>
+          </el-tooltip>
+        </template>
+      </el-table-column>
 
-    <el-table-column label="删除当前行" header-align="center" min-width="4%">
-      <template slot-scope="scope">
-        <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
-          <el-button
-            v-show="isShowDelButton(scope.$index)"
-            type="text"
-            size="mini"
-            icon="el-icon-minus"
-            style="color: red"
-            @click.native="delRow(scope.$index)">
-          </el-button>
-        </el-tooltip>
-      </template>
-    </el-table-column>
+      <el-table-column label="删除当前行" header-align="center" min-width="4%">
+        <template slot-scope="scope">
+          <el-tooltip class="item" effect="dark" placement="top-end" content="删除当前行">
+            <el-button
+              v-show="isShowDelButton(scope.$index)"
+              type="text"
+              size="mini"
+              icon="el-icon-minus"
+              style="color: red"
+              @click.native="delRow(scope.$index)">
+            </el-button>
+          </el-tooltip>
+        </template>
+      </el-table-column>
 
-  </el-table>
+    </el-table>
+
+  </div>
+
+
 </template>
 
 <script>
