@@ -14,7 +14,6 @@
       style="width: 100%"
       :height="tableHeight"
     >
-
       <el-table-column prop="num" label="序号" min-width="9%">
         <template slot-scope="scope">
           <span>{{ scope.$index + 1 }}</span>
@@ -128,7 +127,10 @@ export default {
     this.$bus.$on(this.$busEvents.editStepIsCommit, (step) => {
       for (let index in this.stepList) {
         if (this.stepList[index].id === step.id) {
-          this.stepList[index] = step
+          for (let key in step){
+            this.$set(this.stepList[index], key, step[key])
+          }
+          // this.stepList[index] = step
           return
         }
       }

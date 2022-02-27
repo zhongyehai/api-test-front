@@ -101,7 +101,6 @@ export default {
   data() {
     return {
       selectedOptions: [],
-      activeName: "stepList",
 
       tempModuleList: [],
       currentProjectId: '',
@@ -206,8 +205,6 @@ export default {
 
       // 如果有用例id，则添加步骤，否则先保存用例
       if (this.caseId) {
-        this.activeName = 'editStepInfo'
-
         // 把当前选中的接口，传给步骤编辑tab
         // 初始化步骤的默认值
         var new_api = JSON.parse(JSON.stringify(api))

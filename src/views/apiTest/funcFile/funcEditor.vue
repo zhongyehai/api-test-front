@@ -58,6 +58,18 @@
         保存
       </el-button>
     </el-container>
+
+    <!-- 展示调试结果 -->
+    <el-drawer
+      :title="debugResultMessage"
+      size="40%"
+      :wrapperClosable="false"
+      :visible.sync="debugResultDrawerIsShow"
+      :direction="direction">
+      <div class="demo-drawer__content" style="margin-left: 20px">
+        <pre class="el-collapse-item-content" style="overflow: auto">{{ debugResultDetail }}</pre>
+      </div>
+    </el-drawer>
   </div>
 
 </template>
@@ -80,6 +92,10 @@ export default {
       name: '',
       id: '',
       debugFuncData: '',
+      direction: 'rtl',  // 抽屉打开方式
+      debugResultDrawerIsShow: false,
+      debugResultDetail: '',
+      debugResultMessage: ''
     }
   },
   methods: {
@@ -104,7 +120,12 @@ export default {
       this.deBugButtonIsLoading = true
       debugFuncFile({'id': this.id, 'debug_data': this.debugFuncData}).then(response => {
         this.deBugButtonIsLoading = false
-        this.$alert(response.result, response.message, {confirmButtonText: '确定'});
+
+          this.debugResultDetail = response.result
+          this.debugResultMessage = response.message
+          this.debugResultDrawerIsShow = true
+
+        // this.$alert(response.result, response.message, {confirmButtonText: '确定'});
       })
     },
 

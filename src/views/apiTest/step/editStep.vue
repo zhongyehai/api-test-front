@@ -139,7 +139,7 @@ import headersView from "@/components/Inputs/changeRow"
 import paramsView from "@/components/Inputs/changeRow"
 import bodyView from '@/components/apiBody'
 import jsonEditorView from "@/components/jsonView";
-import extractsView from "@/components/Inputs/changeRow"
+import extractsView from "@/components/Inputs/extract"
 import validatesView from "@/components/Inputs/validates";
 
 import {postStep, putStep} from "@/apis/apiTest/step"

@@ -3,14 +3,14 @@
 
     <el-table-column label="Key" header-align="center" min-width="35%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.key" size="mini" :placeholder="placeholderKey">
+        <el-input v-model="scope.row.key" size="mini" type="textarea" :rows="1" :placeholder="placeholderKey">
         </el-input>
       </template>
     </el-table-column>
 
     <el-table-column label="Value" header-align="center" min-width="35%">
       <template slot-scope="scope">
-        <el-input v-model="scope.row.value" size="mini" :placeholder="placeholderValue">
+        <el-input v-model="scope.row.value" size="mini" type="textarea" :rows="1" :placeholder="placeholderValue">
         </el-input>
       </template>
     </el-table-column>
