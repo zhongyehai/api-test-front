@@ -7,6 +7,31 @@
     </el-tab-pane>
 
     <el-tab-pane label="json" name="json">
+      <!-- 使用示例 -->
+      <el-collapse accordion>
+        <el-collapse-item>
+          <template slot="title">
+            <div style="color:#409eff"> 点击查看示例</div>
+          </template>
+          <div style="margin-left: 20px">
+            可以使用自定义函数，也可以使用自定义变量
+            <pre>
+  {
+    "key1": "123",
+    "key2": "$extract_name_2",  // 自定义变量（提取的变量）
+    "key3": "some_data$extract_name_2",  // 字符串+自定义变量拼接
+    "key4": "${do_something()}",  // 自定义函数
+    "key5": "${do_something(1, b=2)}",  // 带参数的自定义函数
+    "key6": "${do_something($extract_name_1)}",  // 自定义函数传自定义变量为参数
+    "key7": "${do_something($extract_name_1, b=$extract_name_2)}",  // 自定义函数指定位置传参
+    "key8": "some_data${do_something($extract_name_1, b=$extract_name_2)}",  // 字符串+自定义函数拼接
+    "key9": "${do_something($extract_name_1, b=$extract_name_2)}some_data"   // 字符串+自定义函数拼接
+  }
+  <span style="margin-top: 5px"><span style="color: red">注</span>：不支持 自定义变量+字符串的拼接，如：$extract_name_2some_data</span>
+              </pre>
+          </div>
+        </el-collapse-item>
+      </el-collapse>
       <jsonEditorView
           ref="jsonEditorView"
           :dataJson="dataJson"

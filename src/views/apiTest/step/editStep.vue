@@ -106,6 +106,29 @@
 
       <!-- 数据驱动 -->
       <el-tab-pane label="数据驱动" name="editDataDriver">
+        <!-- 使用示例 -->
+        <el-collapse accordion>
+          <el-collapse-item>
+            <template slot="title">
+              <div style="color:#409eff"> 点击查看示例</div>
+            </template>
+            <div style="margin-left: 20px">
+              列表嵌套字典，每一个字典就是一组请求数据，请求格式为
+              <pre>
+  [
+    {
+      "comment": "用例1描述",
+      "data": "请求数据，支持自定义变量和自定义函数"
+    },
+    {
+      "comment": "用例2描述",
+      "data": "请求数据，支持自定义变量和自定义函数"
+    }
+  ]
+              </pre>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
         <jsonEditorView
           ref="dataDriverView"
           :data-json="currentStep.data_driver"

@@ -18,7 +18,7 @@
     <el-table-column label="type" header-align="center" min-width="20%">
       <template slot-scope="scope">
         <el-select v-model="scope.row.data_type" size="mini" placeholder="选择数据类型">
-          <el-option v-for="item in formDataTypes" :key="item" :value="item">
+          <el-option v-for="item in formDataTypes" :label="item.label" :key="item.value" :value="item.value">
           </el-option>
         </el-select>
       </template>
@@ -106,7 +106,8 @@ export default {
   data() {
     return {
       // form-data的类型，文本还是文件
-      formDataTypes: ['string', 'file'],
+      // formDataTypes: ['string', 'file'],
+      formDataTypes: [{label: '字符串', value: 'string'}, {label: '文件', value: 'file'}],
       tempDataForm: '',
       fileType: 'case',
       uploadAddr: uploadAddr

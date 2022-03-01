@@ -166,8 +166,8 @@
             <div slot="content">
               1、此处提取的数据只在运行时有效 <br/>
               2、若在此处设置的key与服务/用例设置的公共变量的一致，则会使用此处提取到的值 <br/>
-              3、提取方式详见httpRunner <br/>
-              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值
+<!--              3、提取方式详见httpRunner <br/>-->
+<!--              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值-->
             </div>
             <extractsView
               ref="extractsView"
