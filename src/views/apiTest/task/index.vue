@@ -42,11 +42,12 @@
 
               <el-table-column prop="cron" label="cron表达式" min-width="35%"></el-table-column>
 
-              <el-table-column prop="status" label="状态" min-width="9%">
+              <el-table-column align="center" label="是否启用" min-width="15%">
                 <template slot-scope="scope">
-                  <el-tag size="small" :type="scope.row.status === '启用中' ? 'success' : 'warning'">
-                    {{ scope.row.status }}
-                  </el-tag>
+                  <el-switch
+                    :disabled="scope.row.taskIsDisabled"
+                    v-model="scope.row.status === '启用中'"
+                    @change="changeStatus(scope.row)"></el-switch>
                 </template>
               </el-table-column>
 
@@ -65,86 +66,71 @@
               <el-table-column label="操作" min-width="16%">
                 <template slot-scope="scope">
 
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="禁用任务"
-                    placement="top-start">
-                  <el-button
-                    type="text"
-                    icon="el-icon-video-pause"
-                    v-if="scope.row.status === '启用中'"
-                    :loading="scope.row.disableLoadingIsShow"
-                    @click.native="disable(scope.row)"></el-button>
-                  </el-tooltip>
-
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="启用任务"
-                    placement="top-start">
-                  <el-button
-                    type="text"
-                    icon="el-icon-caret-left"
-                    v-if="scope.row.status === '禁用中'"
-                    :loading="scope.row.enableLoadingIsShow"
-                    @click.native="enable(scope.row)"></el-button>
-                  </el-tooltip>
-
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="修改任务"
-                    placement="top-start">
+                  <!-- 运行任务 -->
+                  <el-popconfirm
+                    placement="top"
+                    hide-icon
+                    style="margin-right: 10px"
+                    title="运行任务并生成报告？"
+                    confirm-button-text='确认'
+                    cancel-button-text='取消'
+                    @onConfirm="run(scope.row)"
+                  >
                     <el-button
                       type="text"
-                      icon="el-icon-edit"
-                      :disabled="scope.row.status === '启用中'"
-                      @click.native="editTask(scope.row)"></el-button>
-                  </el-tooltip>
-
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="复制任务"
-                    placement="top-end">
-                    <el-button
-                      type="text"
-                      icon="el-icon-document-copy"
-                      :loading="scope.row.copyButtonIsLoading"
-                      @click.native="copy(scope.row)"></el-button>
-                  </el-tooltip>
-
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="运行任务"
-                    placement="top-start">
-                    <el-button
-                      type="text"
+                      slot="reference"
                       icon="el-icon-video-play"
                       :loading="scope.row.runButtonIsLoading"
-                      @click.native="run(scope.row)"></el-button>
-                  </el-tooltip>
+                    ></el-button>
+                  </el-popconfirm>
 
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="删除接口"
-                    placement="top-start">
+                  <!-- 修改任务 -->
+                  <el-button
+                    type="text"
+                    icon="el-icon-edit"
+                    style="margin-right: 10px"
+                    :disabled="scope.row.status === '启用中'"
+                    @click.native="editTask(scope.row)"></el-button>
+
+                  <!-- 复制任务 -->
+                  <el-popconfirm
+                    placement="top"
+                    hide-icon
+                    style="margin-right: 10px"
+                    title="复制此任务并生成新的任务？"
+                    confirm-button-text='确认'
+                    cancel-button-text='取消'
+                    @onConfirm="copy(scope.row)"
+                  >
                     <el-button
+                      type="text"
+                      slot="reference"
+                      icon="el-icon-document-copy"
+                      :loading="scope.row.copyButtonIsLoading"
+                    ></el-button>
+                  </el-popconfirm>
+
+                  <!-- 删除任务 -->
+                  <el-popconfirm
+                    placement="top"
+                    hide-icon
+                    style="margin-right: 10px"
+                    :title="`确定删除【${scope.row.name}】?`"
+                    confirm-button-text='确认'
+                    cancel-button-text='取消'
+                    @onConfirm="delTask(scope.row)"
+                  >
+                    <el-button
+                      slot="reference"
                       type="text"
                       style="color: red"
                       icon="el-icon-delete"
                       :disabled="scope.row.status === '启用中'"
                       :loading="scope.row.deleteLoadingIsShow"
-                      @click.native="confirmBox(delTask, scope.row, scope.row.name)"></el-button>
-                  </el-tooltip>
-
+                    ></el-button>
+                  </el-popconfirm>
                 </template>
               </el-table-column>
-
-
             </el-table>
 
             <pagination
@@ -265,26 +251,27 @@ export default {
       })
     },
 
-    // 启用任务
-    enable(task) {
-      this.$set(task, 'enableLoadingIsShow', true)
-      enableTask({id: task.id}).then(response => {
-        this.$set(task, 'enableLoadingIsShow', false)
-        if (this.showMessage(this, response)) {
-          this.getTaskList()
-        }
-      })
-    },
-
-    // 禁用任务
-    disable(task) {
-      this.$set(task, 'disableLoadingIsShow', true)
-      disableTask({id: task.id}).then(response => {
-        this.$set(task, 'disableLoadingIsShow', false)
-        if (this.showMessage(this, response)) {
-          this.getTaskList()
-        }
-      })
+    // 修改定时任务状态
+    changeStatus(task) {
+      this.$set(task, 'taskIsDisabled', true)
+      console.log('task.taskIsDisabled: ', task.taskIsDisabled)
+      if (task.status === '启用中') {
+        disableTask({id: task.id}).then(response => {
+          this.$set(task, 'taskIsDisabled', false)
+          console.log('task.taskIsDisabled: ', task.taskIsDisabled)
+          if (this.showMessage(this, response)) {
+            this.getTaskList()
+          }
+        })
+      } else {
+        enableTask({id: task.id}).then(response => {
+          this.$set(task, 'taskLoadingIsShow', false)
+          console.log('task.taskIsDisabled: ', task.taskIsDisabled)
+          if (this.showMessage(this, response)) {
+            this.getTaskList()
+          }
+        })
+      }
     },
 
     // 获取任务列表

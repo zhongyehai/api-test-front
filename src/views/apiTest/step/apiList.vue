@@ -51,7 +51,7 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="添加到步骤"
+              content="添加为步骤"
               placement="top-start">
               <el-button
                 type="text"

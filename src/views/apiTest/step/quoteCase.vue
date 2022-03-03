@@ -63,7 +63,7 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="引用此用例"
+              content="引用此用例为步骤"
               placement="top-start">
               <el-button
                 type="text"

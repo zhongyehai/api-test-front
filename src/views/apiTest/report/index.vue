@@ -39,7 +39,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="performer" label="创建者"min-width="8%"></el-table-column>
+              <el-table-column prop="performer" label="创建者" min-width="8%"></el-table-column>
 
               <el-table-column label="是否通过" min-width="10%">
                 <template slot-scope="scope">
@@ -67,47 +67,42 @@
 
               <el-table-column label="操作" min-width="10%">
                 <template slot-scope="scope">
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="下载报告"
-                    placement="top-start">
-                    <el-button
-                      type="text"
-                      icon="el-icon-download"
-                      v-show="scope.row.is_done === 1"
-                      @click.native="downReport(scope.row.id)"></el-button>
-                  </el-tooltip>
 
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="查看报告"
-                    placement="top-start">
-                    <el-button
-                      type="text"
-                      icon="el-icon-view"
-                      v-show="scope.row.is_done === 1"
-                      @click.native="openReportById(scope.row.id)"></el-button>
-                  </el-tooltip>
+                  <!--下载报告-->
+                  <el-button
+                    type="text"
+                    icon="el-icon-download"
+                    v-show="scope.row.is_done === 1"
+                    @click.native="downReport(scope.row.id)"></el-button>
 
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    content="删除报告"
-                    placement="top-start">
+                  <!--查看报告-->
+                  <el-button
+                    type="text"
+                    icon="el-icon-view"
+                    style="margin-right: 10px"
+                    v-show="scope.row.is_done === 1"
+                    @click.native="openReportById(scope.row.id)"></el-button>
+
+                  <!-- 删除报告 -->
+                  <el-popconfirm
+                    v-show="scope.row.is_done === 1"
+                    placement="top"
+                    hide-icon
+                    style="margin-right: 10px"
+                    :title="`确定删除【${scope.row.name}】?`"
+                    confirm-button-text='确认'
+                    cancel-button-text='取消'
+                    @onConfirm="delReport(scope.row)"
+                  >
                     <el-button
+                      slot="reference"
                       type="text"
                       style="color: red"
                       icon="el-icon-delete"
-                      v-show="scope.row.is_done === 1"
-                      @click.native="confirmBox(delReport, scope.row.id, scope.row.name)"></el-button>
-                  </el-tooltip>
-
+                    ></el-button>
+                  </el-popconfirm>
                 </template>
               </el-table-column>
-
-
             </el-table>
 
             <pagination

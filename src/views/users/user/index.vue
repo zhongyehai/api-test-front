@@ -71,24 +71,31 @@
           <span> {{ (listQuery.pageNum - 1) * listQuery.pageSize + scope.$index + 1 }} </span>
         </template>
       </el-table-column>
+
       <el-table-column :label="'用户名'" prop="id" align="center" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
+
       <el-table-column :label="'账号'" prop="id" align="center" min-width="20%">
         <template slot-scope="scope">
           <span>{{ scope.row.account }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="'状态'" prop="id" align="center" min-width="10%">
-        <template slot-scope="scope">
-          <span>{{ scope.row.status === 1 ? '启用中' : '禁用中' }}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column :label="'角色'" prop="id" align="center" min-width="10%">
         <template slot-scope="scope">
           <span>{{ scope.row.role_id === 1 ? '测试人员' : '管理人员' }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="启用状态" min-width="15%">
+        <template slot-scope="scope">
+          <el-switch
+            :disabled="scope.row.changStatusIsDisabled"
+            v-model="scope.row.status === 1"
+            @change="changStatus(scope.row)"></el-switch>
         </template>
       </el-table-column>
 
@@ -104,60 +111,34 @@
         </template>
       </el-table-column>
 
-      <el-table-column :label="'操作'" align="center" min-width="22%" class-name="small-padding fixed-width">
+      <el-table-column :label="'操作'" align="center" min-width="10%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="编辑"
-            placement="top-start">
-            <el-button
-              type="text"
-              icon="el-icon-edit"
-              @click="handleUpdate(row)"></el-button>
-          </el-tooltip>
+          <!--编辑用户-->
+          <el-button
+            type="text"
+            style="margin-right: 10px"
+            icon="el-icon-edit"
+            @click="handleUpdate(row)"></el-button>
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="启用"
-            placement="top-start">
+          <!-- 删除账号 -->
+          <el-popconfirm
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            :title="`确定删除【${row.name}】?`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="delUser(row)"
+          >
             <el-button
-              type="text"
-              style="color: red"
-              icon="el-icon-check"
-              v-show="row.status !== 1"
-              :loading="row.changStatusLoadingIsShow"
-              @click="changStatus(row)"></el-button>
-          </el-tooltip>
-
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="禁用"
-            placement="top-start">
-            <el-button
-              type="text"
-              style="color: red"
-              icon="el-icon-close"
-              v-show="row.status === 1"
-              :loading="row.changStatusLoadingIsShow"
-              @click="changStatus(row)"></el-button>
-          </el-tooltip>
-
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="删除"
-            placement="top-start">
-            <el-button
+              slot="reference"
               type="text"
               style="color: red"
               icon="el-icon-delete"
               :loading="row.deleteLoadingIsShow"
-              @click="confirmBox(delUser, row, row.name)"></el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -251,7 +232,6 @@ export default {
       },
 
       submitButtonIsLoading: false,
-      changStatusLoadingIsShow: false,
 
       user_list: [],  // 用户列表
       role_list: [{'id': 1, name: '启用'}, {'id': 2, name: '冻结'}],  // 角色列表
@@ -376,9 +356,9 @@ export default {
 
     // 启用禁用用户
     changStatus(row) {
-      this.$set(row, 'changStatusLoadingIsShow', true)
+      this.$set(row, 'changStatusIsDisabled', true)
       userStatus({'id': row.id}).then(response => {
-        this.$set(row, 'changStatusLoadingIsShow', false)
+        this.$set(row, 'changStatusIsDisabled', false)
         this.showMessage(this, response)
         this.getUserList()
       })

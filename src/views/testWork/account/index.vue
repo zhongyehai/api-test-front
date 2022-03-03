@@ -84,29 +84,33 @@
       <el-table-column label="操作" min-width="10%">
         <template slot-scope="scope">
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="修改"
-            placement="top-start">
-            <el-button
-              type="text"
-              icon="el-icon-edit"
-              @click.native="showDialog(scope.row)"></el-button>
-          </el-tooltip>
+          <!--修改账号信息-->
+          <el-button
+            type="text"
+            style="margin-right: 10px"
+            icon="el-icon-edit"
+            @click="showDialog(scope.row)">
+          </el-button>
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="删除"
-            placement="top-end">
+          <!-- 删除账号 -->
+          <el-popconfirm
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            :title="`确定删除【${scope.row.name}】?`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="delAccount(scope.row)"
+          >
             <el-button
+              slot="reference"
               type="text"
               style="color: red"
               icon="el-icon-delete"
               :loading="scope.row.deleteButtonIsLoading"
-              @click.native="confirmBox(delAccount, scope.row, scope.row.name)"></el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
+
         </template>
       </el-table-column>
     </el-table>

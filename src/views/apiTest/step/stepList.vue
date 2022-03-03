@@ -35,51 +35,73 @@
       <el-table-column align="center" label="操作" min-width="15%">
         <template slot-scope="scope">
 
-          <el-tooltip class="item" effect="dark" content="复制步骤" placement="top-start">
+          <!-- 复制步骤 -->
+          <el-popconfirm
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            title="复制此步骤并生成新的步骤？"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="copy(scope.row)"
+          >
             <el-button
               type="text"
-              size="mini"
+              slot="reference"
               icon="el-icon-document-copy"
               :loading="scope.row.copyIsLoading"
-              @click.native="copy(scope.row)"></el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
 
-          <el-tooltip class="item" effect="dark" content="编辑步骤" placement="top-start">
-            <el-button
-              v-if="!scope.row.quote_case"
-              type="text"
-              size="mini"
-              icon="el-icon-edit"
-              @click.native="editStep(scope.row, scope.$index)"></el-button>
-          </el-tooltip>
+          <!-- 编辑步骤 -->
+          <el-button
+            v-if="!scope.row.quote_case"
+            type="text"
+            size="mini"
+            style="margin-right: 10px"
+            icon="el-icon-edit"
+            @click.native="editStep(scope.row, scope.$index)"></el-button>
 
-          <el-tooltip class="item" effect="dark" content="删除步骤" placement="top-start">
+          <!-- 删除步骤 -->
+          <el-popconfirm
+            v-if="!scope.row.quote_case"
+            placement="top"
+            hide-icon
+            :title="`确定删除【${scope.row.name}】?`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="deleteStepOnList({id: scope.row.id, index: scope.$index})"
+          >
             <el-button
-              v-if="!scope.row.quote_case"
-              type="text"
-              size="mini"
-              style="color: red"
-              icon="el-icon-delete"
-              @click.native="confirmBox(deleteStepOnList, {id: scope.row.id, index: scope.$index}, scope.row.name)">
-            </el-button>
-          </el-tooltip>
-
-          <el-tooltip class="item" effect="dark" content="解除引用" placement="top-start">
-            <el-button
-              v-if="scope.row.quote_case"
+              slot="reference"
               type="text"
               style="color: red"
               icon="el-icon-delete"
-              @click.native="confirmBox(deleteStepOnList, {id: scope.row.id, index: scope.$index}, scope.row.name)">
-            </el-button>
-          </el-tooltip>
+            ></el-button>
+            <!--:loading="scope.row.deleteLoadingIsShow"-->
+          </el-popconfirm>
 
+          <!-- 解除引用 -->
+          <el-popconfirm
+            v-if="scope.row.quote_case"
+            placement="top"
+            hide-icon
+            :title="`是否解除引用【${scope.row.name}】？`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="deleteStepOnList({id: scope.row.id, index: scope.$index})"
+          >
+            <el-button
+              slot="reference"
+              type="text"
+              style="color: red"
+              icon="el-icon-delete"
+            ></el-button>
+            <!--:loading="scope.row.deleteLoadingIsShow"-->
+          </el-popconfirm>
         </template>
       </el-table-column>
-
     </el-table>
-
-
   </div>
 </template>
 
@@ -127,7 +149,7 @@ export default {
     this.$bus.$on(this.$busEvents.editStepIsCommit, (step) => {
       for (let index in this.stepList) {
         if (this.stepList[index].id === step.id) {
-          for (let key in step){
+          for (let key in step) {
             this.$set(this.stepList[index], key, step[key])
           }
           // this.stepList[index] = step
@@ -184,7 +206,7 @@ export default {
     },
 
     // 复制步骤
-    copy(row){
+    copy(row) {
       this.$set(row, 'copyIsLoading', true)
       stepCopy({'id': row.id}).then(response => {
         this.$set(row, 'copyIsLoading', false)

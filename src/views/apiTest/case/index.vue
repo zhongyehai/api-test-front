@@ -49,56 +49,68 @@
           <el-table-column label="用例操作" min-width="14%">
             <template slot-scope="scope">
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="运行测试用例并生成报告"
-                placement="top-end">
+              <!-- 运行用例 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                title="运行测试用例并生成报告？"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="runCase(scope.row)"
+              >
                 <el-button
                   type="text"
-                  size="mini"
+                  slot="reference"
                   icon="el-icon-video-play"
                   :loading="scope.row.isShowRunLoading"
-                  @click.native="runCase(scope.row)"></el-button>
-              </el-tooltip>
+                ></el-button>
+              </el-popconfirm>
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="编辑用例"
-                placement="top-end">
+              <!--修改用例-->
+              <el-button
+                type="text"
+                style="margin-right: 8px"
+                icon="el-icon-edit"
+                @click="editCase(scope.row)">
+              </el-button>
+
+              <!-- 复制用例 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                title="复制用例及其步骤？"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="copyCase(scope.row)"
+              >
                 <el-button
                   type="text"
-                  size="mini"
-                  icon="el-icon-edit"
-                  @click.native="editCase(scope.row)"></el-button>
-              </el-tooltip>
-
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="复制用例及其步骤"
-                placement="top-end">
-                <el-button
-                  type="text"
-                  size="mini"
+                  slot="reference"
                   icon="el-icon-document-copy"
-                  @click.native="copyCase(scope.row)"></el-button>
-              </el-tooltip>
+                ></el-button>
+                <!--:loading="scope.row.copyButtonIsLoading"-->
+              </el-popconfirm>
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="将删除此用例及此用例下的步骤"
-                placement="top-end">
+              <!-- 删除用例 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                :title="`确定删除【${scope.row.name}】及其步骤?`"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="delCase(scope.row)"
+              >
                 <el-button
+                  slot="reference"
                   type="text"
-                  size="mini"
                   style="color: red"
                   icon="el-icon-delete"
                   :loading="scope.row.isShowDeleteLoading"
-                  @click.native="confirmBox(delCase, scope.row, `用例 ${scope.row.name}`)"></el-button>
-              </el-tooltip>
+                ></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>

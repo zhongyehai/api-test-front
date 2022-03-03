@@ -142,63 +142,71 @@
       <el-table-column :label="'操作'" align="center" min-width="10%" class-name="small-padding fixed-width">
         <template slot-scope="{row, $index}">
 
-          <el-tooltip
+          <!-- 从yapi拉取此服务下的模块、接口信息 -->
+          <el-popconfirm
             v-show="row.yapi_id"
-            class="item"
-            effect="dark"
-            content="从yapi拉取此服务下的模块、接口信息"
-            placement="top-start">
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            title="从yapi拉取此服务下的模块、接口信息?"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="pullByYapi(row)"
+          >
             <el-button
-              size="mini"
+              slot="reference"
+              type="text"
               icon="el-icon-refresh"
               :loading="row.isPullByYapi"
-              type="text"
-              @click="pullByYapi(row)">
-            </el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
 
-          <el-tooltip
+          <!-- 从swagger拉取模块、接口信息-->
+          <el-popconfirm
             v-show="!row.yapi_id && row.swagger"
-            class="item"
-            effect="dark"
-            content="从swagger拉取此服务下的模块、接口信息"
-            placement="top-start">
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            title="从swagger拉取此服务下的模块、接口信息?"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="pullBySwagger(row)"
+          >
             <el-button
-              size="mini"
+              slot="reference"
+              type="text"
               icon="el-icon-refresh"
               :loading="row.isPullBySwagger"
-              type="text"
-              @click="pullBySwagger(row)">
-            </el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="编辑服务"
-            placement="top-start">
-            <el-button
-              type="text"
-              size="mini"
-              icon="el-icon-edit"
-              @click="showEditForm(row)">
-            </el-button>
-          </el-tooltip>
+          <!-- 编辑服务 -->
+          <el-button
+            type="text"
+            size="mini"
+            style="margin-right: 10px"
+            icon="el-icon-edit"
+            @click="showEditForm(row)">
+          </el-button>
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="删除服务"
-            placement="top-start">
+          <!--删除服务-->
+          <el-popconfirm
+            placement="top"
+            hide-icon
+            style="margin-right: 10px"
+            :title="`确定删除【${row.name}】?`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="delProject(row)"
+          >
             <el-button
+              slot="reference"
               type="text"
-              size="mini"
               style="color: red"
               icon="el-icon-delete"
-              :loading="row.submitButtonIsLoading"
-              @click="confirmBox(delProject, row, row.name)">
-            </el-button>
-          </el-tooltip>
+              :loading="row.deleteButtonIsLoading"
+            ></el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
 
@@ -340,9 +348,9 @@ export default {
 
     // 删除服务
     delProject(row) {
-      this.$set(row, 'submitButtonIsLoading', true)
+      this.$set(row, 'deleteButtonIsLoading', true)
       deleteProject({"id": row.id}).then(response => {
-        this.$set(row, 'submitButtonIsLoading', false)
+        this.$set(row, 'deleteButtonIsLoading', false)
         if (this.showMessage(this, response)) {
           this.getProjectList(); // 重新从后台获取服务列表
         }

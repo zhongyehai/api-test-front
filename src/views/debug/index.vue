@@ -1,23 +1,40 @@
 <template>
-  <el-tree
-    :data="data"
-    node-key="id"
-    default-expand-all
-    @node-drag-start="handleDragStart"
-    @node-drag-enter="handleDragEnter"
-    @node-drag-leave="handleDragLeave"
-    @node-drag-over="handleDragOver"
-    @node-drag-end="handleDragEnd"
-    @node-drop="handleDrop"
-    draggable
-    :allow-drop="allowDrop"
-    :allow-drag="allowDrag">
-  </el-tree>
+  <div>
+    <el-tree
+      :data="data"
+      node-key="id"
+      default-expand-all
+      @node-drag-start="handleDragStart"
+      @node-drag-enter="handleDragEnter"
+      @node-drag-leave="handleDragLeave"
+      @node-drag-over="handleDragOver"
+      @node-drag-end="handleDragEnd"
+      @node-drop="handleDrop"
+      draggable
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag">
+    </el-tree>
+
+    <el-popover
+      placement="top"
+      width="160"
+      v-model="visible">
+      <p>这是一段内容这是一段内容确定删除吗？</p>
+      <div style="text-align: right; margin: 0">
+        <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+        <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+      </div>
+      <el-button slot="reference">删除</el-button>
+    </el-popover>
+  </div>
+
 </template>
 <script>
 export default {
   data() {
     return {
+      visible: false,
+
       data: [{
         id: 1,
         label: '一级 1',

@@ -51,59 +51,68 @@
           <el-table-column label="接口操作" min-width="14%">
             <template slot-scope="scope">
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="运行接口"
-                placement="top-start">
+              <!-- 运行接口 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                title="运行接口并生成报告？"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="runApis(scope.row)"
+              >
                 <el-button
                   type="text"
-                  size="mini"
+                  slot="reference"
                   icon="el-icon-video-play"
                   :loading="scope.row.isLoading"
-                  @click="runApis(scope.row)">
-                </el-button>
-              </el-tooltip>
+                ></el-button>
+              </el-popconfirm>
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="编辑接口"
-                placement="top-start">
+              <!--修改接口-->
+              <el-button
+                type="text"
+                style="margin-right: 8px"
+                icon="el-icon-edit"
+                @click="showEditForm(scope.row)">
+              </el-button>
+
+              <!-- 复制接口 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                title="复制此接口并生成新的接口？"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="copyApi(scope.row)"
+              >
                 <el-button
                   type="text"
-                  icon="el-icon-edit"
-                  @click="showEditForm(scope.row)">
-                </el-button>
-              </el-tooltip>
-
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="复制接口"
-                placement="top-end">
-                <el-button
-                  type="text"
-                  size="mini"
+                  slot="reference"
                   icon="el-icon-document-copy"
-                  @click.native="copyApi(scope.row)">
-                </el-button>
-              </el-tooltip>
+                ></el-button>
+                <!--:loading="scope.row.copyButtonIsLoading"-->
+              </el-popconfirm>
 
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="删除接口"
-                placement="top-start">
+              <!-- 删除接口 -->
+              <el-popconfirm
+                placement="top"
+                hide-icon
+                style="margin-right: 8px"
+                :title="`确定删除【${scope.row.name}】?`"
+                confirm-button-text='确认'
+                cancel-button-text='取消'
+                @onConfirm="delApi(scope.row)"
+              >
                 <el-button
+                  slot="reference"
                   type="text"
-                  size="mini"
                   style="color: red"
                   icon="el-icon-delete"
                   :loading="scope.row.isShowDeleteLoading"
-                  @click.native="confirmBox(delApi, scope.row, scope.row.name)">
-                </el-button>
-              </el-tooltip>
+                ></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
 

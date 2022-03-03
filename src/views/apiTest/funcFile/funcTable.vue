@@ -25,33 +25,34 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作" min-width="15%">
+      <el-table-column label="操作" min-width="18%">
         <template slot-scope="scope">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="编辑"
-            placement="top-start">
-            <el-button
-              type="text"
-              size="mini"
-              icon="el-icon-edit"
-              @click.native="editFuncFile(scope.row)"></el-button>
-          </el-tooltip>
 
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="删除"
-            placement="top-start">
+          <!--修改文件信息-->
+          <el-button
+            type="text"
+            style="margin-right: 8px"
+            icon="el-icon-edit"
+            @click="editFuncFile(scope.row)">
+          </el-button>
+
+          <!-- 删除文件 -->
+          <el-popconfirm
+            placement="top"
+            hide-icon
+            :title="`确定删除【${scope.row.name}】?`"
+            confirm-button-text='确认'
+            cancel-button-text='取消'
+            @onConfirm="delFuncFile(scope.row)"
+          >
             <el-button
+              slot="reference"
               type="text"
-              size="mini"
               style="color: red"
               icon="el-icon-delete"
               :loading="scope.row.deleteLoadingIsShow"
-              @click.native="confirmBox(delFuncFile, scope.row, scope.row.name)"></el-button>
-          </el-tooltip>
+            ></el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
