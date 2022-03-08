@@ -15,21 +15,20 @@
             :props="defaultProps"
             @node-click="projectClick"
           >
-            <span class="custom-tree-node"
-                  slot-scope="{ node, data }"
-                  @mouseenter="mouseenter(data)"
-                  @mouseleave="mouseleave(data)">
-            <!-- <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start"> -->
+            <span
+              class="custom-tree-node"
+              slot-scope="{ node, data }"
+              @mouseenter="mouseenter(data)"
+              @mouseleave="mouseleave(data)">
               <span> {{ data.name }} </span>
-              <!-- </el-tooltip> -->
             <span v-show="data.showMenu" style="margin-left: 10px">
-              <el-button size="mini"
-                         type="text"
-                         @click="clickMenu(node, data)"
+              <el-button
+                size="mini"
+                type="text"
+                @click="clickMenu(node, data)"
               >{{ menuName }}</el-button>
               </span>
             </span>
-
           </el-tree>
         </el-scrollbar>
         <!-- 服务列表分页 -->
@@ -192,7 +191,7 @@ export default {
 <style scoped>
 .project-tree {
   width: 100%;
-  height: 800px;
+  height: 80%;
   /*overflow: scroll;*/
 }
 

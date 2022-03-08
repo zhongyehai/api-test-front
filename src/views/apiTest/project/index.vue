@@ -111,7 +111,12 @@
 
       <el-table-column :label="'测试环境'" prop="test" align="center" min-width="28%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
-          <span>{{ scope.row.test }}</span>
+          <div v-if="scope.row.test">
+            <span>{{ scope.row.test}}</span>
+          </div>
+          <div v-else>
+            <el-tag type="danger">请设置测试环境地址</el-tag>
+          </div>
         </template>
       </el-table-column>
 

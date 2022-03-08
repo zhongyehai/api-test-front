@@ -19,6 +19,9 @@ export default {
 
   // dialog 监听事件
   showProjectDialog: 'showProjectDialog',  // 服务 Dialog 框 的状态，新增/编辑
+  clickProjectEnv: 'clickProjectEnv',  // 服务环境编辑
+  showEnvSynchronizer: 'showEnvSynchronizer',  // 服务环境同步编辑
+  envSynchronizerIsSuccess: 'envSynchronizerIsSuccess',  // 服务环境同步完成
   projectDialogCommitSuccess: 'projectDialogCommitSuccess',  // 服务 Dialog 框 的提交状态
 
   moduleDialogCommit: 'moduleDialogCommit',  // 模块 Dialog 框提交事件

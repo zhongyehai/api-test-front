@@ -24,3 +24,20 @@ export function getDataFormListByName(data, data_name) {
     }
   }
 }
+
+// 递归把列表转为树行结构
+export function arrayToTree(arr, parentId) {
+  //  arr 是返回的数据  parendId 父id
+  let temp = [];
+  let treeArr = arr;
+  treeArr.forEach((item, index) => {
+    if (item.parent === parentId) {
+      if (arrayToTree(treeArr, treeArr[index].id).length > 0) {
+        // 递归调用此函数
+        treeArr[index].children = arrayToTree(treeArr, treeArr[index].id);
+      }
+      temp.push(treeArr[index]);
+    }
+  });
+  return temp;
+}

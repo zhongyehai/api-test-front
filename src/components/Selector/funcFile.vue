@@ -26,21 +26,23 @@ import {funcFileList} from '@/apis/apiTest/funcFile'
 
 export default {
   name: 'funcFile',
-  props: ['funcFiles'],
+  props: [
+      'currentFuncFileList',
+      'funcFiles'
+  ],
   mounted() {
-    this.getFuncFileList()
+    this.funcFilesList = this.currentFuncFileList
+    if (!this.currentFuncFileList){
+      this.getFuncFileList()
+    }
   },
   created() {
     this.tempFuncFiles = this.funcFiles
   },
   data() {
     return {
-
-      // 自定义函数列表
-      funcFilesList: [],
-
-      tempFuncFiles: []
-
+      funcFilesList: [],  // 自定义函数列表
+      tempFuncFiles: []  // 选中的自定义函数列表
     }
   },
   methods: {

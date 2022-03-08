@@ -43,3 +43,27 @@ export function yapiPullProject(data) {
 export function swaggerPull(data) {
   return request({url: '/api/swagger/pull', method: 'post', data: data});
 }
+
+
+// 获取服务的环境信息
+export function getProjectEnv(params) {
+  return request({url: '/api/project/env', method: 'get', params: params});
+}
+
+
+// 修改改服务的环境信息
+export function putProjectEnv(data) {
+  return request({url: '/api/project/env', method: 'put', data: data});
+}
+
+
+// 新增服务的环境信息
+export function postProjectEnv(data) {
+  return request({url: '/api/project/env', method: 'post', data: data});
+}
+
+
+// 同步服务的环境信息
+export function projectEnvSynchronization(data) {
+  return request({url: '/api/project/env/synchronization', method: 'post', data: data});
+}

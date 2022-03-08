@@ -151,7 +151,7 @@
 import waves from "@/directive/waves";
 import caseManage from '@/views/apiTest/case'  // 用例管理组件
 
-import {ellipsis} from "@/utils/parseData"
+import {ellipsis, arrayToTree} from "@/utils/parseData"
 
 import {projectList} from "@/apis/apiTest/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/apiTest/caseSet";
@@ -219,7 +219,7 @@ export default {
       this.currentLevelForCommit = 1 // 切换项目的时候，把选中用例集置为''
       caseSetTree({'project_id': projectId}).then(response => {
         var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
-        this.setListData = this.arrayToTree(response_data, null)
+        this.setListData = arrayToTree(response_data, null)
       })
     },
 
@@ -309,23 +309,6 @@ export default {
           this.currentParent.name = response.data.name
         }
       })
-    },
-
-    // 递归把列表转为树行结构
-    arrayToTree(arr, parentId) {
-      //  arr 是返回的数据  parendId 父id
-      let temp = [];
-      let treeArr = arr;
-      treeArr.forEach((item, index) => {
-        if (item.parent === parentId) {
-          if (this.arrayToTree(treeArr, treeArr[index].id).length > 0) {
-            // 递归调用此函数
-            treeArr[index].children = this.arrayToTree(treeArr, treeArr[index].id);
-          }
-          temp.push(treeArr[index]);
-        }
-      });
-      return temp;
     },
 
     // 关键字查询用例集
