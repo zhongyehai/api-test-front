@@ -126,7 +126,6 @@
 
 
         <el-tab-pane label="配置任务用例" name="case">
-          {{ tempTask.case_id }}
           <div style="margin-bottom: 20px">
             <span style="color: red">注：</span><br>
             1、若没有选择用例集和用例，则默认运行当前服务下的所有用例集下的所有用例<br>
