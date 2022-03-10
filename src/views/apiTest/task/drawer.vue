@@ -133,7 +133,6 @@
             3、若要选择用例，则点击对应的用例集获取用例列表，再在用例列表中勾选要选择的用例
           </div>
           <el-row>
-            <!--            <el-col :span="6">-->
             <el-col style="width: 25%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
               <el-tabs v-model="caseSetTab">
                 <el-tab-pane label="用例集列表" name="caseSetTab">
@@ -144,6 +143,7 @@
                     show-checkbox
                     node-key="id"
                     check-strictly
+                    highlight-current
                     :default-expanded-keys="tempTask.set_id"
                     :default-checked-keys="tempTask.set_id"
                     :props="defaultProps"
@@ -166,16 +166,18 @@
                     @select-all="selectAll">
                     <el-table-column
                       type="selection"
-                      width="55">
+                      :selectable='isDisable'
+                      min-width="10%">
                     </el-table-column>
 
                     <el-table-column
                       prop="name"
                       label="用例名"
+                      min-width="70%"
                       show-overflow-tooltip>
                     </el-table-column>
 
-                    <el-table-column prop="is_run" label="是否执行">
+                    <el-table-column prop="is_run" label="是否执行" min-width="20%">
                       <template slot-scope="scope">
                         <el-switch
                           :disabled="true"
@@ -249,6 +251,11 @@ export default {
   },
   methods: {
 
+    // 用例列表的选中框是否禁用
+    isDisable(row) {
+      return row.is_run
+    },
+
     // 执行列表默认勾选，遍历用例列表，如果用例的id在task.case_id里面，则把这行标为选中状态
     defaultClick() {
       this.$nextTick(() => {
@@ -271,21 +278,21 @@ export default {
     // 列表勾选事件，如果勾选的数据在列表里面，就去掉此数据，如果不在，就添加
     selectRow(selection, row) {
       let index = this.tempTask.case_id.indexOf(row.id)
-      index >= 0 ? this.tempTask.case_id.splice(index, 1): this.tempTask.case_id.push(row.id)
+      index >= 0 ? this.tempTask.case_id.splice(index, 1) : this.tempTask.case_id.push(row.id)
     },
 
     // 全选或者全部取消
     selectAll(selection) {
-      if (selection.length > 0){  // 全选
-        selection.forEach(row =>{
-          if (this.tempTask.case_id.indexOf(row.id) < 0){
+      if (selection.length > 0) {  // 全选
+        selection.forEach(row => {
+          if (this.tempTask.case_id.indexOf(row.id) < 0) {
             this.tempTask.case_id.push(row.id)
           }
         })
-      }else {
+      } else {
         this.currentCaseList.forEach(row => {  // 全部取消
           let index = this.tempTask.case_id.indexOf(row.id)
-          if (index >= 0){
+          if (index >= 0) {
             this.tempTask.case_id.splice(index, 1)
           }
         })
@@ -297,6 +304,11 @@ export default {
       caseSetList({'projectId': project_id}).then(response => {
         var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data.data
         this.tempCaseSetList = arrayToTree(response_data, null)
+
+        // 默认获取第一个用例集的用例
+        if (this.tempCaseSetList.length > 0) {
+          this.getCaseList(this.tempCaseSetList[0].id)
+        }
       })
     },
 
@@ -388,8 +400,10 @@ export default {
     // 服务树选中项事件
     this.$bus.$on(this.$busEvents.projectTreeChoiceProject, (project, project_list) => {
       this.projectLists = project_list  // 当前服务所在的服务列表
-      if (project.id !== this.projectSelectedId) {  // 如果服务变了，则把已选中模块置为''
-        this.tempTask.set_id = []
+      // 如果服务变了，则清空用例集数和用例列表
+      if (project.id !== this.projectSelectedId) {
+        this.currentCaseList = []
+        this.currentCaseList = []
       }
       this.projectSelectedId = project.id  // 当前选中的服务
     })

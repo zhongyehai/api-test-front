@@ -1,6 +1,6 @@
 <template>
 
-  <div style="margin-left: 20px; margin-right: 20px">
+  <div style="margin-left: 20px; margin-right: 20px" :key="currentEnv">
 
     <el-form label-width="80px">
       <el-form-item :label="'环境地址'" class="filter-item is-required" size="mini">
@@ -24,7 +24,7 @@
 
     </el-form>
 
-    <el-tabs style="margin-left: 20px">
+    <el-tabs style="margin-left: 20px" :key="currentEnv">
       <!-- 公用变量 -->
       <el-tab-pane label="公用变量">
         <el-tooltip class="item" effect="dark" placement="top-end">
@@ -68,7 +68,7 @@
         size="mini"
         @click="saveEvent() "
         :loading="submitButtonIsLoading"
-      >{{ '保存' }}
+      >{{ `保存${currentEnvName}设置` }}
       </el-button>
     </div>
   </div>
@@ -85,6 +85,7 @@ export default {
   name: 'envEditor',
   props: [
     'currentEnv',
+    'currentEnvName',
     'funcFilesList',
     'currentProjectId'
   ],
@@ -102,11 +103,12 @@ export default {
         host: '',
         project_id: '',
         func_files: [],
-        headers: [{'key': null, 'value': null, 'remark': null}],
-        variables: [{'key': null, 'value': null, 'remark': null}]
+        headers: [{'key': "", 'value': "", 'remark': ""}],
+        variables: [{'key': "", 'value': "", 'remark': ""}]
       },
 
-      submitButtonIsLoading: false  // 提交按钮的loading状态
+      submitButtonIsLoading: false,  // 提交按钮的loading状态
+      initData: {}
     }
   },
 
@@ -121,12 +123,14 @@ export default {
       putProjectEnv(this.tempEnv).then(response => {
         this.submitButtonIsLoading = false
         this.showMessage(this, response)
+        this.initData = JSON.parse(JSON.stringify(this.tempEnv))
       })
     },
 
     // 获取环境信息
     getEnv(env, projectId) {
       getProjectEnv({env: env, projectId: projectId}).then(response => {
+        this.initData = JSON.parse(JSON.stringify(response.data))
         this.tempEnv.id = response.data.id
         this.tempEnv.env = response.data.env
         this.tempEnv.host = response.data.host
@@ -140,19 +144,21 @@ export default {
 
   mounted() {
 
+    this.initData = this.tempEnv
+
     // 监听 点击环境设置面板 的状态
     this.$bus.$on(this.$busEvents.clickProjectEnv, (projectId, env) => {
-      if (env === this.currentEnv && !this.tempEnv.host) {
+      if (env === this.currentEnv){
         this.getEnv(env, projectId)
       }
     })
 
     // 监听 环境同步是否完成 的状态
     this.$bus.$on(this.$busEvents.envSynchronizerIsSuccess, (envData) => {
-      if (envData[this.tempEnv]){
-       this.tempEnv.headers = envData[this.tempEnv].headers
-       this.tempEnv.variables = envData[this.tempEnv].variables
-       this.tempEnv.func_files = envData[this.tempEnv].func_files
+      if (envData[this.tempEnv]) {
+        this.tempEnv.headers = envData[this.tempEnv].headers
+        this.tempEnv.variables = envData[this.tempEnv].variables
+        this.tempEnv.func_files = envData[this.tempEnv].func_files
       }
     })
   },

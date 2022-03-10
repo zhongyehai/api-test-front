@@ -10,12 +10,8 @@
 
         <div style="margin-left: 20px">
 
-          <!-- 服务信息折叠面板 -->
-          <el-collapse v-model="projectActiveName">
-            <el-collapse-item name="setting">
-              <template slot="title">
-                <div style="color:#409eff">服务信息</div>
-              </template>
+          <el-tabs v-model="activeName" :before-leave="beforeLeave">
+            <el-tab-pane label="服务信息" name="info">
               <el-form ref="dataForm" :model="tempProject" label-width="100px"
                        style="min-width: 200px;margin-left: 20px;margin-right: 20px">
                 <el-form-item :label="'服务名'" prop="name" size="mini" class="is-required">
@@ -23,11 +19,9 @@
                 </el-form-item>
 
                 <el-form-item :label="'负责人'" prop="manager" size="mini" class="is-required">
-                  <userSelector ref="userSelector" :user="tempProject.manager"></userSelector>
+                  <userSelector ref="userSelect" :user="tempProject.manager"></userSelector>
                 </el-form-item>
 
-
-                <!-- swagger地址 -->
                 <el-tooltip class="item" effect="dark" placement="top-end">
                   <div slot="content">
                     若此处填写了对应的swagger地址，则只需要回到列表页点击同步按钮，系统会自动获取swagger数据，
@@ -45,38 +39,26 @@
                   size="mini"
                   @click="tempProject.id ? changProject() : addProject() "
                   :loading="submitButtonIsLoading"
-                >{{ tempProject.id ? '保存' : '确定新增' }}
+                >{{ tempProject.id ? '保存服务信息' : '新增服务信息' }}
                 </el-button>
               </div>
-            </el-collapse-item>
-          </el-collapse>
+            </el-tab-pane>
 
-          <!-- 环境设置折叠面板 -->
-          <el-collapse v-if="tempProject.id" v-model="activeName">
-
-            <!-- 环境设置 -->
-            <el-collapse-item :name="key" @click.native="clickItem(key)" v-for="(value, key, index) in envMapping">
-              <template slot="title">
-                <i
-                  v-if="key === 'test'"
-                  style="color: red"
-                  class="el-icon-star-on"
-                ></i>
-                <div
-                  style="color:#409eff"
-                >{{'设置' + value }}
-                </div>
-              </template>
+            <el-tab-pane :label="value" :name="key" v-for="(value, key, index) in envMapping">
               <envEditor
+                :ref="key"
                 :currentEnv="key"
+                :currentEnvName="value"
                 :funcFilesList="funcFilesList"
                 :currentProjectId="tempProject.id"
               ></envEditor>
-            </el-collapse-item>
-          </el-collapse>
+            </el-tab-pane>
+
+          </el-tabs>
         </div>
 
         <div class="demo-drawer__footer">
+          <!-- 同步环境信息 -->
           <el-button
             v-if="tempProject.id"
             type="primary"
@@ -116,10 +98,9 @@ export default {
   },
   data() {
     return {
-
+      drawerIsShow: false,  // 抽屉的显示状态
       direction: 'rtl',  // 抽屉打开方式
-      projectActiveName: 'setting',
-      activeName: [],
+      activeName: 'info',
 
       // 临时数据，添加、修改
       tempProject: {
@@ -139,23 +120,49 @@ export default {
       },
       user_list: [],  // 用户列表
       funcFilesList: [],
-      drawerIsShow: false,  // 编辑框的显示状态
       submitButtonIsLoading: false,
       submitButtonIsShow: true,
-      currentCollapseItem: ''
+      infoCopy: {}
     }
   },
 
   methods: {
 
-    // 点击折叠面板事件
-    clickItem(env) {
-      if (env !== this.currentCollapseItem) {
-        this.currentCollapseItem = env
-        // 展开事件
-        if (this.activeName.indexOf(env) !== -1) {
-          this.$bus.$emit(this.$busEvents.clickProjectEnv, this.tempProject.id, env)
+    /* 点击切换tab
+    * activeName：要去的标签页
+    * oldActiveName：当前的标签页
+    * */
+    beforeLeave(activeName, oldActiveName) {
+      if (!this.tempProject.id && activeName !== 'info') {
+        this.$notify.error('请先保存服务信息')
+        return false
+      } else if (oldActiveName === 'info') {
+        // console.log('this.infoCopy.name: ', this.infoCopy.name)
+        // console.log('this.tempProject.name: ', this.tempProject.name)
+        // console.log('this.infoCopy.manager: ', this.infoCopy.manager)
+        // console.log('this.tempProject.manager: ', this.$refs.userSelect.tempData)
+        // console.log('this.infoCopy.swagger: ', this.infoCopy.swagger)
+        // console.log('this.tempProject.swagger: ', this.tempProject.swagger)
+        // 对比服务信息是否改变
+        if (this.infoCopy.name !== this.tempProject.name ||
+          this.infoCopy.manager !== this.$refs.userSelect.tempData ||
+          this.infoCopy.swagger !== this.tempProject.swagger) {
+          this.$notify.error('请先保存当前服务信息的修改')
+          return false
         }
+        this.$bus.$emit(this.$busEvents.clickProjectEnv, this.tempProject.id, activeName)
+      } else if (oldActiveName !== 'info') {
+        let ref = this.$refs[oldActiveName][0]
+        if (ref.initData.host !== ref.tempEnv.host ||
+          JSON.stringify(ref.initData.headers) !== JSON.stringify(ref.tempEnv.headers) ||
+          JSON.stringify(ref.initData.func_files) !== JSON.stringify(ref.$refs.funcFiles.tempFuncFiles) ||
+          JSON.stringify(ref.initData.variables) !== JSON.stringify(ref.tempEnv.variables)) {
+          this.$notify.error('请先保存当前环境的修改')
+          return false
+        }
+        this.$bus.$emit(this.$busEvents.clickProjectEnv, this.tempProject.id, activeName)
+      } else {
+        this.$bus.$emit(this.$busEvents.clickProjectEnv, this.tempProject.id, activeName)
       }
     },
 
@@ -184,6 +191,7 @@ export default {
 
     // 初始化临时服务数据 (修改)
     updateTempProject(row) {
+      this.infoCopy = JSON.parse(JSON.stringify(row))
       this.tempProject.id = row.id
       this.tempProject.name = row.name
       this.tempProject.manager = row.manager
@@ -196,7 +204,7 @@ export default {
       return {
         id: this.tempProject.id,
         name: this.tempProject.name,
-        manager: this.$refs.userSelector.tempData,
+        manager: this.$refs.userSelect.tempData,
         swagger: this.tempProject.swagger
       }
     },
@@ -207,6 +215,7 @@ export default {
       postProject(this.getProjectForCommit()).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
+          this.infoCopy = JSON.parse(JSON.stringify(response.data))
           this.tempProject.id = response.data.id
           this.sendIsCommitStatus()
         }
@@ -219,6 +228,7 @@ export default {
       putProject(this.getProjectForCommit()).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
+          this.infoCopy = JSON.parse(JSON.stringify(response.data))
           this.sendIsCommitStatus()
         }
       })
@@ -229,21 +239,6 @@ export default {
       this.$bus.$emit(this.$busEvents.projectDialogCommitSuccess, 'success')
     },
 
-    sendEmit() {
-      this.drawerIsShow = false
-      this.sendIsCommitStatus()
-    },
-
-    showEnvDrawer(env, project) {
-
-      // 判断服务是否已保存，若未保存，则自动保存
-      if (!project.id) {
-        this.addProject(true, env)
-      } else {
-        this.$bus.$emit(this.$busEvents.showProjectEnvDrawer, env, project)
-      }
-    }
-
   },
 
   mounted() {
@@ -251,6 +246,7 @@ export default {
     this.getFuncFileList()
 
     this.$bus.$on(this.$busEvents.showProjectDialog, (status, data) => {
+      this.activeName = 'info'
       if (status === 'add') {
         this.initTempProject()  // 新增
       } else if (status === 'edit') {
