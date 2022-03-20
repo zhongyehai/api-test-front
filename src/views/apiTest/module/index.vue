@@ -165,7 +165,7 @@
           type="primary"
           :loading="isShowLoading"
           @click=" moduleDrawerStatus === 'add' ? addModule() : changModule() ">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
       </div>
     </el-drawer>
@@ -253,6 +253,8 @@ export default {
       moduleTree({'project_id': projectId}).then(response => {
         var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
         this.moduleListData = arrayToTree(response_data, null)
+
+        this.sendModuleTreeIsDone(this.moduleListData)
       })
     },
 
@@ -323,7 +325,7 @@ export default {
           } else {
             this.moduleListData.push(response.data)
           }
-
+          this.sendModuleTreeIsDone(this.moduleListData)
         }
       })
     },
@@ -342,6 +344,7 @@ export default {
         if (this.showMessage(this, response)) {
           this.moduleDrawerIsShow = false
           this.currentParent.name = response.data.name
+          this.sendModuleTreeIsDone(this.moduleListData)
         }
       })
     },
@@ -362,6 +365,7 @@ export default {
       deleteModule({'id': data.id}).then(response => {
         if (this.showMessage(this, response)) {
           this.$refs.tree.remove(data)
+          this.sendModuleTreeIsDone(this.tempDataForm)
         }
       })
     },
@@ -417,7 +421,12 @@ export default {
           }
         }
       )
-    }
+    },
+
+    // 发送模块树数据
+    sendModuleTreeIsDone(moduleTree){
+      this.$bus.$emit(this.$busEvents.moduleTreeIsDone, JSON.parse(JSON.stringify(moduleTree)))
+    },
   },
   watch: {
     filterText(val) {

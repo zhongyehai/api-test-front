@@ -6,6 +6,7 @@ export default {
   projectTreeChoiceProject: 'projectTreeChoiceProject',  // 服务树选中服务事件
   moduleTreeChoiceModule: 'moduleTreeChoiceModule',  // 模块树选中模块事件
   moduleTreeCommand: 'moduleTreeCommand',  // 模块树选中模块要执行的命令，添加、修改
+  moduleTreeIsDone: 'moduleTreeIsDone',  // 模块树组装完成事件
   caseSetTreeChoiceCaseSet: 'caseSetTreeChoiceCaseSet',  // 用例集树选中用例集事件
   caseSetCommand: 'caseSetCommand',  // 用例集树选中要执行的命令，添加、修改
 
@@ -23,6 +24,7 @@ export default {
   showEnvSynchronizer: 'showEnvSynchronizer',  // 服务环境同步编辑
   envSynchronizerIsSuccess: 'envSynchronizerIsSuccess',  // 服务环境同步完成
   projectDialogCommitSuccess: 'projectDialogCommitSuccess',  // 服务 Dialog 框 的提交状态
+  envIsCommit: 'envIsCommit',  // 服务 环境 的提交状态
 
   moduleDialogCommit: 'moduleDialogCommit',  // 模块 Dialog 框提交事件
   moduleIndexAddApi: 'moduleIndexAddApi',  // 模块管理 首页点击添加接口事件
@@ -32,6 +34,7 @@ export default {
 
   caseSetDialogCommit: 'caseSetDialogCommit',  // 用例集 Dialog 框提交事件
   caseSetIndexAddCase: 'caseSetIndexAddCase',  // 用例集管理 首页点击添加用例事件
+  caseSetTreeIsDone: 'caseSetTreeIsDone',  // 用例集树组装完成事件
 
   caseDialogStatus: 'caseDialogStatus',  // 用例 Dialog 框 的状态，新增/编辑
   caseDialogCommitSuccess: 'caseDialogCommitSuccess',  // 用例 Dialog 框 的提交状态

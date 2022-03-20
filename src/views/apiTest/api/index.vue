@@ -148,6 +148,7 @@ import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/apiTest/api'
 import {reportIsDone} from "@/apis/apiTest/report";
 import {getDataFormListById} from "@/utils/parseData";
 import {runTestTimeOutMessage} from "@/utils/message";
+import {getRunTimeout} from "@/utils/getConfig";
 
 export default {
   name: 'index',
@@ -189,6 +190,7 @@ export default {
       sortable: null,
       oldList: [],
       newList: [],
+
     }
   },
 
@@ -209,6 +211,8 @@ export default {
     this.$bus.$on(this.$busEvents.apiDialogCommitSuccess, () => {
       this.getApiList()
     })
+
+    getRunTimeout(this)  // 初始化等待用例运行超时时间
   },
 
 
@@ -285,9 +289,10 @@ export default {
           // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
           // 已出结果，则停止查询，展示测试报告
           var that = this
-          var queryCount = 0
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
           var timer = setInterval(function () {
-            if (queryCount <= 10) {
+            if (queryCount <= runTimeoutCount) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
                   that.$set(row, 'isLoading', false)

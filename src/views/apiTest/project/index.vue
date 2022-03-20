@@ -413,6 +413,20 @@ export default {
     this.$bus.$on(this.$busEvents.projectDialogCommitSuccess, (status) => {
       this.getProjectList()
     })
+
+    // test环境修改后，前端页面也跟随修改域名
+    this.$bus.$on(this.$busEvents.envIsCommit, (projectId, host) => {
+      try{
+        this.project_list.forEach(row => {
+          if (row.id === projectId){
+            this.$set(row, 'test', host)
+            throw new Error('遍历结束')
+          }
+        })
+      }catch (error){
+        if (error.message !== '遍历结束') throw error
+      }
+    })
   },
 
   // 组件销毁前，关闭bus监听事件

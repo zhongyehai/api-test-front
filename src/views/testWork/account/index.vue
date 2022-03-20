@@ -174,7 +174,7 @@
           type="primary"
           :loading="submitButtonIsLoading"
           @click=" currentAccount.id ? changeAccount() : addAccount() ">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
       </div>
     </el-drawer>

@@ -122,7 +122,11 @@ export default {
       this.tempEnv.project_id = this.tempProjectId
       putProjectEnv(this.tempEnv).then(response => {
         this.submitButtonIsLoading = false
-        this.showMessage(this, response)
+        if (this.showMessage(this, response)){
+          if (this.currentEnv === 'test'){
+            this.$bus.$emit(this.$busEvents.envIsCommit, this.tempEnv.project_id, this.tempEnv.host)
+          }
+        }
         this.initData = JSON.parse(JSON.stringify(this.tempEnv))
       })
     },

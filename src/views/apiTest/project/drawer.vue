@@ -137,12 +137,6 @@ export default {
         this.$notify.error('请先保存服务信息')
         return false
       } else if (oldActiveName === 'info') {
-        // console.log('this.infoCopy.name: ', this.infoCopy.name)
-        // console.log('this.tempProject.name: ', this.tempProject.name)
-        // console.log('this.infoCopy.manager: ', this.infoCopy.manager)
-        // console.log('this.tempProject.manager: ', this.$refs.userSelect.tempData)
-        // console.log('this.infoCopy.swagger: ', this.infoCopy.swagger)
-        // console.log('this.tempProject.swagger: ', this.tempProject.swagger)
         // 对比服务信息是否改变
         if (this.infoCopy.name !== this.tempProject.name ||
           this.infoCopy.manager !== this.$refs.userSelect.tempData ||

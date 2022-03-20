@@ -196,13 +196,31 @@
     </el-form>
 
     <div class="demo-drawer__footer">
+      <el-popconfirm
+        placement="top"
+        hide-icon
+        :title="`自动保存，再触发调试，并生成测试报告?`"
+        confirm-button-text='确认'
+        cancel-button-text='取消'
+        @onConfirm="debugTask()"
+      >
+        <el-button
+          slot="reference"
+          size="mini"
+          type="primary"
+          style="float: left"
+          :loading="isShowDebugLoading"
+        >调试
+        </el-button>
+      </el-popconfirm>
+
       <el-button @click="drawerIsShow = false" size="mini">取 消</el-button>
       <el-button
         type="primary"
         size="mini"
         :loading="submitButtonIsLoading"
         @click.native="tempTask.id ? updateTask() : createTask()"
-      >确定
+      >保存
       </el-button>
     </div>
 
@@ -213,10 +231,12 @@
 import environmentSelectorView from "@/components/Selector/environment";
 import emailServerSelector from "@/components/Selector/email";
 
-import {postTask, putTask} from '@/apis/apiTest/task'
+import {postTask, putTask, runTask} from '@/apis/apiTest/task'
 import {caseSetList} from "@/apis/apiTest/caseSet";
-import {caseList} from '@/apis/apiTest/case'
+import {caseList, caseRun, postCase, putCase} from '@/apis/apiTest/case'
 import {arrayToTree} from "@/utils/parseData";
+import {reportIsDone} from "@/apis/apiTest/report";
+import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
   name: "drawer",
@@ -238,6 +258,7 @@ export default {
       direction: 'rtl',  // 抽屉打开方式
       submitButtonIsLoading: false,
       drawerIsShow: false,
+      isShowDebugLoading: false,
       tempTask: {},
 
       projectLists: '',  // 服务列表
@@ -378,6 +399,7 @@ export default {
       postTask(this.getTaskToCommit()).then(response => {
         this.submitButtonIsLoading = false
         if (this.showMessage(this, response)) {
+          this.tempTask.id = response.data.id
           this.busEmit()
         }
       })
@@ -392,7 +414,69 @@ export default {
           this.busEmit()
         }
       })
+    },
+
+    debugTask() {
+      this.submitButtonIsLoading = true
+      if (this.tempTask.id) {
+        putTask(this.getTaskToCommit()).then(response => {
+          this.submitButtonIsLoading = false
+          if (this.showMessage(this, response)) {
+            this.run(this.tempTask.id)
+          }
+        })
+      } else {
+        postTask(this.getTaskToCommit()).then(response => {
+          this.submitButtonIsLoading = false
+          if (this.showMessage(this, response)) {
+            this.tempTask.id = response.data.id
+            this.run(this.tempTask.id)
+          }
+        })
+      }
+    },
+
+
+    // 运行任务
+    run(taskId) {
+      this.isShowDebugLoading = true
+      runTask({id: taskId}).then(runResponse => {
+        if (this.showMessage(this, runResponse)) {
+
+          // 触发运行成功，每三秒查询一次，
+          // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
+          // 已出结果，则停止查询，展示测试报告
+          var that = this
+          // 初始化运行超时时间
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
+          var timer = setInterval(function () {
+            if (queryCount <= runTimeoutCount) {
+              reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
+                if (queryResponse.data === 1) {
+                  that.isShowDebugLoading = false
+                  that.openReportById(runResponse.data.report_id)
+                  clearInterval(timer)  // 关闭定时器
+                }
+              })
+              queryCount += 1
+            } else {
+              that.isShowDebugLoading = false
+              that.$notify(runTestTimeOutMessage);
+              clearInterval(timer)  // 关闭定时器
+            }
+          }, 3000)
+        }
+      })
+    },
+
+    // 打开测试报告
+    openReportById(reportId) {
+      // console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
+      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+      window.open(href, '_blank')
     }
+
   },
 
   mounted() {

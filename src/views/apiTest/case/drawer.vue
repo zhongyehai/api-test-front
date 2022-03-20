@@ -24,32 +24,39 @@
             <!-- 用例集选择 -->
             <el-col :span="7">
               <el-form-item label="用例集" class="is-required" style="margin-bottom: 5px">
-                <caseSetSelectorView
-                  ref="caseSetSelector"
-                  :projectId="currentProjectId || ''"
-                  :caseSetId="currentSetId || ''"
-                  :isWatchStatus="drawerIsShow"
-                  :busOnEventName="$busEvents.projectTreeChoiceProject"
-                  :busOnModuleDialogCommit="$busEvents.moduleDialogCommit">
-                  >
-                </caseSetSelectorView>
+                <el-select v-model="caseSetLabel" placeholder="请选择用例集" size="mini" style="width: 100%">
+                  <el-option :value="[]" style="height: auto">
+                    <el-tree
+                      ref="setTree"
+                      :data="caseSetTree"
+                      show-checkbox
+                      node-key="id"
+                      check-strictly
+                      highlight-current
+                      :props="defaultProps"
+                      @check-change="handleNodeClick"
+                    ></el-tree>
+                  </el-option>
+                </el-select>
+
               </el-form-item>
 
             </el-col>
+
             <!-- 选择环境 -->
             <el-col :span="7">
-              <el-tooltip class="item" effect="dark" placement="top-end">
-                <div slot="content">
-                  请确保此用例涉中及到的所有服务都配置了当前选中环境的域名 <br/>
-                  如：选测试环境，则需确保此用例涉及到的所有服务都配置了测试环境的域名
-                </div>
-                <el-form-item label="环境" class="is-required" style="margin-bottom: 5px">
-                  <environmentSelectorView
-                    :choice_environment="tempCase.choice_host"
-                    ref="environmentSelectorView"
-                  ></environmentSelectorView>
-                </el-form-item>
-              </el-tooltip>
+              <el-form-item label="环境" class="is-required" style="margin-bottom: 5px">
+                <environmentSelectorView
+                  :choice_environment="tempCase.choice_host"
+                  ref="environmentSelectorView"
+                ></environmentSelectorView>
+                <el-popconfirm
+                  placement="top"
+                  title="请确保此用例涉中及到的所有服务都设置置了当前选中环境的域名"
+                  hide-icon>
+                  <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+                </el-popconfirm>
+              </el-form-item>
             </el-col>
 
           </el-row>
@@ -135,13 +142,31 @@
     </el-tabs>
 
     <div class="demo-drawer__footer">
+      <el-popconfirm
+        placement="top"
+        hide-icon
+        :title="`自动保存，再触发调试，并生成测试报告?`"
+        confirm-button-text='确认'
+        cancel-button-text='取消'
+        @onConfirm="debugCase()"
+      >
+        <el-button
+          slot="reference"
+          size="mini"
+          type="primary"
+          style="float: left"
+          :loading="isShowDebugLoading"
+        >调试
+        </el-button>
+      </el-popconfirm>
+
       <el-button size="mini" @click=" drawerIsShow = false"> {{ '取消' }}</el-button>
       <el-button
         size="mini"
         type="primary"
         :loading="submitLoadingIsShow"
         @click=" drawerType === 'add' ? addCase() : changCase() ">
-        {{ '保存用例' }}
+        {{ '保存' }}
       </el-button>
     </div>
 
@@ -151,15 +176,17 @@
 
 <script>
 import moduleSelectorView from "@/components/Selector/module";
-import caseSetSelectorView from "@/components/Selector/caseSet";
 import environmentSelectorView from "@/components/Selector/environment";
 import funcFilesView from '@/components/Selector/funcFile'
 import headersView from '@/components/Inputs/changeRow'
 import variablesView from '@/components/Inputs/changeRow'
 import stepView from '@/views/apiTest/step'
 
-import {postCase, putCase, copyCase} from "@/apis/apiTest/case";
+import {postCase, putCase, copyCase, caseRun} from "@/apis/apiTest/case";
+import {getCaseSet} from "@/apis/apiTest/caseSet";
 import {stepList} from "@/apis/apiTest/step";
+import {reportIsDone} from "@/apis/apiTest/report";
+import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
   name: 'drawer',
@@ -169,7 +196,6 @@ export default {
   ],
   components: {
     moduleSelectorView,
-    caseSetSelectorView,
     environmentSelectorView,
     funcFilesView,
     headersView,
@@ -182,7 +208,14 @@ export default {
       drawerType: '',
       drawerIsShow: false,
       submitLoadingIsShow: false,
+      isShowDebugLoading: false,
       activeName: 'caseInFo',
+      caseSetTree: [],
+      defaultProps: {
+        children: "children",
+        label: "name"
+      },
+      caseSetLabel: '',
       tempCase: {
         id: '',
         name: '',
@@ -235,13 +268,21 @@ export default {
     // 获取当前的用例数据，用于提交给后端
     getCaseDataToCommit() {
       let caseData = JSON.parse(JSON.stringify(this.tempCase))
-      caseData.set_id = this.$refs.caseSetSelector.tempCaseSetId
+      caseData.set_id = this.$refs.setTree.getCheckedKeys()[0]
       caseData.choice_host = this.$refs.environmentSelectorView.current_environment
       caseData.func_files = this.$refs.funcFilesView.tempFuncFiles
       caseData.variables = this.$refs.variablesView.tempData
       caseData.headers = this.$refs.headersView.tempData
       caseData.steps = this.$refs.stepView.$refs.stepListView.stepList
       return caseData
+    },
+
+    // 勾选树事件
+    handleNodeClick(data, checked, node) {
+      if (checked && [data.id] !== this.$refs.setTree.getCheckedKeys()) {
+        this.$refs.setTree.setCheckedKeys([data.id])  // 选中
+        this.caseSetLabel = data.name
+      }
     },
 
     // 获取步骤列表
@@ -276,11 +317,74 @@ export default {
       })
     },
 
+    debugCase() {
+      this.submitLoadingIsShow = true
+      if (this.tempCase.id) {
+        putCase(this.getCaseDataToCommit()).then(response => {
+          this.submitLoadingIsShow = false
+          if (this.showMessage(this, response)) {
+            this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+            this.runCase(this.tempCase.id)
+          }
+        })
+      } else {
+        postCase(this.getCaseDataToCommit()).then(response => {
+          this.submitLoadingIsShow = false
+          if (this.showMessage(this, response)) {
+            this.tempCase.id = response.data.id
+            this.$bus.$emit(this.$busEvents.caseDialogCommitSuccess, 'success')
+            this.runCase(this.tempCase.id)
+          }
+        })
+      }
+    },
+
+    // 运行用例
+    runCase(caseId) {
+      this.isShowDebugLoading = true
+      caseRun({caseId: [caseId]}).then(runResponse => {
+        // console.log('case.index.methods.runCase.response: ', JSON.stringify(response))
+        if (this.showMessage(this, runResponse)) {
+
+          // 触发运行成功，每三秒查询一次，
+          // 查询指定时间没出结果，则停止查询，提示用户去测试报告页查看
+          // 已出结果，则停止查询，展示测试报告
+          var that = this
+          // 初始化运行超时时间
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
+          var timer = setInterval(function () {
+            if (queryCount <= runTimeoutCount) {
+              reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
+                if (queryResponse.data === 1) {
+                  that.isShowDebugLoading = false
+                  that.openReportById(runResponse.data.report_id)
+                  clearInterval(timer)  // 关闭定时器
+                }
+              })
+              queryCount += 1
+            } else {
+              that.isShowDebugLoading = false
+              that.$notify(runTestTimeOutMessage);
+              clearInterval(timer)  // 关闭定时器
+            }
+          }, 3000)
+        }
+      })
+    },
+
+    // 打开测试报告
+    openReportById(reportId) {
+      // console.log(`api.dialogForm.openReportById.reportId: ${JSON.stringify(reportId)}`)
+      let {href} = this.$router.resolve({path: 'reportShow', query: {id: reportId}})
+      window.open(href, '_blank')
+    }
+
   },
 
   mounted() {
 
-    // 监听 caseDialog 的状态
+    // 监听 case抽屉 的状态
     this.$bus.$on(this.$busEvents.caseDialogStatus, (command, currentCase) => {
       if (command === 'add') {
         this.initNewTempCase()
@@ -301,6 +405,11 @@ export default {
       this.activeName = 'caseInFo'
     })
 
+    // 监听、接收用例集树
+    this.$bus.$on(this.$busEvents.caseSetTreeIsDone, (caseSetTree) => {
+      this.caseSetTree = caseSetTree
+    })
+
     // 在添加步骤时触发的 保存用例，这个时候保存后不关闭用例的Dialog框，只重新请求用例列表
     this.$bus.$on(this.$busEvents.isAddStepTriggerSaveCase, (status) => {
       postCase(this.getCaseDataToCommit()).then(response => {
@@ -318,6 +427,7 @@ export default {
   // 组件销毁前，关闭bus监听事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.caseDialogStatus)
+    this.$bus.$off(this.$busEvents.caseSetTreeIsDone)
     this.$bus.$off(this.$busEvents.isAddStepTriggerSaveCase)
   },
 
@@ -334,6 +444,18 @@ export default {
       deep: true,
       handler(newVal, oldVal) {
         this.tempCase.set_id = newVal
+      }
+    },
+
+    'drawerIsShow': {
+      deep: true,
+      handler(newVal, oldVal) {
+        if (newVal) {
+          getCaseSet({'id': this.tempCase.set_id}).then(response => {
+            this.caseSetLabel = response.data.name
+            this.$refs.setTree.setCheckedKeys([this.tempCase.set_id])
+          })
+        }
       }
     }
   }

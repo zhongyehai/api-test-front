@@ -34,53 +34,55 @@
           <!-- 选择模块 -->
           <el-col :span="7">
             <el-form-item label="选择模块" class="is-required" style="margin-bottom: 5px">
-              <moduleSelectorView
-                ref="moduleSelector"
-                :moduleId="tempApi.module_id"
-                :projectId="tempApi.project_id"
-                :status="drawerIsShow"
-                :busOnEventName="$busEvents.projectSelectorChoiceProject"
-                :busOnModuleDialogCommit="$busEvents.moduleDialogCommit"
-                :busEmitEventName="$busEvents.moduleSelectorChoiceModule"
-              ></moduleSelectorView>
+              <el-select v-model="moduleLabel" placeholder="请选择模块" size="mini" style="width: 100%">
+                <el-option :value="[]" style="height: auto">
+                  <el-tree
+                    ref="moduleTree"
+                    :data="moduleTree"
+                    show-checkbox
+                    node-key="id"
+                    check-strictly
+                    highlight-current
+                    :props="defaultProps"
+                    @check-change="handleNodeClick"
+                  ></el-tree>
+                </el-option>
+              </el-select>
+
             </el-form-item>
           </el-col>
         </el-row>
 
         <!-- 前置条件 -->
         <el-row>
-          <el-tooltip class="item" effect="dark" placement="top-end">
-            <div slot="content">
-              1、在运行接口之前要做的一些前置操作，使用自定义函数的形式实现 <br/>
-              2、可以执行多个操作，要执行多个操作时，按执行顺序用英文的分号（";"）隔开 <br/>
-            </div>
-            <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
-              <el-input
-                type="textarea"
-                autosize
-                v-model="tempApi.up_func"
-                placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-                size="mini"></el-input>
-            </el-form-item>
-          </el-tooltip>
+          <el-form-item label="前置条件" prop="up_func" style="margin-bottom: 5px">
+            <el-input
+              type="textarea"
+              autosize
+              style="width: 98%"
+              v-model="tempApi.up_func"
+              placeholder="前置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+              size="mini"></el-input>
+            <el-popconfirm placement="top" hide-icon title="在运行接口之前要做的一些前置操作，使用自定义函数的形式实现">
+              <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+            </el-popconfirm>
+          </el-form-item>
         </el-row>
 
         <!-- 后置条件 -->
         <el-row>
-          <el-tooltip class="item" effect="dark" placement="top-end">
-            <div slot="content">
-              1、在接口运行完毕过后要做的一些后置操作，使用自定义函数的形式实现 <br/>
-              2、可以执行多个操作，要执行多个操作时，按执行顺序用英文的分号（";"）隔开 <br/>
-            </div>
-            <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
-              <el-input
-                type="textarea"
-                autosize
-                v-model="tempApi.down_func"
-                placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
-                size="mini"></el-input>
-            </el-form-item>
-          </el-tooltip>
+          <el-form-item label="后置条件" prop="down_func" style="margin-bottom: 5px">
+            <el-input
+              type="textarea"
+              autosize
+              style="width: 98%"
+              v-model="tempApi.down_func"
+              placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"
+              size="mini"></el-input>
+            <el-popconfirm placement="top" hide-icon title="在运行接口之后要做的一些前置操作，使用自定义函数的形式实现">
+              <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+            </el-popconfirm>
+          </el-form-item>
         </el-row>
 
       </el-form>
@@ -104,14 +106,8 @@
             class="input-with-select"
             placeholder="请输入接口地址"
             size="mini"
-            style="width: 78%;margin-right: 5px">
+            style="width: 85%;margin-right: 5px">
           </el-input>
-
-          <!-- 调试按钮 -->
-          <el-tooltip class="item" effect="dark" content="会先自动保存，再触发调试" placement="right-end">
-            <el-button type="primary" size="mini" :loading="isShowDebugLoading" @click.native="debugApi()">调试
-            </el-button>
-          </el-tooltip>
 
         </el-form-item>
       </el-form>
@@ -166,8 +162,8 @@
             <div slot="content">
               1、此处提取的数据只在运行时有效 <br/>
               2、若在此处设置的key与服务/用例设置的公共变量的一致，则会使用此处提取到的值 <br/>
-<!--              3、提取方式详见httpRunner <br/>-->
-<!--              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值-->
+              <!--              3、提取方式详见httpRunner <br/>-->
+              <!--              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值-->
             </div>
             <extractsView
               ref="extractsView"
@@ -190,14 +186,34 @@
       </el-tabs>
 
       <div class="demo-drawer__footer">
+
+        <el-popconfirm
+          placement="top"
+          hide-icon
+          :title="`自动保存，再触发调试，并生成测试报告?`"
+          confirm-button-text='确认'
+          cancel-button-text='取消'
+          @onConfirm="debugApi()"
+        >
+          <el-button
+            slot="reference"
+            size="mini"
+            type="primary"
+            style="float: left"
+            :loading="isShowDebugLoading"
+          >调试
+          </el-button>
+        </el-popconfirm>
+
         <el-button size="mini" @click=" drawerIsShow = false"> {{ '取消' }}</el-button>
         <el-button
           type="primary"
           size="mini"
           :loading="isShowSubmitLoading"
           @click=" drawerType === 'update' ? changApi() : addApi() ">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
+
       </div>
     </el-drawer>
 
@@ -219,6 +235,8 @@ import validatesView from '@/components/Inputs/validates'
 import {postApi, putApi, runApi} from '@/apis/apiTest/api'
 import {reportIsDone} from "@/apis/apiTest/report";
 import {runTestTimeOutMessage} from "@/utils/message";
+import {getCaseSet} from "@/apis/apiTest/caseSet";
+import {getModule} from "@/apis/apiTest/module";
 
 export default {
   name: 'drawer',
@@ -247,8 +265,12 @@ export default {
       // 请求方法选择组件选择的请求方法
       methodSelectorChoiceMethod: '',
 
-      // 当前选中的服务的hosts列表
-      // currentChoiceProjectHosts: [],
+      moduleTree: [],
+      defaultProps: {
+        children: "children",
+        label: "name"
+      },
+      moduleLabel: '',
 
       // 是否展示请求接口时的等待状态
       isShowDebugLoading: false,
@@ -283,6 +305,14 @@ export default {
   },
 
   methods: {
+
+    // 勾选树事件
+    handleNodeClick(data, checked, node) {
+      if (checked && [data.id] !== this.$refs.moduleTree.getCheckedKeys()) {
+        this.$refs.moduleTree.setCheckedKeys([data.id])  // 选中
+        this.moduleLabel = data.name
+      }
+    },
 
     // 打开测试报告
     openReportById(reportId) {
@@ -326,9 +356,11 @@ export default {
           // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
           // 已出结果，则停止查询，展示测试报告
           var that = this
-          var queryCount = 0
+          // 初始化运行超时时间
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
           var timer = setInterval(function () {
-            if (queryCount <= 10) {
+            if (queryCount <= runTimeoutCount) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
                   that.isShowDebugLoading = false
@@ -343,7 +375,7 @@ export default {
               clearInterval(timer)  // 关闭定时器
             }
           }, 3000)
-        }else {
+        } else {
           this.isShowDebugLoading = false
         }
       })
@@ -423,7 +455,7 @@ export default {
         data_form: this.$refs.bodyView.$refs.dataFormView.tempDataForm,
         data_json: json_data ? JSON.parse(json_data) : {},
         data_xml: this.$refs.bodyView.tempDataXml,
-        module_id: this.$refs.moduleSelector.tempModuleId,
+        module_id: this.$refs.moduleTree.getCheckedKeys()[0],
         project_id: this.tempApi.project_id
       }
     }
@@ -431,6 +463,11 @@ export default {
   },
 
   mounted() {
+
+    // 监听、接收模块树
+    this.$bus.$on(this.$busEvents.moduleTreeIsDone, (moduleTree) => {
+      this.moduleTree = moduleTree
+    })
 
     // 监听请求方法选择器的选中事件
     this.$bus.$on(this.$busEvents.methodSelectorChoiceMethod, (method) => {
@@ -454,6 +491,7 @@ export default {
   // 组件销毁前，关闭bus监听事件
   beforeDestroy() {
     this.$bus.$off(this.$busEvents.apiDialogStatus)
+    this.$bus.$off(this.$busEvents.moduleTreeIsDone)
     this.$bus.$off(this.$busEvents.methodSelectorChoiceMethod)
   },
 
@@ -472,6 +510,18 @@ export default {
       deep: true,  // 深度监听
       handler(newVal, oldVal) {
         this.tempApi.module_id = newVal
+      }
+    },
+
+    'drawerIsShow': {
+      deep: true,
+      handler(newVal, oldVal) {
+        if (newVal) {
+          getModule({'id': this.tempApi.module_id}).then(response => {
+            this.moduleLabel = response.data.name
+            this.$refs.moduleTree.setCheckedKeys([this.tempApi.module_id])
+          })
+        }
       }
     }
   }

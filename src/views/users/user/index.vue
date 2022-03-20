@@ -191,7 +191,7 @@
           size="mini"
           type="primary"
           :loading="submitButtonIsLoading"
-          @click="drawerType==='create'?addUser():changUser()">确定
+          @click="drawerType==='create'?addUser():changUser()">保存
         </el-button>
       </div>
 

@@ -24,7 +24,7 @@
         size="mini"
         :loading="submitButtonIsLoading"
         @click="creteFuncFile()">
-        {{ '确定' }}
+        {{ '保存' }}
       </el-button>
     </div>
 

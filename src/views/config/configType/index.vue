@@ -85,7 +85,7 @@
           size="mini"
           :loading="submitButtonIsLoading"
           @click=" drawerType === 'add' ? addConfigType() : changConfigType()">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
       </div>
     </el-drawer>

@@ -74,7 +74,7 @@
           type="primary"
           :loading="submitButtonIsLoading"
           @click=" addKYMProject() ">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
       </div>
     </el-dialog>

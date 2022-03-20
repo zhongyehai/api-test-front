@@ -134,9 +134,9 @@
           :data-json="currentStep.data_driver"
         ></jsonEditorView>
       </el-tab-pane>
+    </el-tabs>
 
-      <hr>
-
+    <div class="demo-drawer__footer">
       <el-button
         style="float: right; margin-left: 10px"
         size="mini"
@@ -151,8 +151,8 @@
         size="mini"
         @click="rowBackStep()"> {{ '还原步骤' }}
       </el-button>
+    </div>
 
-    </el-tabs>
   </el-drawer>
 </template>
 

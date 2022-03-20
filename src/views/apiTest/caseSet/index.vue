@@ -137,7 +137,7 @@
           type="primary"
           :loading="isShowLoading"
           @click=" moduleDrawerStatus === 'add' ? addCaseSet() : changCaseSet() ">
-          {{ '确定' }}
+          {{ '保存' }}
         </el-button>
       </div>
     </el-drawer>
@@ -157,6 +157,7 @@ import {projectList} from "@/apis/apiTest/project";
 import {caseSetTree, caseSetRun, deleteCaseSet, postCaseSet, putCaseSet} from "@/apis/apiTest/caseSet";
 import {reportIsDone} from "@/apis/apiTest/report";
 import {runTestTimeOutMessage} from "@/utils/message";
+import {getRunTimeout} from "@/utils/getConfig";  // 初始化超时时间
 
 export default {
   name: 'index',
@@ -195,6 +196,7 @@ export default {
 
   created() {
     this.getProjectList()
+    getRunTimeout(this)  // 初始化等待用例运行超时时间
   },
 
   methods: {
@@ -211,6 +213,11 @@ export default {
       })
     },
 
+    // 发送用例集树数据
+    sendSetTreeIsDone(caseSetTree){
+      this.$bus.$emit(this.$busEvents.caseSetTreeIsDone, JSON.parse(JSON.stringify(caseSetTree)))
+    },
+
     // 获取用例集列表
     getSetList(projectId) {
       this.currentSetId = '' // 切换项目的时候，把选中用例集置为''
@@ -220,6 +227,7 @@ export default {
       caseSetTree({'project_id': projectId}).then(response => {
         var response_data = JSON.stringify(response.data) === '{}' ? [] : response.data
         this.setListData = arrayToTree(response_data, null)
+        this.sendSetTreeIsDone(this.setListData)
       })
     },
 
@@ -288,7 +296,7 @@ export default {
           } else {
             this.setListData.push(response.data)
           }
-
+          this.sendSetTreeIsDone(this.setListData)
         }
       })
     },
@@ -307,6 +315,8 @@ export default {
         if (this.showMessage(this, response)) {
           this.moduleDrawerIsShow = false
           this.currentParent.name = response.data.name
+
+          this.sendSetTreeIsDone(this.setListData)
         }
       })
     },
@@ -327,6 +337,8 @@ export default {
       deleteCaseSet({'id': data.id}).then(response => {
         if (this.showMessage(this, response)) {
           this.$refs.tree.remove(data)
+
+          this.sendSetTreeIsDone(this.setListData)
         }
       })
     },
@@ -346,9 +358,11 @@ export default {
           // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
           // 已出结果，则停止查询，展示测试报告
           var that = this
-          var queryCount = 0
+          // 初始化运行超时时间
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
           var timer = setInterval(function () {
-            if (queryCount <= 10) {
+            if (queryCount <= runTimeoutCount) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
                   that.$set(data, 'runButtonIsNotShow', false)

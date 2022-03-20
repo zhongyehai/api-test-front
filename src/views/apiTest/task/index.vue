@@ -159,6 +159,7 @@ import {userList} from "@/apis/user/user";
 import {reportIsDone} from "@/apis/apiTest/report";
 import {getDataFormListById} from "@/utils/parseData";
 import {runTestTimeOutMessage} from "@/utils/message";
+import {getRunTimeout} from "@/utils/getConfig";  // 初始化超时时间
 
 export default {
   name: "index",
@@ -176,7 +177,7 @@ export default {
       // 拖拽排序参数
       sortable: null,
       oldList: [],
-      newList: [],
+      newList: []
     }
   },
 
@@ -212,9 +213,11 @@ export default {
           // 查询10次没出结果，则停止查询，提示用户去测试报告页查看
           // 已出结果，则停止查询，展示测试报告
           var that = this
-          var queryCount = 0
+          // 初始化运行超时时间
+          var runTimeoutCount = Number(this.$busEvents.runTimeout) * 1000 / 3000
+          var queryCount = 1
           var timer = setInterval(function () {
-            if (queryCount <= 10) {
+            if (queryCount <= runTimeoutCount) {
               reportIsDone({'id': runResponse.data.report_id}).then(queryResponse => {
                 if (queryResponse.data === 1) {
                   that.$set(task, 'runButtonIsLoading', false)
@@ -332,6 +335,8 @@ export default {
   },
 
   mounted() {
+    getRunTimeout(this)  // 初始化等待用例运行超时时间
+
     this.getUserList()
 
     this.$bus.$on(this.$busEvents.taskDialogIsCommit, (status) => {
@@ -347,6 +352,7 @@ export default {
   },
 
   created() {
+
     this.oldList = this.taskList.map(v => v.id)
     this.newList = this.oldList.slice()
     this.$nextTick(() => {
