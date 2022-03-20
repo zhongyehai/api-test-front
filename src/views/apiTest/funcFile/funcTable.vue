@@ -71,9 +71,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 
-import {funcFileList, getFuncFile, debugFuncFile, deleteFuncFile} from '@/apis/apiTest/funcFile'
-import {userList} from '@/apis/user/user'
-import {getDataFormListById} from "@/utils/parseData";
+import {funcFileList, deleteFuncFile} from '@/apis/apiTest/funcFile'
+import {getUserDict} from '@/apis/user/user'
 
 export default {
   name: "funcTable",
@@ -84,7 +83,6 @@ export default {
     return {
       funcDebugData: '',
       listLoading: false,
-      userLists: [],
       funcFiles: {
         list: [],
         total: 0,
@@ -95,16 +93,9 @@ export default {
   },
   methods: {
 
-    // 获取用户列表
-    getUserList() {
-      userList().then(response => {
-        this.userLists = response.data.data
-      })
-    },
-
-    // 根据用户id，解析用户
+    // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.userLists, userId).name
+      return this.$busEvents.userDict[userId].name
     },
 
     getFuncFileList() {
@@ -130,8 +121,12 @@ export default {
 
   },
 
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
+
   mounted() {
-    this.getUserList()
     this.getFuncFileList()
 
     // 修改函数文件成功，重新请求列表

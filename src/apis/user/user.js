@@ -53,3 +53,20 @@ export function userPassword(data) {
 export function roleList() {
   return request({url: '/api/role/list', method: 'get'});
 }
+
+// 获取用户列表数据
+export function getUserDict(_this) {
+  let userDict = _this.$busEvents.userDict
+  if (!userDict || userDict.length === 0) {
+    userDict = []
+    userList().then(response => {
+      _this.$busEvents.userList = response.data.data
+      response.data.data.forEach(user => {
+        userDict[user.id] = user
+      })
+      _this.$busEvents.userDict = userDict
+      userDict = response.data.data
+    })
+    return userDict
+  }
+}

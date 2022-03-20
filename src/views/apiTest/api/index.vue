@@ -143,10 +143,9 @@ import Pagination from '@/components/Pagination'
 
 import apiDrawer from '@/views/apiTest/api/drawer'
 
-import {userList} from '@/apis/user/user'
+import {getUserDict} from '@/apis/user/user'
 import {apiList, deleteApi, runApi, apiMsgSort} from '@/apis/apiTest/api'
 import {reportIsDone} from "@/apis/apiTest/report";
-import {getDataFormListById} from "@/utils/parseData";
 import {runTestTimeOutMessage} from "@/utils/message";
 import {getRunTimeout} from "@/utils/getConfig";
 
@@ -177,9 +176,6 @@ export default {
       // 接口新增/编辑临时数据
       tempApi: {},
 
-      // 用户列表
-      user_list: [],
-
       // 接口数据列表
       pageNum: 1,
       pageSize: 20,
@@ -194,10 +190,12 @@ export default {
     }
   },
 
-  created() {
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
 
-    // 初始化用户列表
-    this.getUserList()
+  created() {
 
     this.oldList = this.api_list.map(v => v.id)
     this.newList = this.oldList.slice()
@@ -231,14 +229,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
-    },
-
-    // 用户列表
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
+      return this.$busEvents.userDict[userId].name
     },
 
     // 删除接口

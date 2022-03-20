@@ -155,9 +155,8 @@ import Pagination from '@/components/Pagination'
 import taskDrawer from "@/views/apiTest/task/drawer";
 
 import {taskList, disableTask, enableTask, runTask, deleteTask, copyTask, taskSort} from '@/apis/apiTest/task'
-import {userList} from "@/apis/user/user";
+import {getUserDict} from "@/apis/user/user";
 import {reportIsDone} from "@/apis/apiTest/report";
-import {getDataFormListById} from "@/utils/parseData";
 import {runTestTimeOutMessage} from "@/utils/message";
 import {getRunTimeout} from "@/utils/getConfig";  // 初始化超时时间
 
@@ -294,14 +293,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
-    },
-
-    // 用户列表
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
+      return this.$busEvents.userDict[userId].name
     },
 
     // 拖拽排序
@@ -337,8 +329,6 @@ export default {
   mounted() {
     getRunTimeout(this)  // 初始化等待用例运行超时时间
 
-    this.getUserList()
-
     this.$bus.$on(this.$busEvents.taskDialogIsCommit, (status) => {
       this.getTaskList()
     })
@@ -349,6 +339,11 @@ export default {
       this.getTaskList()
     })
 
+  },
+
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
   },
 
   created() {

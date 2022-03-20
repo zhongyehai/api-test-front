@@ -126,7 +126,7 @@
 import projectTreeView from '@/components/Trees/projectTree'
 import Pagination from '@/components/Pagination'
 
-import {reportList, deleteReport, downloadReport, getReport} from '@/apis/apiTest/report'
+import {reportList, deleteReport, downloadReport} from '@/apis/apiTest/report'
 
 export default {
   name: 'index',

@@ -139,10 +139,9 @@ import Sortable from 'sortablejs'
 import Pagination from '@/components/Pagination'
 import caseDrawer from '@/views/apiTest/case/drawer'
 
-import {userList} from '@/apis/user/user'
+import {getUserDict} from '@/apis/user/user'
 import {caseList, caseRun, deleteCase, putCaseIsRun, caseSort} from '@/apis/apiTest/case'
 import {reportIsDone} from "@/apis/apiTest/report";
-import {getDataFormListById} from "@/utils/parseData";
 import {runTestTimeOutMessage} from "@/utils/message";
 
 export default {
@@ -179,9 +178,6 @@ export default {
       // 模块列表数据
       module_list: [],
 
-      // 用户列表
-      user_list: [],
-
       // 用例数据列表
       case_total: 0,
       case_list: [],
@@ -196,11 +192,12 @@ export default {
     }
   },
 
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
+
   created() {
-
-    // 初始化用户列表
-    this.getUserList()
-
     this.oldList = this.case_list.map(v => v.id)
     this.newList = this.oldList.slice()
     this.$nextTick(() => {
@@ -232,14 +229,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
-    },
-
-    // 用户列表
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
+      return this.$busEvents.userDict[userId].name
     },
 
     // 删除用例

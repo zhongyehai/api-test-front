@@ -192,7 +192,7 @@
 
 <script>
 import Pagination from '@/components/Pagination'
-import {userList} from '@/apis/user/user'
+import {getUserDict, userList} from '@/apis/user/user'
 import {
   accountList,
   postAccount,
@@ -222,7 +222,6 @@ export default {
         {'key': 'test', 'value': '测试环境'},
         {'key': 'uat', 'value': 'uat环境'}
       ],
-      user_list: [],  // 用户列表
       projectList: [],  // 项目列表
       currentAccountList: [],  // 账号列表
       // 账号
@@ -245,13 +244,6 @@ export default {
   methods: {
 
     // 请求用户信息
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
-    },
-
-    // 请求用户信息
     getAccountProjectList() {
       accountProjectList().then(response => {
         this.projectList = response.data
@@ -260,7 +252,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
+      return this.$busEvents.userDict[userId].name
     },
 
     // 获取账号列表
@@ -379,8 +371,12 @@ export default {
     }
   },
 
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
+
   mounted() {
-    this.getUserList()
     this.getAccountProjectList()
     this.getAccountList()
   },

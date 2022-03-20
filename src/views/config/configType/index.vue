@@ -103,8 +103,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import {configTypeList, postConfigType, putConfigType, deleteConfigType, getConfigType} from "@/apis/config/configType";
-import {userList} from "@/apis/user/user";
-import {getDataFormListById} from "@/utils/parseData";
+import {getUserDict} from "@/apis/user/user";
 
 export default {
   name: "index",
@@ -126,7 +125,6 @@ export default {
         name: '',
         desc: ''
       },
-      user_list: [],
       // 用户权限
       roles: localStorage.getItem('roles'),
       pageNum: 1,
@@ -138,14 +136,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
-    },
-
-    // 用户列表
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
+      return this.$busEvents.userDict[userId].name
     },
 
     showAddConfigTypeDialog(row) {
@@ -193,8 +184,13 @@ export default {
       })
     }
   },
+
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
+
   mounted() {
-    this.getUserList()
     this.getConfigTypeList()
   }
 }

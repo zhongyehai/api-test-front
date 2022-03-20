@@ -25,20 +25,6 @@
         </el-button>
 
       </el-form>
-      <!--      <el-select v-model="queryType"-->
-      <!--                 :placeholder="'选择配置类型'"-->
-      <!--                 clearable-->
-      <!--                 style="margin-left: 10px; width: 30%"-->
-      <!--                 size="mini"-->
-      <!--                 class="filter-item"-->
-      <!--                 @change="getConfigList"-->
-      <!--      >-->
-      <!--        <el-option v-for="type in currentConfigTypeList" :key="type.id" :label="type.name" :value="type.name"/>-->
-      <!--      </el-select>-->
-
-      <!--      <el-button class="filter-item" style="margin-left: 10px;" type="primary" size="mini" @click="addConfig">-->
-      <!--        {{ '添加配置' }}-->
-      <!--      </el-button>-->
     </div>
 
     <el-table
@@ -126,10 +112,9 @@
 import Pagination from '@/components/Pagination'
 import configDialog from "@/views/config/configs/drawer";
 
-import {getConfig, configList, deleteConfig, postConfig, putConfig} from '@/apis/config/config'
-import {userList} from "@/apis/user/user";
+import {configList, deleteConfig} from '@/apis/config/config'
+import {getUserDict} from "@/apis/user/user";
 import {configTypeList} from "@/apis/config/configType";
-import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: "config",
@@ -155,9 +140,6 @@ export default {
       // 初始化数据默认的数据
       pageNum: 1,
       pageSize: 20,
-
-      // 用户列表
-      user_list: [],
 
       // 配置类型列表
       currentConfigTypeList: [],
@@ -187,14 +169,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
-    },
-
-    // 用户列表
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
+      return this.$busEvents.userDict[userId].name
     },
 
     getConfigList() {
@@ -218,6 +193,11 @@ export default {
     }
   },
 
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
+
   mounted() {
     this.getConfigTypeList()
 
@@ -225,7 +205,6 @@ export default {
       this.getConfigList()
     })
 
-    this.getUserList()
     this.getConfigList()
 
   },

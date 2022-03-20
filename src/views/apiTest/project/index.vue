@@ -30,7 +30,7 @@
             clearable
             size="mini"
             class="filter-item">
-            <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+            <el-option v-for="user in userList" :key="user.name" :label="user.name" :value="user.id"/>
           </el-select>
         </el-form-item>
 
@@ -43,7 +43,7 @@
             clearable
             size="mini"
             class="filter-item">
-            <el-option v-for="user in user_list" :key="user.name" :label="user.name" :value="user.id"/>
+            <el-option v-for="user in userList" :key="user.name" :label="user.name" :value="user.id"/>
           </el-select>
         </el-form-item>
 
@@ -112,7 +112,7 @@
       <el-table-column :label="'测试环境'" prop="test" align="center" min-width="28%" :show-overflow-tooltip=true>
         <template slot-scope="scope">
           <div v-if="scope.row.test">
-            <span>{{ scope.row.test}}</span>
+            <span>{{ scope.row.test }}</span>
           </div>
           <div v-else>
             <el-tag type="danger">请设置测试环境地址</el-tag>
@@ -134,12 +134,14 @@
 
       <el-table-column :label="'创建人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
+          {{ scope.row.update_user }}
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
       </el-table-column>
 
       <el-table-column :label="'最后修改人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
+          {{ scope.row.update_user }}
           <span>{{ parsUser(scope.row.update_user) }}</span>
         </template>
       </el-table-column>
@@ -228,7 +230,7 @@
     <!-- 抽屉 -->
     <projectDrawer
       :currentProject="currentProject"
-      :currentUserList="user_list"
+      :currentUserList="$busEvents.userList"
     ></projectDrawer>
 
   </div>
@@ -236,11 +238,10 @@
 
 <script>
 import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from '@/apis/apiTest/project'
-import {userList} from '@/apis/user/user'
+import {userList, getUserDict} from '@/apis/user/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import projectDrawer from '@/views/apiTest/project/drawer'
-import {getDataFormListById} from "@/utils/parseData";
 
 export default {
   name: 'Project',
@@ -264,7 +265,7 @@ export default {
       currentProject: {},
 
       // 用户列表
-      user_list: [],
+      userList: [],
 
       // 服务列表
       project_list: [],
@@ -288,10 +289,13 @@ export default {
     }
   },
 
-  created() {
+  // 组件创建前获取用户数据
+  beforeCreate() {
+    getUserDict(this)  // 获取用户列表数据
+  },
 
-    // 初始化用户列表
-    this.getUserList()
+  created() {
+    this.userList = this.$busEvents.userList  // 初始化用户列表
 
     // 初始化服务列表
     this.getProjectList()
@@ -334,13 +338,6 @@ export default {
       })
     },
 
-    // 请求用户信息
-    getUserList() {
-      userList().then(response => {
-        this.user_list = response.data.data
-      })
-    },
-
     // 获取服务列表
     getProjectList() {
       this.listLoading = true
@@ -375,7 +372,7 @@ export default {
 
     // 把用户id解析为用户名
     parsUser(userId) {
-      return getDataFormListById(this.user_list, userId).name
+      return this.$busEvents.userDict[userId].name
     },
 
     // 初始化查询数据
@@ -416,14 +413,14 @@ export default {
 
     // test环境修改后，前端页面也跟随修改域名
     this.$bus.$on(this.$busEvents.envIsCommit, (projectId, host) => {
-      try{
+      try {
         this.project_list.forEach(row => {
-          if (row.id === projectId){
+          if (row.id === projectId) {
             this.$set(row, 'test', host)
             throw new Error('遍历结束')
           }
         })
-      }catch (error){
+      } catch (error) {
         if (error.message !== '遍历结束') throw error
       }
     })
