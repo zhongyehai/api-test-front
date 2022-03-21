@@ -134,14 +134,12 @@
 
       <el-table-column :label="'创建人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
-          {{ scope.row.update_user }}
           <span>{{ parsUser(scope.row.create_user) }}</span>
         </template>
       </el-table-column>
 
       <el-table-column :label="'最后修改人'" prop="id" align="center" min-width="8%">
         <template slot-scope="scope">
-          {{ scope.row.update_user }}
           <span>{{ parsUser(scope.row.update_user) }}</span>
         </template>
       </el-table-column>
