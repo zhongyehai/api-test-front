@@ -10,6 +10,10 @@
 
         <div style="margin-left: 20px">
           <div style="margin-left: 20px; margin-bottom: 5px">
+            1、此处提取的数据只在运行时有效 <br/>
+            2、若在此处设置的key与服务/用例设置的公共变量的一致，则会使用此处提取到的值
+          </div>
+          <div style="margin-left: 20px; margin-bottom: 5px">
             示例数据： {"status": 200, "list": [{"id": 1},{"id": 2}]}
           </div>
           <div style="margin-left: 20px">

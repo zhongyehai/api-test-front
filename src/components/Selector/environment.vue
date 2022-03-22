@@ -7,10 +7,11 @@
     style="width: 90%"
     size="mini"
   >
-    <el-option v-for="(item) in environments"
-               :key="item.key"
-               :label="item.value"
-               :value="item.key"
+    <el-option
+      v-for="(item) in environments"
+      :key="item.key"
+      :label="item.value"
+      :value="item.key"
     >
     </el-option>
   </el-select>
@@ -19,7 +20,7 @@
 <script>
 export default {
   name: "environment",
-  props:['choice_environment'],
+  props: ['choice_environment'],
   data() {
     return {
       current_environment: 'test',
@@ -53,4 +54,3 @@ export default {
 <style scoped>
 
 </style>
-

@@ -14,9 +14,10 @@
             </el-input>
           </el-form-item>
           <!-- 服务选择 -->
-          <el-col :span="12">
-            <el-tooltip class="item" effect="dark" placement="top-end">
-              <div slot="content">若没有选择用例集，则默认运行此服务下的所有用例</div>
+          <el-row>
+
+
+            <el-col :span="12">
               <el-form-item label="选择服务" class="is-required">
                 <el-select
                   v-model="projectSelectedId"
@@ -24,32 +25,41 @@
                   size="mini"
                   filterable
                   default-first-option
-                  style="width: 100%"
+                  style="width: 95%"
                   :disabled="true"
                 >
-                  <el-option v-for="(item) in projectLists" :key="item.id" :label="item.name"
-                             :value="item.id"></el-option>
+                  <el-option
+                    v-for="(item) in projectLists"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
                 </el-select>
+                <el-popconfirm
+                  placement="top"
+                  title="若没有选择用例集，则默认运行此服务下的所有用例"
+                  hide-icon>
+                  <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+                </el-popconfirm>
               </el-form-item>
-            </el-tooltip>
-          </el-col>
+            </el-col>
 
-          <!-- 选择环境 -->
-          <el-col :span="12">
-            <el-tooltip class="item" effect="dark" placement="top-end">
-              <div slot="content">
-                请确保此定时任务中选中的用例涉及到的所有服务都配置了当前选中环境的域名 <br/>
-                如：选测试环境，则需确保此定时任务中选中的用例涉及到的所有服务都配置了测试环境的域名
-              </div>
+            <!-- 选择环境 -->
+            <el-col :span="12">
               <el-form-item label="选择环境" class="is-required">
                 <environmentSelectorView
                   :choice_environment="tempTask.choice_host"
                   ref="environmentSelectorView"
                 ></environmentSelectorView>
+                <el-popconfirm
+                  placement="top"
+                  title="触发次定时任务时，会以此处选择的环境来执行，请确保此任务涉中及到的所有服务都设置了当前选中环境的域名"
+                  hide-icon>
+                  <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+                </el-popconfirm>
               </el-form-item>
-            </el-tooltip>
-          </el-col>
-
+            </el-col>
+          </el-row>
           <el-form-item label="发送报告" class="is-required">
             <el-radio v-model="tempTask.is_send" label="1">不发送</el-radio>
             <el-radio v-model="tempTask.is_send" label="2">始终发送</el-radio>
@@ -126,12 +136,20 @@
 
 
         <el-tab-pane label="配置任务用例" name="case">
-          <div style="margin-bottom: 20px">
-            <span style="color: red">注：</span><br>
-            1、若没有选择用例集和用例，则默认运行当前服务下的所有用例集下的所有用例<br>
-            2、若要选择用例集下的所有用例，则勾选对应的用例集即可，无需再选择用例<br>
-            3、若要选择用例，则点击对应的用例集获取用例列表，再在用例列表中勾选要选择的用例
-          </div>
+          <!-- 使用示例 -->
+          <el-collapse accordion>
+            <el-collapse-item>
+              <template slot="title">
+                <div style="color:#409eff"> 点击查看说明</div>
+              </template>
+              <div style="margin-left: 20px">
+                1、若没有选择用例集和用例，则默认运行当前服务下的所有用例集下的所有用例<br>
+                2、若要选择用例集下的所有用例，则勾选对应的用例集即可，无需再选择用例<br>
+                3、若要选择用例，则点击对应的用例集获取用例列表，再在用例列表中勾选要选择的用例
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+
           <el-row>
             <el-col style="width: 25%; border:1px solid;border-color: #ffffff rgb(234, 234, 234) #ffffff #ffffff;">
               <el-tabs v-model="caseSetTab">

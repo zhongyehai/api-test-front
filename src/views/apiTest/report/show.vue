@@ -95,7 +95,7 @@
                                 effect="dark"
                                 :content="item.records ? `${item.records.length}个步骤` : ''"
                                 placement="top-start">
-                      <div style="font-weight:600 ;font-size: 15px;margin-left: 10px"
+                      <div style="font-weight:600 ;font-size: 15px;margin-left: 10px; overflow: hidden"
                            :style="item.success === true ? 'color:#409eff': 'color:rgb(255, 74, 74)'">
                         {{ item.name }}
                       </div>
@@ -567,8 +567,8 @@ export default {
       var text = xml
       if (xml && xml.length > 0) {
         text = vkbeautify.xml(xml)
-        console.log('xml: ', xml)
-        console.log('text: ', text)
+        // console.log('xml: ', xml)
+        // console.log('text: ', text)
       }
       return text
     },
@@ -588,7 +588,7 @@ export default {
 
     // 复制失败
     onError(e) {
-      this.$message.error('内容已复制失败')
+      this.$message.error('内容复制失败')
     },
 
     // 解析字符串为json
@@ -741,9 +741,12 @@ export default {
   border-bottom: 1px solid #d0d0d0;
 }
 
-.my-table {
-  border-bottom: 1px solid #d0d0d0;
-  font-weight: 600;
-  color: #66b1ff
+/* 用例名文字描述 */
+/deep/ .el-collapse-item__header {
+  /*height: 40px;*/
+  /*line-height: 25px;*/
+  line-height: 150%;
+  height: auto;
+  padding: 10px 0;
 }
 </style>

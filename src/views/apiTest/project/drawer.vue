@@ -21,16 +21,18 @@
                 <el-form-item :label="'负责人'" prop="manager" size="mini" class="is-required">
                   <userSelector ref="userSelect" :user="tempProject.manager"></userSelector>
                 </el-form-item>
-
-                <el-tooltip class="item" effect="dark" placement="top-end">
-                  <div slot="content">
-                    若此处填写了对应的swagger地址，则只需要回到列表页点击同步按钮，系统会自动获取swagger数据，
-                    并把其中的模块、接口同步到测试平台，无需手动录入
-                  </div>
-                  <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
-                    <el-input v-model="tempProject.swagger" placeholder="当前服务的swagger地址，用于拉取模块、接口数据"/>
-                  </el-form-item>
-                </el-tooltip>
+                <el-form-item :label="'swagger地址'" prop="swagger" class="filter-item" size="mini">
+                  <el-input
+                    v-model="tempProject.swagger"
+                    style="width: 98%"
+                    placeholder="当前服务的swagger地址，用于拉取模块、接口数据"/>
+                  <el-popconfirm
+                    placement="top"
+                    hide-icon
+                    title="若此处填写了对应的swagger地址，则只需要回到列表页点击同步按钮，系统会自动获取swagger数据，并把其中的模块、接口同步到测试平台，无需手动录入">
+                    <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+                  </el-popconfirm>
+                </el-form-item>
               </el-form>
               <div style="text-align: right; margin-right: 10px">
                 <el-button

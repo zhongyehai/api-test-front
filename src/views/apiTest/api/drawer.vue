@@ -117,21 +117,27 @@
 
         <!-- 头部信息 -->
         <el-tab-pane label="头部信息" name="headers">
-          <el-tooltip class="item" effect="dark" placement="top-end">
-            <div slot="content">
-              1、可用此功能设置当前接口的固定的头部参数，比如token、cookie <br/>
-              2、在此处设置的值，在运行此接口的时候，会自动加到头部参数上 <br/>
-              3、此处的value可以使用自定义函数处理/获取数据，比如用自定义函数取数据库获取对应的数据 <br/>
-              4、若在此处设置了与服务的头部参数设置的同样的key，则会用此处设置的value
-            </div>
-            <headersView
-              ref="headersView"
-              :currentData="tempApi.headers"
-              :placeholder-key="'key'"
-              :placeholder-value="'value'"
-              :placeholder-desc="'备注'"
-            ></headersView>
-          </el-tooltip>
+          <!-- 使用示例 -->
+          <el-collapse accordion>
+            <el-collapse-item>
+              <template slot="title">
+                <div style="color:#409eff"> 点击查看说明</div>
+              </template>
+              <div style="margin-left: 20px">
+                1、可用此功能设置当前接口的固定的头部参数，比如token、cookie <br/>
+                2、在此处设置的值，在运行此接口的时候，会自动加到头部参数上 <br/>
+                3、此处的value可以使用自定义函数处理/获取数据，比如用自定义函数取数据库获取对应的数据 <br/>
+                4、若在此处设置了与服务的头部参数设置的同样的key，则会用此处设置的value
+              </div>
+            </el-collapse-item>
+          </el-collapse>
+          <headersView
+            ref="headersView"
+            :currentData="tempApi.headers"
+            :placeholder-key="'key'"
+            :placeholder-value="'value'"
+            :placeholder-desc="'备注'"
+          ></headersView>
         </el-tab-pane>
 
         <!-- 接口查询字符串信息 -->
@@ -158,21 +164,13 @@
 
         <!-- 数据提取信息 -->
         <el-tab-pane label="数据提取" name="extracts">
-          <el-tooltip class="item" effect="dark" placement="top-end">
-            <div slot="content">
-              1、此处提取的数据只在运行时有效 <br/>
-              2、若在此处设置的key与服务/用例设置的公共变量的一致，则会使用此处提取到的值 <br/>
-              <!--              3、提取方式详见httpRunner <br/>-->
-              <!--              4、若遇到复杂场景，可以使用自定义函数处理，如表达式可设置为${fomat_data(content.data)}，自定义函数处理完过后的返回值将用来作为数据提取的值-->
-            </div>
-            <extractsView
-              ref="extractsView"
-              :currentData="tempApi.extracts"
-              :placeholder-key="'起个变量名'"
-              :placeholder-value="'提取表达式'"
-              :placeholder-desc="'备注'"
-            ></extractsView>
-          </el-tooltip>
+          <extractsView
+            ref="extractsView"
+            :currentData="tempApi.extracts"
+            :placeholder-key="'起个变量名'"
+            :placeholder-value="'提取表达式'"
+            :placeholder-desc="'备注'"
+          ></extractsView>
         </el-tab-pane>
 
         <!-- 断言信息 -->
