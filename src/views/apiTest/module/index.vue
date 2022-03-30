@@ -2,13 +2,13 @@
 
   <div class="app-container">
 
-    <el-form label-width="200px">
+    <el-form label-width="150px" inline>
       <el-form-item :label="'选择服务：'" size="mini">
         <el-select
           v-model="currentProjectId"
           placeholder="选择服务"
           size="mini"
-          style="width: 500px"
+          style="width: 300px"
           filterable
           default-first-option
           @change="getModuleList"
@@ -20,11 +20,29 @@
           v-show="currentProjectId"
           type="primary"
           size="mini"
-          style="margin-left: 50px"
+          style="margin-left: 10px"
           @click.native="addParentModule()"
         >为当前服务添加一级模块
         </el-button>
 
+      </el-form-item>
+
+      <el-form-item :label="'查询接口归属：'" size="mini">
+        <el-input
+          v-model="queryAddr"
+          class="input-with-select"
+          placeholder="请输入接口地址"
+          size="mini"
+          style="width: 300px">
+        </el-input>
+        <el-button
+          v-show="queryAddr"
+          type="primary"
+          size="mini"
+          style="margin-left: 10px"
+          @click.native="getApiMsgBelongTo()"
+        >查询
+        </el-button>
       </el-form-item>
     </el-form>
 
@@ -183,7 +201,7 @@ import {ellipsis, arrayToTree} from "@/utils/parseData"
 
 import {projectList} from "@/apis/apiTest/project";
 import {moduleTree, deleteModule, postModule, putModule} from "@/apis/apiTest/module";
-import {downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/apiTest/api";
+import {apiMsgBelongTo, downloadApiMsgTemplate, uploadApi, uploadApiMsg} from "@/apis/apiTest/api";
 
 
 export default {
@@ -222,7 +240,9 @@ export default {
       fileDataList: [],
 
       // 当前鼠标滑入的节点名
-      currentLabel: ''
+      currentLabel: '',
+
+      queryAddr: ''
     }
   },
 
@@ -231,6 +251,14 @@ export default {
   },
 
   methods: {
+
+    // 获取接口归属
+    getApiMsgBelongTo(){
+      apiMsgBelongTo({addr: this.queryAddr}).then(response => {
+        this.showMessage(this, response)
+        // console.log(JSON.stringify(response.message))
+      })
+    },
 
     // el-dropdown 的展开/隐藏状态
     changeDropdownStatus(status) {

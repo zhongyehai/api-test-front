@@ -186,7 +186,6 @@ export default {
       sortable: null,
       oldList: [],
       newList: [],
-
     }
   },
 

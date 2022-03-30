@@ -60,3 +60,8 @@ export function getAssertMapping() {
 export function apiMsgSort(data) {
   return request({url: '/api/apiMsg/sort', method: 'put', data: data});
 }
+
+// 查询接口归属
+export function apiMsgBelongTo(params) {
+  return request({url: '/api/apiMsg/belongTo', method: 'get', params: params});
+}
