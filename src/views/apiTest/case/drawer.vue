@@ -151,6 +151,12 @@
         ></stepView>
       </el-tab-pane>
 
+      <!-- 用例描述 -->
+      <el-tab-pane label="用例描述" name="stepDesc">
+        <el-input v-model="tempCase.desc" size="mini" type="textarea" :rows="20" :placeholder="'用例的描述、备注'">
+        </el-input>
+      </el-tab-pane>
+
     </el-tabs>
 
     <div class="demo-drawer__footer">
