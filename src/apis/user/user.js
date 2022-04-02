@@ -1,17 +1,18 @@
 import request from '@/utils/request'
+import {baseDirUcenter} from "@/apis/base";
 
 function Func(method, data = null, params = null) {
-  return request({url: '/api/user', method: method, data: data, params: params});
+  return request({url: baseDirUcenter + '/', method: method, data: data, params: params});
 }
 
 // 登录
 export function login(data) {
-  return request({url: '/api/login', method: 'post', data})
+  return request({url: baseDirUcenter + '/login', method: 'post', data})
 }
 
 // 退出登录
 export function logout() {
-  return request({url: '/api/logout', method: 'post'})
+  return request({url: baseDirUcenter + '/logout', method: 'post'})
 }
 
 // 获取用户信息
@@ -36,22 +37,22 @@ export function deleteUser(data) {
 
 // 用户列表
 export function userList(params) {
-  return request({url: '/api/user/list', method: 'get', params: params});
+  return request({url: baseDirUcenter + '/list', method: 'get', params: params});
 }
 
 // 修改用户状态
 export function userStatus(data) {
-  return request({url: '/api/user/status', method: 'put', data: data});
+  return request({url: baseDirUcenter + '/status', method: 'put', data: data});
 }
 
 // 修改密码
 export function userPassword(data) {
-  return request({url: '/api/user/password', method: 'put', data: data});
+  return request({url: baseDirUcenter + '/password', method: 'put', data: data});
 }
 
 // 角色列表
 export function roleList() {
-  return request({url: '/api/role/list', method: 'get'});
+  return request({url: baseDirUcenter + '/role/list', method: 'get'});
 }
 
 // 获取用户列表数据

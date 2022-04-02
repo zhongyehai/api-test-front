@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import {fileCheck, fileUpload, uploadAddr} from "@/apis/tools/file";
+import {fileCheck, fileUpload, uploadAddr} from "@/apis/testWork/file";
 
 export default {
   name: "dataForm",

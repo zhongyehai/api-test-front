@@ -1,7 +1,8 @@
 import request from '@/utils/request';
+import {baseDirApiTest} from "@/apis/base";
 
 function Func(method, data = null, params = null) {
-  return request({url: '/api/task', method: method, data: data, params: params});
+  return request({url: baseDirApiTest + '/task', method: method, data: data, params: params});
 }
 
 // 获取任务信息
@@ -26,30 +27,30 @@ export function deleteTask(data) {
 
 // 任务列表
 export function taskList(params) {
-  return request({url: '/api/task/list', method: 'get', params: params});
+  return request({url: baseDirApiTest + '/task/list', method: 'get', params: params});
 }
 
 // 启用任务
 export function enableTask(data) {
-  return request({url: '/api/task/status', method: 'post', data: data});
+  return request({url: baseDirApiTest + '/task/status', method: 'post', data: data});
 }
 
 // 禁用任务
 export function disableTask(data) {
-  return request({url: '/api/task/status', method: 'delete', data: data});
+  return request({url: baseDirApiTest + '/task/status', method: 'delete', data: data});
 }
 
 // 单次运行定时任务
 export function runTask(data) {
-  return request({url: '/api/task/run', method: 'post', data: data});
+  return request({url: baseDirApiTest + '/task/run', method: 'post', data: data});
 }
 
 // 复制定时任务
 export function copyTask(data) {
-  return request({url: '/api/task/copy', method: 'post', data: data});
+  return request({url: baseDirApiTest + '/task/copy', method: 'post', data: data});
 }
 
 // 修改定时任务排序
 export function taskSort(data) {
-  return request({url: '/api/task/sort', method: 'put', data: data});
+  return request({url: baseDirApiTest + '/task/sort', method: 'put', data: data});
 }

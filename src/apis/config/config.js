@@ -1,7 +1,8 @@
-import request from '@/utils/request';  // 加载请求配置文件
+import request from '@/utils/request';
+import {baseDirConfig} from "@/apis/base";  // 加载请求配置文件
 
 function Func(method, data = null, params = null) {
-  return request({url: '/api/config', method: method, data: data, params: params});
+  return request({url: baseDirConfig + '/', method: method, data: data, params: params});
 }
 
 // 添加配置
@@ -26,10 +27,10 @@ export function deleteConfig(data) {
 
 // 获取配置list
 export function configList(params) {
-  return request({url: '/api/config/list', method: 'get', params: params});
+  return request({url: baseDirConfig + '/list', method: 'get', params: params});
 }
 
 // 根据配置名获取配置
 export function getConfigByName(params) {
-  return request({url: '/api/config/configByName', method: 'get', params: params});
+  return request({url: baseDirConfig + '/configByName', method: 'get', params: params});
 }
