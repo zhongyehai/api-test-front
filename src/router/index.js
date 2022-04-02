@@ -175,6 +175,12 @@ export const constantRoutes = [
     name: 'UITest',
     meta: {title: 'UI测试', icon: 'el-icon-connection'},
     children: [
+      // {
+      //   path: 'project',
+      //   name: 'Project',
+      //   component: () => import('@/views/uiTest/project/index'),
+      //   meta: {title: '项目管理', icon: 'el-icon-s-operation'}
+      // },
       {
         path: 'pages',
         name: 'Pages',
