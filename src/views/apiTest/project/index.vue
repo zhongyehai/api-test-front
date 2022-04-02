@@ -235,8 +235,10 @@
 </template>
 
 <script>
-import {deleteProject, projectList, swaggerPull, yapiPull, yapiPullProject} from '@/apis/apiTest/project'
-import {userList, getUserDict} from '@/apis/user/user'
+import {deleteProject, projectList} from '@/apis/apiTest/project'
+import {yapiPull, yapiPullProject} from '@/apis/testWork/yapi'
+import {swaggerPull} from '@/apis/testWork/swagger'
+import {getUserDict} from '@/apis/user/user'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 import projectDrawer from '@/views/apiTest/project/drawer'
