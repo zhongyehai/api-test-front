@@ -278,6 +278,33 @@
                     </el-row>
                   </el-collapse-item>
 
+                  <el-collapse-item name="12">
+                    <template slot="title">
+                      <div class="el-collapse-item-title"> {{ "发送请求时内存中的公共变量：" }}</div>
+                    </template>
+                    <el-row>
+                      <el-col :span="20">
+                        <div style="margin-left: 100px" v-if="this.meta_datas.variables_mapping">
+                          <JsonViewer
+                            :value="strToJson(this.meta_datas.variables_mapping)"
+                            :expand-depth="5"
+                            copyable
+                          ></JsonViewer>
+                        </div>
+                      </el-col>
+                      <el-col :span="4">
+                        <el-button
+                          size="mini"
+                          v-if="this.meta_datas.variables_mapping"
+                          v-clipboard:copy="getCopyData(this.meta_datas.variables_mapping)"
+                          v-clipboard:success="onCopy"
+                          v-clipboard:error="onError"
+                        >复制
+                        </el-button>
+                      </el-col>
+                    </el-row>
+                  </el-collapse-item>
+
                   <el-collapse-item name="7">
                     <template slot="title">
                       <div class="el-collapse-item-title"> {{ "响应状态码：" }}</div>
