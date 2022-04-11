@@ -20,7 +20,7 @@
           v-show="currentProjectId"
           type="primary"
           size="mini"
-          style="margin-left: 50px"
+          style="margin-left: 10px"
           @click.native="addParentSet()"
         >为当前服务添加一级用例集
         </el-button>

@@ -46,7 +46,7 @@
               </div>
             </el-tab-pane>
 
-            <el-tab-pane :label="value" :name="key" v-for="(value, key, index) in envMapping">
+            <el-tab-pane :label="value" :name="key" v-for="(value, key, index) in envMapping" :key="key">
               <envEditor
                 :ref="key"
                 :currentEnv="key"

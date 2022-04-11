@@ -15,6 +15,7 @@
               v-model="dataSourceFrom"
               v-for="(value, key, index) in envMapping"
               :label="key"
+              :key="key"
               @change="changeRadio()"
               border
             >{{ value }}

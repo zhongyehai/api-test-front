@@ -1,13 +1,14 @@
 <template>
   <el-select
-    v-model="tempProjectId"
-    placeholder="请选择服务"
-    size="mini"
-    style="min-width: 100%"
-    filterable
-    default-first-option
-    :disabled="isDisabled"
-    @change="choiceProject"
+      ref="projectSelectorView"
+      v-model="tempProjectId"
+      placeholder="请选择服务"
+      size="mini"
+      style="min-width: 100%"
+      filterable
+      default-first-option
+      :disabled="isDisabled"
+      @change="choiceProject"
   >
     <el-option v-for="(item) in projectLists" :key="item.id" :label="item.name" :value="item.id"></el-option>
   </el-select>

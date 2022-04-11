@@ -3,11 +3,32 @@
 
     <el-form label-width="60px">
       <el-row>
+        <el-form-item :label="'查询'" size="mini" style="margin-bottom: 5px">
+          <el-input
+            v-model="queryAddr"
+            class="input-with-select"
+            placeholder="请输入接口地址，如 /mock/{projectSystemId}"
+            size="mini"
+            style="width: 85%">
+          </el-input>
+          <el-button
+            v-show="queryAddr"
+            type="primary"
+            size="mini"
+            style="margin-left: 10px"
+            @click.native="getApiMsgBelongTo()"
+          >查询
+          </el-button>
+        </el-form-item>
+      </el-row>
+
+      <el-row>
 
         <!-- 服务选择 -->
         <el-col :span="11">
-          <el-form-item label="服务">
+          <el-form-item label="服务" style="margin-bottom: 5px">
             <projectSelectorView
+              ref="projectSelectorView"
               :busEmitEventName="$busEvents.projectSelectorChoiceProject"
             ></projectSelectorView>
           </el-form-item>
@@ -15,7 +36,7 @@
 
         <!-- 选则用例集 -->
         <el-col :span="13">
-          <el-form-item label="模块">
+          <el-form-item label="模块" style="margin-bottom: 5px">
             <el-cascader
               placeholder="选择模块"
               filterable
@@ -82,7 +103,7 @@ import moduleSelectorView from "@/components/Selector/module";
 import editStepView from "@/views/apiTest/step/editStep";
 import Pagination from '@/components/Pagination'
 
-import {apiList} from "@/apis/apiTest/api";
+import {apiList, apiMsgBelongTo} from "@/apis/apiTest/api";
 import {moduleList} from "@/apis/apiTest/module";
 
 export default {
@@ -112,8 +133,8 @@ export default {
         data: []
       },
       pageNum: 0,
-      pageSize: 10
-
+      pageSize: 10,
+      queryAddr: ''
     }
   },
 
@@ -142,6 +163,14 @@ export default {
   },
 
   methods: {
+
+    // 获取接口归属
+    getApiMsgBelongTo() {
+      apiMsgBelongTo({addr: this.queryAddr}).then(response => {
+        this.showMessage(this, response)
+        // console.log(JSON.stringify(response.message))
+      })
+    },
 
     // 递归把列表转为树行结构
     arrayToTree(arr, parentId) {
@@ -212,6 +241,8 @@ export default {
         new_api['id'] = ''
         new_api['is_run'] = true
         new_api['run_times'] = 1
+        new_api['projectName'] = this.$refs.projectSelectorView.$refs.projectSelectorView.selected.label
+        new_api['apiName'] = new_api.name
         this.$bus.$emit(this.$busEvents.addApiToStep, new_api)
       } else {
         this.$bus.$emit(this.$busEvents.isAddStepTriggerSaveCase, 'true')

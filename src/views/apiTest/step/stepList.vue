@@ -26,13 +26,13 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="步骤名称" min-width="38%">
+      <el-table-column align="center" label="步骤名称" min-width="35%">
         <template slot-scope="scope">
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" min-width="15%">
+      <el-table-column align="center" label="操作" min-width="18%">
         <template slot-scope="scope">
 
           <!-- 复制步骤 -->
