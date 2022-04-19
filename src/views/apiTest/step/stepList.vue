@@ -212,6 +212,9 @@ export default {
         this.$set(row, 'copyIsLoading', false)
         if (this.showMessage(this, response)) {
           this.stepList.push(response.data)
+
+          this.oldList = this.stepList.map(v => v.id)
+          this.newList = this.oldList.slice()
         }
       })
     },
