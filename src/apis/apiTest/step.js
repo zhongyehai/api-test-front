@@ -30,6 +30,11 @@ export function putStepIsRun(data) {
   return request({url: baseDirApiTest + '/step/changeIsRun', method: 'put', data: data});
 }
 
+// 修改步骤状态
+export function putStepHost(data) {
+  return request({url: baseDirApiTest + '/step/changeHost', method: 'put', data: data});
+}
+
 // 获取步骤list
 export function stepList(params) {
   return request({url: baseDirApiTest + '/step/list', method: 'get', params: params});

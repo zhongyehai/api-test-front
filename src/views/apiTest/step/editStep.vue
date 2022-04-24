@@ -48,15 +48,36 @@
               placeholder="后置处理函数，多个时用英文的 分号 ' ; ' 分隔"></el-input>
           </el-form-item>
 
-          <el-form-item label="执行次数" class="is-required">
-            <el-input-number
-              v-model="currentStep.run_times"
-              size="mini"
-              :precision="0"
-              :min="1"
-              :max="1000"
-            ></el-input-number>
-          </el-form-item>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="执行次数" class="is-required">
+                <el-input-number
+                  v-model="currentStep.run_times"
+                  size="mini"
+                  :precision="0"
+                  :min="1"
+                  :max="1000"
+                ></el-input-number>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+              <el-form label-width="200px" v-show="currentStep.id">
+                <el-form-item label="是否使用用例所在项目的域名">
+                  <el-switch
+                    :disabled="putStepHostIsLoading"
+                    v-model="currentStep.replace_host"
+                    @change="changeStatus()"></el-switch>
+                  <el-popconfirm
+                    placement="top"
+                    title="解析当前步骤时，若此项为激活状态，则使用用例所在服务的域名，否则使用步骤对应接口所在服务的域名"
+                    hide-icon>
+                    <el-button slot="reference" type="text" icon="el-icon-question"></el-button>
+                  </el-popconfirm>
+                </el-form-item>
+              </el-form>
+            </el-col>
+          </el-row>
         </el-form>
       </el-tab-pane>
 
@@ -173,7 +194,7 @@ import jsonEditorView from "@/components/jsonView";
 import extractsView from "@/components/Inputs/extract"
 import validatesView from "@/components/Inputs/validates";
 
-import {postStep, putStep} from "@/apis/apiTest/step"
+import {postStep, putStep, putStepHost} from "@/apis/apiTest/step"
 import {getApi} from "@/apis/apiTest/api";
 import {getProject} from "@/apis/apiTest/project";
 
@@ -196,11 +217,13 @@ export default {
       drawerType: 'add',
       direction: 'rtl',  // 抽屉打开方式
       submitButtonIsLoading: false,
+      putStepHostIsLoading: false,
       activeName: 'editStepInfo',
       currentStepCopy: '',
       currentStep: {
         'id': '',
         "is_run": '',
+        "replace_host": '',
         "name": '',
         "up_func": '',
         "down_func": '',
@@ -225,6 +248,7 @@ export default {
       return {
         'id': '',
         "is_run": '',
+        "replace_host": 0,
         "name": '',
         "up_func": '',
         "down_func": '',
@@ -248,6 +272,7 @@ export default {
       return {
         'id': this.currentStep.id,
         "is_run": this.currentStep.is_run,
+        "replace_host": this.currentStep.replace_host,
         "name": this.currentStep.name,
         "up_func": this.currentStep.up_func,
         "down_func": this.currentStep.down_func,
@@ -293,6 +318,15 @@ export default {
       })
     },
 
+    // 修改步骤的引用host
+    changeStatus(){
+      this.putStepHostIsLoading = true
+      putStepHost({'id': this.currentStep.id, 'replace_host': this.currentStep.replace_host}).then(response => {
+        this.putStepHostIsLoading = false
+        this.showMessage(this, response)
+      })
+    },
+
     // 取消保存
     rowBackStep() {
       this.currentStep = this.currentStepCopy
@@ -303,7 +337,6 @@ export default {
 
     // 新增步骤
     this.$bus.$on(this.$busEvents.addApiToStep, (step, type) => {
-      console.log('step: ', JSON.stringify(step))
       if (type !== 'quote') {
         this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
         this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
@@ -324,7 +357,7 @@ export default {
       getProject({id: step.project_id}).then(response => {
         this.$set(this.currentStep, 'projectName', response.data.name)
       })
-      this.currentStep = JSON.parse(JSON.stringify(step))  // 深拷贝
+      this.currentStep = step  // 深拷贝
       this.currentStepCopy = JSON.parse(JSON.stringify(step))  // 深拷贝
       this.drawerType = 'update'
       this.drawerIsShow = true

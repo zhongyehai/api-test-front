@@ -240,6 +240,7 @@ export default {
         new_api['api_id'] = new_api['id']
         new_api['id'] = ''
         new_api['is_run'] = true
+        new_api['replace_host'] = false
         new_api['run_times'] = 1
         new_api['projectName'] = this.$refs.projectSelectorView.$refs.projectSelectorView.selected.label
         new_api['apiName'] = new_api.name
